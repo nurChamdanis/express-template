@@ -1,78 +1,27 @@
-![master commit](https://badgen.net/github/last-commit/ais-one/cookbook/master)
-![release](https://img.shields.io/github/v/release/ais-one/cookbook)
-[![npm version](https://badge.fury.io/js/cookbook.svg)](https://badge.fury.io/js/cookbook)
-[![npm](https://img.shields.io/npm/dm/cookbook.svg)](https://www.npmjs.com/package/cookbook)
-[![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=com.lapots.breed.judge:judge-rule-engine&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.lapots.breed.judge:judge-rule-engine)
-[![Known Vulnerabilities](https://snyk.io/test/github/ais-one/cookbook/badge.svg)](https://snyk.io/test/github/ais-one/cookbook)
-[![MadeWithVueJs.com shield](https://madewithvuejs.com/storage/repo-shields/823-shield.svg)](https://madewithvuejs.com/p/cookbook/shield-link)
-
 # About
 
 > **TL;DR** ExpressJS, VueJS, ReactJS cookbook, with evergreen recipes and templates (CRUD, CI/CD, QA, Testing, Cloud container deployment, Web Components, ES Modules, etc.) to develop applications faster, while reducing the need for rewrite or refactoring due to changes in dependencies.
 
-Latest Version [0.7.0](https://github.com/ais-one/cookbook/releases/tag/0.7.0) - Released 2023 Sep 01 0830 +8GMT. åSee changes history in [CHANGELOG.md](CHANGELOG.md) and discuss [here](https://github.com/ais-one/cookbook/discussions)
+Latest Version [0.7.0](https://github.com/ais-one/cookbook/releases/tag/0.7.0) - Released 2023 Sep 01 0830 +8GMT. åSee changes history in [CHANGELOG.md](CHANGELOG.md) and discuss [here](https://github.com/es-labs/express-template/discussions)
 
-Companion Projects:
-- Frontend Template to go with the [express API backend](js-node/expressjs) in this repo
-  - [vue-antd-template](https://github.com/ais-one/vue-antd-template)
-- Reusable Components:
-  - [es-labs/jslib](https://github.com/es-labs/jslibs) reusable CJS and ESM codes
-- Python:
-  - [favv](https://github.com/ais-one/favv) API backend implement in Python FastAPI
-  - streamlit componennt examples
+## IMPORTANT [Read Me First](https://github.com/es-labs/es-labs.github.io/wiki)
 
-# Read This First
-
-## Resuable JS frameworks how to...
-
-for template (framework) repo
-1. exclude configurable files from repo (e.g. .env), but include sample config files (e.g. .env.sample)
-2. create an folder where all custom code is placed, framework must not touch anything inside this folder
-
-for app based on template repo
-1. clone template repo
-2. create a remote called upstream pointing to template repo
-3. update framework when necessary by merging upstream into origin
-
-template repo is advisable not to be monorepo
-
-## Shareable libraries and contracts
-
-TBD
-
-
-
-# Features
-
-Folder | Description | Features
----|---|---
-[js-node/expressjs](js-node/expressjs) | **Base ExpressJS application**<br>(REST API, Websocket, etc) | - CORS, proxy middleware, helmet, error handling, logging, OpenAPI<br>- Knex, MongoDb, Relational DB data example, migration, seed, GraphQL, Redis<br>- Webpush & FCM push notification, Sendgrid email, Nexmo SMS, Telegram<br>- AgendaJS message queue<br>- Unit Test & Integration Test
-[js-node/expressjs/apps/app-sample]() | Custom application (**app-sample**)<br>built on [Base ExpressJS application](js-node/expressjs) |- [controllers] <br>- [models] <br>- [openapi] OpenAPI yamls<br>- [routes] API routes (also websocket handlers)<br>- [services] services to startup/shutdown<br>- [tables] config tables for generic table crud (t4t)<br>- [tests] folder for tests<br>- [graphql-schema.js] application GraphQL codes
-[js-node/expressjs/public/demo-express](js-node/expressjs/public/demo-express) | Frontend to test backend features | - GraphQL, File uploads, Signed URL file upload to GCP Storage, websockets, SSE, webworkers (frontend demo)<br>- JWT using RSA, JWT refresh token, token in HttpOnly cookies, GA OTP, role SAML, OIDC<br>- Github OAuth2 login (setup - https://www.sohamkamani.com/blog/javascript/2018-06-24-oauth-with-node-js)<br>- Fido & Webauthn<br>- Push Notification (Webpush & FCM)
-[vue-nobundler](vue-nobundler/) | Vue 3 SPA no bundler + Bulma | - signed uploads, recaptcha<br>- **Web component table, form & CRUD backend** (files to note)<br><table><tr><td>[js-node/expressjs/app-template-sample/tables/]()</td><td>sample custom app table configurations</td></tr><tr><td>[js-node/expressjs/router/t4t.js](js-node/expressjs/router/t4t.js)</td><td>handle backend CRUD API</td></tr><tr><td>[@es-labs/esm/t4t-fe.js](@es-labs/esm/t4t-fe.js)</td><td>frontend operations to interact with t4t.js</td></tr><tr><td>[@es-labs/esm/t4t-validate.js](@es-labs/esm/t4t-validate.js)</td><td>validation used by both front and backend</td></tr><tr><td>[@es-labs/esm/bwc-table](@es-labs/esm/bwc-table)</td><td>used to display table</td></tr><tr><td>[@es-labs/esm/bwc-t4t-form.js](@es-labs/esm/bwc-t4t-form.js)</td><td>form generated from table configurations</td></tr><tr><td>[vue-nobundler/views/ui1.js](vue-nobundler/views/ui1.js)</td><td>autcomplete, combobox, file upload example</td></tr><tr><td>[vue-nobundler/views/ui2.js](vue-nobundler/views/ui2.js)</td><td>table example</td></tr><tr><td>[vue-nobundler/views/ui3.js](vue-nobundler/views/ui3.js)</td><td>form example (with connection to backend)</td></tr><tr><td>[vue-nobundler/views/ui4.js](vue-nobundler/views/ui4.js)</td><td>table and form example (with connection to backend)</td></tr></table>
-[.github/workflows](.github/workflows) | Github Actions (CI/CD) | - Manually Trigger<br>- On-push Trigger (WIP)
+## IMPORTANT [Requirements](https://github.com/es-labs/es-labs.github.io/wiki/2-Requirements,-Projects-And-Features#general-requirements)
 
 
 # QUICK START - ON YOUR LOCAL MACHINE
 
-## Requirements
-
-- Node 16+ LTS
-- Npm 8.3.2+ (using workspaces)
-- For Windows, **integrate bash shell to cmd shell** (when installing git), or use git-bash
-- Docker
-
-**Updating npm on Windows**
-
-npm i -g npm@latest
-
-
 ## Getting Started
+
+1a. `fork` template repo into a new public or private repo
+1b. OR `clone` template repo, remove existing .get and push to a new public or private repo
+2. set new remote called `upstream` fetch from template repo, push disallowed
+
 ### Install
 
 ```bash
 # clone repo
-git clone https://github.com/ais-one/cookbook.git
+git clone https://github.com/es-labs/express-template.git
 cd cookbook
 
 # install dependencies for specific workspace projects
@@ -138,7 +87,7 @@ See [js-node/README.md](js-node/README.md)
 
 ### Vite SPA Setup & Run - development environment
 
-See [vue-antd-template project](https://github.com/ais-one/vue-antd-template).
+See [https://github.com/es-labs/vue-antd-template]().
 
 Why No SSR or SSG:
 - potential slow rendering by server app, added complexity in code, rehydration errors, added complexity in server
