@@ -47,7 +47,7 @@ npm run ex:start # NODE_ENV=development npm run app --workspace=js-node/expressj
 # use ex:start:win for Windows OS
 
 # OR to include eslint checks
-NODE_ENV=development npm run app:lint --workspace=js-node/expressjs
+NODE_ENV=development npm run app:lint --workspace=js-node/expressjs ? ok?
 ```
 
 **NOTES**
