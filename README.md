@@ -27,13 +27,13 @@ npm i
 npm run start # see ./package.json scripts
 # windows npm run start:win
 
-# OR to include eslint checks
-NODE_ENV=development npm run app:lint --workspace=js-node/expressjs ? ok?
+# OR to include eslint checks - linux
+NODE_ENV=development npm run app:lint # ok?
 ```
 
 Local development sample sqlite DB `apps/app-sample/dev.sqlite3` already created and populated
 
-If need to create and seed, refer to DB deploy project [https://github.com/ais-one/cookbook]() in the `js-node/dbdeploy` folder
+If need to **migrate** and **seed**, refer to `dbdeploy` package in `tools` workspace of [https://github.com/es-labs/jscommon]()
 
 **Visit the following URLs**
 
@@ -43,7 +43,7 @@ If need to create and seed, refer to DB deploy project [https://github.com/ais-o
 
 **NOTES**
 
-- MongoDB examples needs MongoDB to work. To resolve, chose one of the methods to install MongoDB in **docs/backend/mongodb/install.md**
+- MongoDB sample codes needs MongoDB to work
 - If some env entries are not present there maybe some console log errors (but it is ok to ignore) and websockets will not work. Quick start is still usable. Use the README.md to fill up
 
 ### No bundler frontend
@@ -81,7 +81,7 @@ Why No SSR or SSG:
 
 - SAML & OIDC: requires keycloak to be setup and express server to be run
   - Setup and Configure [Keycloak](docker-devenv/keycloak/README.md)
-- You can test out on [sso.html](http://127.0.0.1:3000/sso.html). The file source is [js-node/expressjs/public/demo-express/sso.html]()
+- You can test out on [sso.html](http://127.0.0.1:3000/sso.html). The file source is [public/demo-express/sso.html]()
 - for SAML and OIDC... credentials is `test` / `test`, redirect to the keycloak IDP
 - for OAUTH **requires setup of github account and configs**
 - Refer also to the following files
@@ -91,16 +91,16 @@ Why No SSR or SSG:
 
 Refer to following files for SPA sample (uses fido2-lib in backend)
 
-- [js-node/expressjs/router/fido.js]()
-- [js-node/expressjs/public/demo-express/fido.html]()
+- [router/fido.js]()
+- [public/demo-express/fido.html]()
 
 ## Push Notification
 
 **Note:** For Push Notification
 Refer to following files for SPA sample
 
-- [js-node/expressjs/router/webpush.js]()
-- [js-node/expressjs/public/demo-express/pn.html]()
+- [router/webpush.js]()
+- [public/demo-express/pn.html]()
 - Uses Webpush or Google FCM
 - Using Google FCM, setup your firebase account and messaging, also setup FCM server key in backend
 - Using self hosted webpush is also supported and available
