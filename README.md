@@ -95,15 +95,13 @@ If need to **migrate** and **seed**, refer to `dbdeploy` package in `tools` work
 
 **NOTES**
 
-- MongoDB sample codes needs MongoDB to work
-- If some env entries are not present there maybe some console log errors (but it is ok to ignore) and websockets will not work. Quick start is still usable. Use the README.md to fill up
+- Mongo DB
+  - MongoDB sample codes needs MongoDB to work
+  - If some env entries are not present there maybe some console log errors (but it is ok to ignore) and websockets will not work. Quick start is still usable. Use the README.md to fill up
 
-### No bundler frontend
-
-- See [apps/app-sample/public/vue-nobundler]()
-- Served from [http://127.0.0.1:3000/native/index.html]()
-- import only vue & vue-router at index.html
-- export const store = reactive({}) used [instead of Vuex](https://pinia.vuejs.org/introduction.html#Why-should-I-use-Pinia-)
+- No bundler frontend
+  - import only vue & vue-router at index.html, pure vanilla JS no webpack or other bundler
+  - export const store = reactive({}) used [instead of Vuex](https://pinia.vuejs.org/introduction.html#Why-should-I-use-Pinia)
 
 ### Testing - TBD
 
@@ -133,7 +131,7 @@ Why No SSR or SSG:
 
 - SAML & OIDC: requires keycloak to be setup and express server to be run
   - Setup and Configure [Keycloak](docker-devenv/keycloak/README.md)
-- You can test out on [sso.html](http://127.0.0.1:3000/sso.html). The file source is [public/demo-express/sso.html]()
+- You can test out on [sso.html](http://127.0.0.1:3000/sso.html). The file source is [apps/app-sample/public/demo-express/sso.html]()
 - for SAML and OIDC... credentials is `test` / `test`, redirect to the keycloak IDP
 - for OAUTH **requires setup of github account and configs**
 - Refer also to the following files
@@ -148,19 +146,13 @@ Refer to following files for SPA sample (uses fido2-lib in backend)
 
 ## Push Notification
 
-**Note:** For Push Notification
-Refer to following files for SPA sample
-
-- [router/webpush.js]()
-- [public/demo-express/pn.html]()
-- Uses Webpush or Google FCM
-- Using Google FCM, setup your firebase account and messaging, also setup FCM server key in backend
-- Using self hosted webpush is also supported and available
-- You can test PWA Push notifications using Webpush or FCM on Dashboard page depending on **.env.<environment>** file configuration (need to be on 127.0.0.1).
+- Refer to following files for SPA sample
+  - [router/webpush.js]()
+  - [public/demo-express/pn.html]()
+- Uses Webpush or Google FCM, Webpush is easier (sample config uses Webpush and runs on http://127.0.0.1)
 - Click the following buttons in order (see their output in console.log and screen):
-  - sub PN (subscribe)
-  - Test PN (send a test message to user id 1 - on sqlite)
-  - Unsub PN (unsubscribe)
+  - (1) Subscribe PN, (2) Send And Receive Test PN, (3) Unsubscribe PN
+- For Google FCM, setup your firebase account and messaging, also FCM server key in backend
 
 ## Configuration
 
@@ -172,17 +164,16 @@ Refer to following files for SPA sample
 
 ## CI/CD & Cloud Deployment
 
-### Deployment Using Github Actions
+### Deployment Using Github Actions - TBD
 
 - .github/workflows/manual-gcp-expressjs.yml **TBD**
   - selectable inputs
     - environment (uat for now, development does not deploy anything)
-    - service (default = app-sample)
     - branch
 
 **NOTE** config/secret contents will not be in repo for CI/CD (so you can get errors), those should be put in VAULT
 
-Current secrets
+Current Github Secrets
 
 - GCP_PROJECT_ID, GCP_SA_KEY
 
@@ -213,8 +204,8 @@ https://kentcdodds.com/blog/how-i-structure-express-apps
 |  |  +- models/
 |  |  +- openapi/ : OpenAPI yaml files
 |  |  +- public/ : for serving static files - website
-|  |  |  +- demo-express/ (127.0.0.1:3000/)
-|  |  |  +- vue-nobundler/ (127.0.0.1:3000/native/index.html)
+|  |  |  +- demo-express/
+|  |  |  +- vue-nobundler/
 |  |  +- routes/ : application REST API & websocket setup
 |  |  +- tables/ : configurable table & crud
 |  |  +- tests/ : Jest tests for custom application
@@ -236,7 +227,7 @@ https://kentcdodds.com/blog/how-i-structure-express-apps
 +- .gitignore
 +- app.js : the express app boilerplate
 +- CHANGELOG.md
-+- deploy.sh: GCP deployment script
++- deploy.sh: TBD deployment script
 +- Dockerfile
 +- ecosystem.config.js: for pm2
 +- index.js
