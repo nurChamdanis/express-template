@@ -13,7 +13,7 @@ deploy/*
 # app
 apps/*
 !apps/app-sample
-!apps/index.js.sample
+!apps/apploader.js.sample
 
 coverage
 *.tgz

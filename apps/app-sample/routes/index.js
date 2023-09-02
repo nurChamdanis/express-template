@@ -7,8 +7,8 @@ const router = require('express').Router()
 // websocket.setOnClientCLose =  (ws) => { }
 
 // export your routes here - make sure no clashes
-module.exports = (app) => {
-  app.use(`/api/app-sample`,
+module.exports = ({ app, routePrefix }) => {
+  app.use(routePrefix,
     router.use('/', require('./base')), // http://127.0.0.1:3000/api/app-sample/
     router.use('/categories', require('./categories')), // http://127.0.0.1:3000/api/app-sample/categories/
     router.use('/webhooks', require('./webhooks')),

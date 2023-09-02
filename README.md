@@ -26,18 +26,21 @@ TBD... Instructions on working with templates
 # setup your env file
 cp .env.sample .env
 
+# setup apploader.js to specify app folders (can have more than 1) to use 
+cp apps/apploader.js.sample apps/apploader.js
+
 # to make your custom app you can either
 # - 1. continue development in apps/app-sample
 # - 2. rename apps/app-sample and develop from there
 # - 3. make a copy of apps/app-sample and rename it and work from there
 ```
 
-In `src/apps/apploader.js`, change the `web-sample` to the folder you are using for development
+In `apps/apploader.js`, change the `app-sample` to the folder you are using for development
 
 3. Important notes for development
 
-- change only the package.json in apps/web-sample
-- do note any conflicts to resolve for anything outside the apps folder when merging from upstream
+- change only the package.json in `apps/app-sample`
+- do note any conflicts to resolve for anything outside the `apps` folder when merging from upstream
 - feedback for improvement is welcome
 
 4. Updating the template
@@ -55,9 +58,6 @@ git merge upstream/main
 
 Latest Version [0.7.0](https://github.com/ais-one/cookbook/releases/tag/0.7.0) - Released 2023 Sep 01 0830 +8GMT. åSee changes history in [CHANGELOG.md](CHANGELOG.md) and discuss [here](https://github.com/es-labs/express-template/discussions)
 
-## IMPORTANT [Read Me First](https://github.com/es-labs/es-labs.github.io/wiki)
-
-## IMPORTANT [Requirements](https://github.com/es-labs/es-labs.github.io/wiki/2-Requirements,-Projects-And-Features#general-requirements)
 
 # QUICK START - ON YOUR LOCAL MACHINE
 
@@ -90,7 +90,8 @@ If need to **migrate** and **seed**, refer to `dbdeploy` package in `tools` work
 
 - http://127.0.0.1:3000/api/healthcheck - app is running normally
 - http://127.0.0.1:3000 - Website served by Express with functional samples and demos
-- http://127.0.0.1:3000/api-docs - OpenAPI documentation
+- http://127.0.0.1:3000/docs - OpenAPI documentation
+- http://127.0.0.1:3000/native/index.html - 
 
 **NOTES**
 

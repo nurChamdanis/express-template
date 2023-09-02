@@ -93,8 +93,7 @@ try {
 
 // ROUTES
 try {
-  require(`./apps/app-sample/routes`)(app); // your
-  require(`./apps/index`)(app); // add your APIs here
+  require(`./apps/apploader`)(app); // add your APIs here
   require("./router")(app); // common routes
   app.use("/api/**", (req, res) =>
     res.status(404).json({ error: "Not Found" })
