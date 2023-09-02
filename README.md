@@ -1,3 +1,54 @@
+# Description
+
+An Express Template
+
+## Read Me FIRST!
+
+TBD... Instructions on working with templates
+
+## Setup
+
+1. setup to allow incoming merge from upstream template update
+
+```bash
+# run once only after
+# - clone, or
+# - fork, or
+# - deleting .git and running git init
+./setup-upstream.sh
+```
+
+2. setup for your project
+
+# copy the sample environment
+
+```bash
+# setup your env file
+cp .env.sample .env
+
+# to make your custom app you can either
+# - 1. continue development in apps/app-sample
+# - 2. rename apps/app-sample and develop from there
+# - 3. make a copy of apps/app-sample and rename it and work from there
+```
+
+In `src/apps/apploader.js`, change the `web-sample` to the folder you are using for development
+
+3. Important notes for development
+
+- change only the package.json in apps/web-sample
+- do note any conflicts to resolve for anything outside the apps folder when merging from upstream
+- feedback for improvement is welcome
+
+4. Updating the template
+
+```bash
+git fetch upstream
+git merge upstream/main
+```
+
+---
+
 # About
 
 > **TL;DR** ExpressJS, VueJS, ReactJS cookbook, with evergreen recipes and templates (CRUD, CI/CD, QA, Testing, Cloud container deployment, Web Components, ES Modules, etc.) to develop applications faster, while reducing the need for rewrite or refactoring due to changes in dependencies.
