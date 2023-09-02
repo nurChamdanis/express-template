@@ -6,7 +6,7 @@ UPSTREAM_REPO_URL=https://github.com/es-labs/express-template.git
 
 ## template clone or fork
 echo
-echo "init.sh running..."
+echo "setup-upstream.sh running..."
 echo "You must clone new project from template or fork"
 echo
 echo "add chmod +x flag for this script to work"
@@ -21,7 +21,7 @@ echo "copying .env.deverlopment.sample to .env.development"
 cp .env.development.sample .env.development
 
 echo "1. continue your development in apps/app-sample folder, you can rename app-sample folder or make a copy and rename the copy"
-echo "2. change only the package.json in apps/web-template"
+echo "2. change only the package.json in apps/web-sample"
 echo "3. do note any conflicts to resolve for anything outside the apps folder when merging from upstream"
 echo "4. feedback for improvement is welcome"
 echo
