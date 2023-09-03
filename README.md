@@ -52,13 +52,6 @@ git merge upstream/main
 
 ---
 
-# About
-
-> **TL;DR** ExpressJS, VueJS, ReactJS cookbook, with evergreen recipes and templates (CRUD, CI/CD, QA, Testing, Cloud container deployment, Web Components, ES Modules, etc.) to develop applications faster, while reducing the need for rewrite or refactoring due to changes in dependencies.
-
-Latest Version [0.7.0](https://github.com/ais-one/cookbook/releases/tag/0.7.0) - Released 2023 Sep 01 0830 +8GMT. åSee changes history in [CHANGELOG.md](CHANGELOG.md) and discuss [here](https://github.com/es-labs/express-template/discussions)
-
-
 # QUICK START - ON YOUR LOCAL MACHINE
 
 ## Getting Started
@@ -73,8 +66,10 @@ Latest Version [0.7.0](https://github.com/ais-one/cookbook/releases/tag/0.7.0) -
 git clone https://github.com/es-labs/express-template.git
 cd express-template
 npm i
+cd apps/<your custom development folder> default is `app-sample`
+npm i
 
-# start
+cd ../../.. # go back up
 npm run start # see ./package.json scripts
 # windows npm run start:win
 
