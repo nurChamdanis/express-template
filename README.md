@@ -39,7 +39,7 @@ In `apps/apploader.js`, change the `app-sample` to the folder you are using for 
 
 3. Important notes for development
 
-- change only the package.json in `apps/app-sample`
+- change only the package.json in `apps/<your custom code folder>` (default is app-sample)
 - do note any conflicts to resolve for anything outside the `apps` folder when merging from upstream
 - feedback for improvement is welcome
 
