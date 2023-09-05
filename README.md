@@ -134,15 +134,20 @@ Why No SSR or SSG:
 - for OAUTH **requires setup of github account and configs**
 - Refer to the following file [router/auth.js]()
 
-## Fido2 - TOTEST
+## Fido2 - TO TEST
 
 Refer to following files for SPA sample (uses fido2-lib in backend)
 
-- [apps/app-sample/routes/fido.js]()
 - [apps/app-sample/public/demo-express/fido.html]()
+  - you might need to use nip service for a "pseudo-domain" to test locally
+  - take note of and use the private IP on your local machine
+- [apps/app-sample/routes/fido.js]()
+- you will need Windows Hello or similar service on OSX
 
-## Push Notification - TOTEST
+## Push Notification
 
+- ensure that you enable permissions for the browser
+- sometimes the notifications may be blocked by company policy, you may get a push event, but no notification pops-up
 - Refer to following files for SPA sample
   - [apps/app-sample/routes/webpush.js]()
   - [apps/app-sample/public/demo-express/pn.html]()
@@ -151,11 +156,11 @@ Refer to following files for SPA sample (uses fido2-lib in backend)
   - (1) Subscribe PN, (2) Send And Receive Test PN, (3) Unsubscribe PN
 - For Google FCM, setup your firebase account and messaging, also FCM server key in backend
 
-## Configuration
+## Configuration (Environment Files)
 
 - .env : non-sensitive config values
-- .env.secret: values that are secret (should be in `vault` service for production)
-- JSON values are supported
+- .env.secret : values that are secret (should be in `vault` service for production)
+- JSON values are supported, be aware of syntax errors when setting up
 
 ---
 
