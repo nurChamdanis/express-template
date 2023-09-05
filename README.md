@@ -128,27 +128,25 @@ Why No SSR or SSG:
 
 ## SAML, OIDC, OAuth
 
-- SAML & OIDC: requires keycloak to be setup and express server to be run
-  - Setup and Configure [Keycloak](docker-devenv/keycloak/README.md)
+- SAML & OIDC: requires [Keycloak](docker-devenv/keycloak/README.md) to be setup and express server to be run
 - You can test out on [sso.html](http://127.0.0.1:3000/sso.html). The file source is [apps/app-sample/public/demo-express/sso.html]()
 - for SAML and OIDC... credentials is `test` / `test`, redirect to the keycloak IDP
 - for OAUTH **requires setup of github account and configs**
-- Refer also to the following files
-  - router/auth.js
+- Refer to the following file [router/auth.js]()
 
-## Fido2
+## Fido2 - TOTEST
 
 Refer to following files for SPA sample (uses fido2-lib in backend)
 
-- [router/fido.js]()
-- [public/demo-express/fido.html]()
+- [apps/app-sample/routes/fido.js]()
+- [apps/app-sample/public/demo-express/fido.html]()
 
-## Push Notification
+## Push Notification - TOTEST
 
 - Refer to following files for SPA sample
-  - [router/apps/app-sample/routes/webpush.js]()
-  - [public/demo-express/pn.html]()
-- Uses Webpush or Google FCM, Webpush is easier (sample config uses Webpush and runs on http://127.0.0.1)
+  - [apps/app-sample/routes/webpush.js]()
+  - [apps/app-sample/public/demo-express/pn.html]()
+- Uses Webpush or Google FCM, Webpush is easier (sample config uses Webpush and runs on http://127.0.0.1:3000)
 - Click the following buttons in order (see their output in console.log and screen):
   - (1) Subscribe PN, (2) Send And Receive Test PN, (3) Unsubscribe PN
 - For Google FCM, setup your firebase account and messaging, also FCM server key in backend

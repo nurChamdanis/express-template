@@ -10,6 +10,5 @@ module.exports = function (app) {
     router.use('/oauth', require('./auth').oauthRoute),
     router.use('/saml', require('./auth').samlRoute),
     router.use('/t4t', require('./t4t')),
-    router.use('/fido', require('./fido')),
   )
 }

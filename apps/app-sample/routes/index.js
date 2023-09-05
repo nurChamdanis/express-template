@@ -16,5 +16,6 @@ module.exports = ({ app, routePrefix }) => {
     router.use('/sse', require('./sse')),
     router.use('/tests', require('./tests')), // for tests
     router.use('/webpush', require('./webpush')),
+    router.use('/fido', require('./fido')),
   )
 }

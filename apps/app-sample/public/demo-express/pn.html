@@ -63,6 +63,11 @@
     credentials: "same-origin",
   });
 
+
+  if (Notification.permission === "denied") {
+    await Notification.requestPermission()
+  }
+
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", async function () {
       console.log("SW load");

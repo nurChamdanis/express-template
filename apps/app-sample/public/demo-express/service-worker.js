@@ -60,8 +60,8 @@ self.addEventListener('activate', clearCaches)
 // Cache then network - resources that update frequently (but get resources quickly to screen first)
 function cacheThenNetwork(e) {
   e.respondWith(
-    caches.open(CACHE_NAME_DYNAMIC).then(function (cache) {
-      return fetch(e.request).then(function (res) {
+    caches.open(CACHE_NAME_DYNAMIC).then((cache) => {
+      return fetch(e.request).then((res) => {
         cache.put(e.request, res.clone())
         return res
       })
@@ -72,7 +72,7 @@ function cacheThenNetwork(e) {
 // Network first / Network fall back to cache - resources that update frequently
 function networkCacheFallback(e) {
   e.respondWith(
-    fetch(e.request).catch(function () {
+    fetch(e.request).catch(() => {
       return caches.match(e.request)
     })
   )
@@ -83,10 +83,8 @@ function cacheNetworkFallback(e) {
   e.respondWith(
     caches
       .match(e.request)
-      .then(function (res) {
-        return res || fetch(e.request)
-      })
-      .catch(function () {
+      .then((res) => res || fetch(e.request))
+      .catch(() => {
         // If both fail, show a generic fallback:
         return caches.match('/offline.html')
         // However, in reality you'd have many different
@@ -100,9 +98,7 @@ function cacheNetworkFallback(e) {
 function cacheOnly(e) {
   e.respondWith(
     // caches.match(e.request) // ALL
-    caches.open(CACHE_NAME_STATIC).then(function (cache) {
-      return cache.match(e.request)
-    }) // .then(res => res) // named cache
+    caches.open(CACHE_NAME_STATIC).then((cache) => cache.match(e.request)) // .then(res => res) // named cache
   )
 }
 
@@ -112,12 +108,14 @@ function networkOnly(e) {
 }
 
 // WebPush
-self.addEventListener('push', function (e) {
-  // if (e.origin !== "http://example.org") return // check and reject if not correct origin
+self.addEventListener('push', (e) => {
+  // if (e.origin !== "http://example.org") return 
+  // check and reject if not correct origin
   let message = 'Push message no payload'
   if (e.data) {
     message = e.data.text()
   }
+  console.log('PUSH EVENT!', e.data, message)
 
   // The notificationOptions will shape the look and behavior of our notification
   const notificationOptions = {

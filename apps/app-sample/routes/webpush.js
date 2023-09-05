@@ -49,6 +49,7 @@ module.exports = express.Router()
             // }
           } 
           const subscription = JSON.parse(user.pnToken)
+          console.log(id, mode, subscription, data, options)
           rv = await webpush.send(subscription, data, options)
         }
         res.json({ status: 'sent', mode, rv })
