@@ -44,11 +44,11 @@
 <script type="module">
   import { webpushSubscribe, webpushUnsubscribe } from "/esm/pwa.js"; // served from express /esm static route
   import Fetch from "/esm/fetch.js";
-  import { fcmSubscribe } from './js/fcm.js'
+  import { fcmSubscribe } from '/js/fcm.js'
   import './firebase.config.js'
 
   const VITE_PWA_PN = 'Webpush' // FCM, Webpush
-  alert('V1.8 Using: ' + VITE_PWA_PN)
+  alert('V1.9 Using: ' + VITE_PWA_PN)
   let subState = '[NA]'
   const WEBPUSH_URL = '/api/app-sample/webpush'
 
@@ -58,11 +58,8 @@
   elOutput.innerHTML = subState
 
   const http = new Fetch({
-    baseUrl: "",
-    refreshUrl: "",
-    credentials: "same-origin",
+    baseUrl: '', refreshUrl: '', credentials: 'same-origin',
   });
-
 
   if (Notification.permission === "denied") {
     await Notification.requestPermission()
@@ -138,12 +135,12 @@
     try {
       let data;
       if (VITE_PWA_PN === "FCM") {
-        data = { title: "Hello", body: new Date().toLocaleString() };
+        data = { title: "Hello FCM", body: new Date().toLocaleString() };
       } else if (VITE_PWA_PN === "Webpush") {
-        data = "Hello " + new Date().toLocaleString();
+        data = "Hello Webpush " + new Date().toLocaleString();
       }
       await http.post(WEBPUSH_URL + '/send/1', { mode: VITE_PWA_PN, data });
-      console.log('test sent')
+      console.log('test PN sent')
     } catch (e) {
       console.log("error test", e);
       elError.innerHTML = e.toString();

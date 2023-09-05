@@ -42,22 +42,21 @@ module.exports = express.Router()
           rv = await fcm.send(user.pnToken, data.title || '', data.body || '')
         } else if (mode === 'Webpush') { // Use Webpush
           const options = {
-            TTL: 60
+            TTL: 60,
             // headers: {
-            //   'Access-Control-Allow-Origin': 'http://127.0.0.1:8080',
+            //   'Access-Control-Allow-Origin': 'http://127.0.0.1:3000',
             //   'Content-type': 'application/json'
-            // }
+            // },
           } 
           const subscription = JSON.parse(user.pnToken)
-          console.log(id, mode, subscription, data, options)
-          rv = await webpush.send(subscription, data, options)
+          // console.log(id, mode, subscription, data, options)
+          rv = await webpush.send(subscription, 'FROM Backend: ' + data, options)
         }
         res.json({ status: 'sent', mode, rv })
       } else {
         res.status(404).json({ status: 'no user or token'})
       }
     } catch (e) {
-      console.log('ERROR >>>>>')
       console.log(e) // need more info
       res.status(500).json({ error: process.env.NODE_ENV === 'production' ? 'Send Error: contact admin' : e })
     }

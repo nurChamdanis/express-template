@@ -111,6 +111,11 @@ function networkOnly(e) {
 self.addEventListener('push', (e) => {
   // if (e.origin !== "http://example.org") return 
   // check and reject if not correct origin
+  if (!(self.Notification && self.Notification.permission === "granted")) {
+    console.log('NOTIFICATION EVENT ERROR')
+    return;
+  }
+
   let message = 'Push message no payload'
   if (e.data) {
     message = e.data.text()
@@ -134,6 +139,7 @@ self.addEventListener('push', (e) => {
       }
     ]
   }
+ 
   e.waitUntil(
     // We use the service worker's registration `showNotification` function to display the Notification
     self.registration.showNotification('💊💊 You got notified! 💊💊', notificationOptions)
