@@ -20,11 +20,12 @@
 <script>
 async function mq() {
   try {
-    const res = await fetch('/api/mq-agenda', { method: 'GET' })
-    const rv = await res.json()
-    document.querySelector('#output').innerHTML = rv && typeof rv === 'object' ? JSON.stringify(rv, null, 2) : rv.toString()
+    alert('To REPLACE')
+    // const res = await fetch('/api/app-sample/tests/mq-agenda', { method: 'GET' })
+    // const rv = await res.json()
+    // document.querySelector('#output').innerHTML = rv && typeof rv === 'object' ? JSON.stringify(rv, null, 2) : rv.toString()
   } catch (e) {
-    document.querySelector('#output').innerHTML = e && typeof e === 'object' ? JSON.stringify(e, null, 2) : e.toString()
+    // document.querySelector('#output').innerHTML = e && typeof e === 'object' ? JSON.stringify(e, null, 2) : e.toString()
   }
 }
 </script>

@@ -146,7 +146,7 @@ Refer to following files for SPA sample (uses fido2-lib in backend)
 ## Push Notification
 
 - Refer to following files for SPA sample
-  - [router/webpush.js]()
+  - [router/apps/app-sample/routes/webpush.js]()
   - [public/demo-express/pn.html]()
 - Uses Webpush or Google FCM, Webpush is easier (sample config uses Webpush and runs on http://127.0.0.1)
 - Click the following buttons in order (see their output in console.log and screen):

@@ -47,9 +47,10 @@
   import { fcmSubscribe } from './js/fcm.js'
   import './firebase.config.js'
 
-  const VITE_PWA_PN = "Webpush" // FCM, Webpush
-  alert("V1.7 Using: " + VITE_PWA_PN)
-  let subState = "[NA]"
+  const VITE_PWA_PN = 'Webpush' // FCM, Webpush
+  alert('V1.8 Using: ' + VITE_PWA_PN)
+  let subState = '[NA]'
+  const WEBPUSH_URL = '/api/app-sample/webpush'
 
   const elOutput = document.querySelector("#txt-output")
   const elError = document.querySelector("#txt-error")
@@ -87,7 +88,7 @@
         subscription = await fcmSubscribe(
           window.SW_REG,
           async (token) => {
-            await http.post('/api/webpush/sub', { subscription: token })
+            await http.post(WEBPUSH_URL + '/sub', { subscription: token })
           },
           (payload) => {
             // console.log('Message received. ', payload)
@@ -101,13 +102,13 @@
           },
           { VAPID_KEY: window.CONFIG_VAPID_KEY, FIREBASE_CLIENT: window.CONFIG_FIREBASE_CLIENT }
         )
-        if (subscription) await http.post('/api/webpush/sub', { subscription })
+        if (subscription) await http.post(WEBPUSH_URL + '/sub', { subscription })
       } else if (VITE_PWA_PN === "Webpush") {
-        const { data } = await http.get("/api/webpush/vapid-public-key")
+        const { data } = await http.get(WEBPUSH_URL + '/vapid-public-key')
         subscription = await webpushSubscribe(data.publicKey)
       }
       console.log('subscription', subscription)
-      if (subscription) await http.post("/api/webpush/sub", { subscription });
+      if (subscription) await http.post(WEBPUSH_URL + '/sub', { subscription });
       subState = "[Subscribed]";
       elOutput.innerHTML = subState;
     } catch (e) {
@@ -119,7 +120,7 @@
     // No FCM Unsub
     try {
       if (VITE_PWA_PN === "Webpush") await webpushUnsubscribe();
-      await http.post("/api/webpush/unsub", {});
+      await http.post(WEBPUSH_URL + '/unsub', {});
       subState = "[UNsubscribed]";
       elOutput.innerHTML = subState;
     } catch (e) {
@@ -136,7 +137,7 @@
       } else if (VITE_PWA_PN === "Webpush") {
         data = "Hello " + new Date().toLocaleString();
       }
-      await http.post("/api/webpush/send/1", { mode: VITE_PWA_PN, data });
+      await http.post(WEBPUSH_URL + '/send/1', { mode: VITE_PWA_PN, data });
       console.log('test sent')
     } catch (e) {
       console.log("error test", e);
