@@ -25,12 +25,13 @@ TBD... Instructions on working with templates
 ```bash
 # setup your env file
 cp apps/.env.sample apps/.env
-
-# to make your custom app you can either
-# - 1. continue development in apps/app-sample
-# - 2. rename apps/app-sample and develop from there
-# - 3. make a copy of apps/app-sample and rename it and work from there
+# move properties with secrets to apps/.env.secret
 ```
+
+To make your custom app you can either
+- 1. continue development in apps/app-sample
+- 2. rename apps/app-sample and develop from there
+- 3. make a copy of apps/app-sample and rename it and work from there
 
 In `apps/apploader.js`, change the `app-sample` to the folder you are using for development
 
@@ -42,10 +43,16 @@ In `apps/apploader.js`, change the `app-sample` to the folder you are using for 
 
 4. Updating the template
 
+Ensure that you have commited your changes and pushed to remote in case there are issues
+
 ```bash
 git fetch upstream
 git merge upstream/main
+# or
+git merge upstream/main -–allow-unrelated-histories
 ```
+
+There may be some template related merge conflicts to resolve.
 
 ---
 
