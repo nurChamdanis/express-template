@@ -8,23 +8,23 @@ let createdCategoryId
 let authObj = {}
 let endpointUrl
 
-beforeAll(async () => {
-  const path = require('path')
-  require('dotenv').config() // load
-  require('dotenv').config({ path: path.join(process.cwd(), '.env'), override: true } )
-  require('dotenv').config({ path: path.join(process.cwd(), '.env.secret'), override: true } )
+const path = require('path')
 
+beforeAll(async () => {
+  require(path.join(process.cwd(), 'env'))
   await require('@es-labs/node/config')(process.cwd())
   require('@es-labs/node/express/init')() // TODELETE require(path.join(process.cwd(), 'common', 'init'))()
-  require('@es-labs/node/express/preRoute')()(app, express) // TODELETE require(path.join(process.cwd(), 'common', 'preRoute'))(app, express)
+  require('@es-labs/node/express/preRoute')(app, express) // TODELETE require(path.join(process.cwd(), 'common', 'preRoute'))(app, express)
   process.env.WS_PORT = '' // disable websocket for now
+
+  require(path.join(process.cwd(), 'apps', 'apploader'))(app)
   require(path.join(process.cwd(), 'router'))(app)
 
   services = require('@es-labs/node/services')
   authService = require('@es-labs/node/auth')
   await services.start()
+  authService.setup(services.get("keyv"), services.get("knex1"));
   const tokens = await authService.createToken({ id: 100, groups: 'TestGroup' })
-
   authObj = {
     Authorization: `Bearer ${tokens.access_token}`,
     refresh_token: tokens.refresh_token
@@ -36,7 +36,10 @@ afterAll(async () => {
 })
 
 describe.only('Testing Categories Endpoint URL', () => {
+  it('Always Pass', async () => expect(1).toBe(1))
+
   it.only('GET categories', async () => {
+    console.log('>>>>>>>>>>>>>>', endpointUrl)
     const response = await request(app)
       // .get('/api/app-sample/categories/categories')
       // .get('/api/app-sample/healthcheck')

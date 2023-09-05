@@ -1,6 +1,5 @@
 (async function() {
-  require('dotenv').config() // load
-  require('dotenv').config({ path: '.env.secret', override: true }) // load
+  require('./env')
   // console.log(__dirname, process.cwd())
   // exit(1)
   

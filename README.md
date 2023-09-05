@@ -24,10 +24,7 @@ TBD... Instructions on working with templates
 
 ```bash
 # setup your env file
-cp .env.sample .env
-
-# setup apploader.js to specify app folders (can have more than 1) to use 
-cp apps/apploader.js.sample apps/apploader.js
+cp apps/.env.sample apps/.env
 
 # to make your custom app you can either
 # - 1. continue development in apps/app-sample

@@ -1,5 +1,6 @@
 const httpMocks = require('node-mocks-http')
 const newCategory = require('../mock-data/new-category.json')
+const path = require('path')
 
 let services
 let createdCategoryId
@@ -13,10 +14,7 @@ beforeEach(() => {
 })
 beforeAll(async () => {
   // const { exit } = require('process')
-  const path = require('path')
-  require('dotenv').config() // load
-  require('dotenv').config({ path: path.join(process.cwd(), '.env'), override: true } )
-  require('dotenv').config({ path: path.join(process.cwd(), '.env.secret'), override: true } )
+  require(path.join(process.cwd(), 'env'))
 
   await require('@es-labs/node/config')(process.cwd())
   services = require(`@es-labs/node/services`)
@@ -58,6 +56,8 @@ describe('CategoryController.create', () => {
 })
 
 describe('CategoryController.findOne', () => {
+  it('Always Pass', async () => expect(1).toBe(1))
+
   it('should have CategoryController.findOne()', () => { // function exists
     expect(typeof CategoryController.findOne).toBe('function')
   })

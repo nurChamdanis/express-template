@@ -1,21 +1,18 @@
+# app
+apps/*
+
+# configs and secret configs
+# .env
+# .env.secret
+
 # npm
 node_modules
 package-lock.json
 
-# deploy
-deploy/*
-!deploy/README.md
-
-# configs and secret configs
-.env
-.env.secret
-
-# app
-apps/*
-!apps/app-sample
-!apps/apploader.js.sample
-
+# tests
 coverage
+
+# compressed files
 *.tgz
 
 # Log files
