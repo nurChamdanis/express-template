@@ -25,11 +25,11 @@ cp apps/.env.sample apps/.env
 ```
 
 - You can develop custom code in `apps/app-sample` or rename it or copy it to another folder name
-- In apps/apploader.js`, change `app-sample` to the folder you are using
+- In apps/apploader.js, change `app-sample` to the folder you are using
 
 3. Important notes for development
 
-- change only the package.json in `apps/<your custom code folder>` (default is app-sample)
+- userland changes only in the `apps` folder
 - do note any conflicts to resolve when merging from upstream
 
 4. Updating the template
