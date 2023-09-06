@@ -1,6 +1,6 @@
 # Description
 
-An Express Template
+> Built from [https://github.com/es-labs/express-template]() template
 
 ## Read Me FIRST!
 
@@ -10,40 +10,32 @@ An Express Template
 
 1. setup to allow incoming merge from upstream template update
 
-run once only after you `clone`, or `fork` or `delete .git and run git init`
-
 ```bash
+# run once only after you `clone`, or `fork` or `delete .git and run git init`
 ./setup-upstream.sh
 ```
 
-2. setup for your custom code
+2. Setup for your custom code
 
 ```bash
 # setup your env file
-cp apps/.env.sample apps/.env
-# move properties with secrets to apps/.env.secret
+cp apps/.env.sample apps/.env # secret properties can be in apps/.env.secret
 ```
 
+**Important notes**
 - You can develop custom code in `apps/app-sample` or rename it or copy it to another folder name
 - In apps/apploader.js, change `app-sample` to the folder you are using
-
-3. Important notes for development
-
 - userland changes only in the `apps` folder
 - do note any conflicts to resolve when merging from upstream
 
-4. Updating the template
-
-Ensure that you have commited your changes and pushed to remote origin first before running commands below:
+3. Updating the template
 
 ```bash
+# Commit and push to remote before running commands below
 git fetch upstream
-git merge upstream/main
-# or
-git merge upstream/main --allow-unrelated-histories
+git merge upstream/main # or 'git merge upstream/main --allow-unrelated-histories'
+# There may be some template related merge conflicts to resolve.
 ```
-
-There may be some template related merge conflicts to resolve.
 
 ---
 
