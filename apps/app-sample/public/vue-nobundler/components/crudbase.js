@@ -96,8 +96,8 @@ export default defineComponent({
           await t4t.create(data, rv.form ? rv.form : rv.json)
           if (rv.files) { // upload using signed URL
             for (const file of rv.files) {
-              await t4t.uploadGoogle(file) // tbd use... promise.allSettled
-              // await t4t.deleteGoogle(file.name) // tbd use... promise.allSettled
+              await t4t.uploadGoogle(file) // TODO use... promise.allSettled
+              // await t4t.deleteGoogle(file.name) // TODO use... promise.allSettled
             }
           }
           page.value = 1 // for reload
@@ -107,8 +107,8 @@ export default defineComponent({
           await t4t.update(__key, rv.form ? rv.form : rv.json)
           if (rv.files) { // upload using signed URL
             for (const file of rv.files) {
-              await t4t.uploadGoogle(file) // tbd use... promise.allSettled
-              // await t4t.deleteGoogle(file.name) // tbd use... promise.allSettled
+              await t4t.uploadGoogle(file) // TODO use... promise.allSettled
+              // await t4t.deleteGoogle(file.name) // TODO use... promise.allSettled
             }
           }
         }
@@ -157,7 +157,7 @@ export default defineComponent({
     // events
     const checked = (e) => console.log('checked', e.detail)
     const triggered = async (e) => {
-      // TBD if (name === 'page-size') ...
+      // TODO if (name === 'page-size') ...
       console.log('triggered', e.detail)
       page.value = e.detail.page
       pageSize.value = e.detail.pageSize
@@ -180,7 +180,7 @@ export default defineComponent({
         } else if (e.detail.cmd === 'import') {
           document.querySelector('#upload').click()
         } else if (e.detail.cmd === 'export') {
-          // TBD const _filters = keycol.value ? [...filters, { col: keycol.value, op: '=', val: keyval.value, andOr: 'and' }] : filters
+          // TODO const _filters = keycol.value ? [...filters, { col: keycol.value, op: '=', val: keyval.value, andOr: 'and' }] : filters
           const data = await t4t.download(filters, sorter)
           if (data) downloadData(data.csv, props.tableName + '.csv', 'text/csv;charset=utf-8;')
         } else if (e.detail.cmd === 'goback') {

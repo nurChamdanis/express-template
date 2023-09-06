@@ -75,7 +75,7 @@ export default {
 
     onMounted(async () => {
       // console.log(topRef)
-      // TBD loading spinner...
+      // TODO loading spinner...
       console.log('SignIn mounted!')
       if (window.location.hash) {
         alert('Test OAuth callback Success! Remember to remove hash from front of token', window.location.hash) // token-refresh_token, - character is seperator

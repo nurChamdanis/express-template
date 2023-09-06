@@ -47,14 +47,7 @@ There may be some template related merge conflicts to resolve.
 
 ---
 
-# QUICK START - ON YOUR LOCAL MACHINE
-
-## Getting Started
-
-1a. `fork` template repo into a new public or private repo
-1b. OR `clone` template repo, remove existing .get and push to a new public or private repo 2. set new remote called `upstream` fetch from template repo, push disallowed
-
-### Install & Run
+## Install & Run & Test
 
 ```bash
 # clone repo
@@ -93,7 +86,7 @@ If need to **migrate** and **seed**, refer to `dbdeploy` package in `tools` work
   - import only vue & vue-router at index.html, pure vanilla JS no webpack or other bundler
   - export const store = reactive({}) used [instead of Vuex](https://pinia.vuejs.org/introduction.html#Why-should-I-use-Pinia)
 
-### Testing - TBD
+Unit & Integration Tests:
 
 - To run unit & integration test on **/api/categories** endpoint. E2E testing is **Work In Progress**
 - TO TEST EVERYTHING PLEASE change describe.only(...) to describe(...) in the test scripts in **apps/app-sample/tests**
@@ -107,13 +100,7 @@ npm run test
 
 ### Vite SPA Setup & Run - development environment
 
-See [https://github.com/es-labs/vue-antd-template]().
-
-Why No SSR or SSG:
-
-- potential slow rendering by server app, added complexity in code, rehydration errors, added complexity in server
-- https://github.com/nuxt/nuxt.js/issues/8102
-- prefer static sites and lazy loaded SPA for now
+See [https://github.com/es-labs/vue-antd-template]() for a SPA frontend template that can be used with projects based on this template
 
 ---
 
@@ -157,9 +144,9 @@ Refer to following files for SPA sample (uses fido2-lib in backend)
 
 ## CI/CD & Cloud Deployment
 
-### Deployment Using Github Actions - TBD
+### Deployment Using Github Actions - TODO
 
-- .github/workflows/manual-gcp-expressjs.yml **TBD**
+- .github/workflows/manual-gcp-expressjs.yml **TODO**
   - selectable inputs
     - environment (uat for now, development does not deploy anything)
     - branch
@@ -220,7 +207,7 @@ https://kentcdodds.com/blog/how-i-structure-express-apps
 +- .gitignore
 +- app.js : the express app boilerplate
 +- CHANGELOG.md
-+- deploy.sh: TBD deployment script
++- deploy.sh: TODO deployment script
 +- Dockerfile
 +- ecosystem.config.js: for pm2
 +- index.js

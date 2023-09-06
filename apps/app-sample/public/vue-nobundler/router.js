@@ -33,7 +33,7 @@ const router = createRouter({
       meta: { requiresAuth: true, layout: 'layout-secure' },
       beforeEnter: AuthGuard,
       path: '/dashboard',
-      component: Dashboard, // () => import('./views/about.js') // TBD use lazy loading
+      component: Dashboard, // () => import('./views/about.js') // TODO use lazy loading
       name: 'dashboard'
     },
     { meta: { requiresAuth: true, layout: 'layout-secure' }, beforeEnter: AuthGuard, path: '/ui1', component: () => import('./views/ui1.js'), name: 'ui1' },

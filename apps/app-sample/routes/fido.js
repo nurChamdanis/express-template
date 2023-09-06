@@ -59,7 +59,7 @@ const f2l = new Fido2Lib({
 
 let testInfo = { }
 
-// TBD make below scalable
+// TODO make below scalable
 let registerChallenge = '33EHav-jZ1v9qwH783aU-j0ARx6r5o-YHh-wd7C6jPbd7Wh6ytbIZosIIACehwf9-s6hXhySHO-HHUjEwZS29w' //  base64url
 let validateChallenge = '' // ab
 

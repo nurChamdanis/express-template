@@ -16,7 +16,7 @@ export async function readGoogle (filename) {
       const res2 = await fetch(rv.url, { method: 'GET' })
       if (res2.ok) {
         const data = await res2.body.getReader().read()
-        // TBD why is data.done always false?
+        // TODO why is data.done always false?
         console.log(decoder.decode(data.value))
         alert('readGoogle() OK - see console log for data')
       } else {
@@ -28,7 +28,7 @@ export async function readGoogle (filename) {
       //     .getReader()
       //     .read()
       //     .then(({value, done}) => {
-      //       console.log(done, "boo", decoder.decode(value)) // TBD why is done always false?
+      //       console.log(done, "boo", decoder.decode(value)) // TODO why is done always false?
       //     })
       // })
     } else {
@@ -57,11 +57,11 @@ export async function deleteGoogle (filename) {
 
 export async function uploadGoogle (files) {
   if (!files || files.length === 0) {
-    alert('Google Upload:: No Files') // TBD limit file quantity and size
+    alert('Google Upload:: No Files') // TODO limit file quantity and size
     return
   }
   try {
-    const file = files[0] // TBD handle multiple files
+    const file = files[0] // TODO handle multiple files
     const filename = file.name
     const res = await fetch(`/api/app-sample/tests/gcp-sign`, { method: 'POST', headers, body: JSON.stringify({ filename, action: 'write' }) })
     const rv = await res.json()

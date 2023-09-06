@@ -1,6 +1,5 @@
 'use strict'
 
-// TBD rename service to pn
 const express = require('express')
 const { 
   // authUser,

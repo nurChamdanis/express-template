@@ -64,7 +64,7 @@ describe.only('Testing Categories Endpoint URL', () => {
     // expect(response.body.total).toBeDefined()
     // firstTodo = response.body[0]
   })
-  // TBD 500 error for get
+  // TODO 500 error for get
   it('POST ' + endpointUrl, async () => {
     const response = await request(app)
       .post(endpointUrl)
@@ -74,7 +74,7 @@ describe.only('Testing Categories Endpoint URL', () => {
     // expect(response.body.name).toBe(newCategory.name)
     createdCategoryId = response.body.id
   })
-  // TBD 500 error for post
+  // TODO 500 error for post
 
   it('GET by Id ' + endpointUrl + ':id', async () => { // 200
     const response = await request(app)
@@ -89,7 +89,7 @@ describe.only('Testing Categories Endpoint URL', () => {
       .set(authObj)
     expect(response.statusCode).toBe(404)
   })
-  // TBD 500 error for get/:id
+  // TODO 500 error for get/:id
 
   it('PATCH by Id ' + endpointUrl + ':id', async () => {
     const response = await request(app)
@@ -110,7 +110,7 @@ describe.only('Testing Categories Endpoint URL', () => {
       // .field('docx',JSON.stringify({ name: 'author1' }))
     expect(response.statusCode).toBe(404)
   })
-  // TBD 500 error for patch/:id
+  // TODO 500 error for patch/:id
 
   it('DELETE by Id ' + endpointUrl + ':id', async () => { // 200
     const response = await request(app)
@@ -126,7 +126,7 @@ describe.only('Testing Categories Endpoint URL', () => {
       .send()
     expect(response.statusCode).toBe(404)
   })
-  // TBD 500 error for delete
+  // TODO 500 error for delete
 })
 
 describe('Integration Test', () => {

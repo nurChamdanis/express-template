@@ -10,7 +10,7 @@ module.exports = {
   export: true,
   multiSelect: true, // multiple selection
   cols: {
-    id: { // TBD click to get to pages table
+    id: { // TODO click to get to pages table
       label: 'ID',
       auto: 'pk',
       add: 'hide',

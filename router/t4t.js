@@ -1,6 +1,6 @@
 'use strict'
 // table for tables
-// TBD use __key instead of key
+// TODO use __key instead of key
 const express = require('express')
 const fs = require('fs')
 
@@ -32,7 +32,7 @@ const processJson = async (req, res, next) => {
 
 // __key is reserved property for identifying row in a multiKey table
 // | is reserved for seperating columns that make the multiKey
-async function generateTable (req, res, next) { // TBD get config info from a table
+async function generateTable (req, res, next) { // TODO get config info from a table
   try {
     const tableKey = req.params.table // 'books' // its the table name also
     const ref = require(`../apps/app-sample/tables/${tableKey}.js`) // get table from a file...
@@ -123,13 +123,13 @@ module.exports = express.Router()
 
     if (table.db === 'knex') {
       let columns = [`${table.name}.*`]
-      if (table.select) columns = table.select.split(',') // custom columns... TBD need to add table name?
+      if (table.select) columns = table.select.split(',') // custom columns... TODO need to add table name?
 
       query = svc.get(table.conn).knex(table.name)
       query = query.where({})
 
       // query = svc.get(table.conn).knex(table.name).where({})
-      // TBD handle filters for joins...
+      // TODO handle filters for joins...
       let prevFilter = {}
       const joinCols = {}
       if (filters && filters.length) for (let filter of filters) {
@@ -200,7 +200,7 @@ module.exports = express.Router()
         rows = rows.map((row) => kvDb2Col(row, joinCols))
       }
     } else { // mongo
-      // TBD Joins for MongoDB
+      // TODO Joins for MongoDB
       //   db.orders.aggregate([
       //     { $match: { <query> } },
       //     { $skip: <positive integer> },
@@ -230,11 +230,11 @@ module.exports = express.Router()
         if (op === '=') exp = { [key]: val }
         else if (op === 'like') exp = { [key]: { $regex: val, $options: 'i' } }
         else if (op === '!=') exp = { [key]: { $ne: val } }
-        else if (op === '>') exp = { [key]: { $gt: val } } //  TBD type casting?...
+        else if (op === '>') exp = { [key]: { $gt: val } } //  TODO type casting?...
         else if (op === '>=') exp = { [key]: { $gte: val } }
         else if (op === '<') exp = { [key]: { $lt: val } }
         else if (op === '<=') exp = { [key]: { $lte: val } }
-        // TBD empty string? null?
+        // TODO empty string? null?
         // else if (op === 'in') exp = {[key]: { $in: val } } // convert val from string to array?
         if (filter.andOr === 'and') and.push(exp)
         else or.push(exp)
@@ -281,7 +281,7 @@ module.exports = express.Router()
     if (dbName === 'knex') {
       const query = svc.get(conn).knex(tableName).where(key, 'like', `%${search}%`).orWhere(text, 'like', `%${search}%`)
       if (parentTableColName !== undefined && parentTableColVal !== undefined) query.andWhere(parentTableColName, parentTableColVal) // AND filter - OK
-      rows = await query.clone().limit(limit) // TBD orderBy
+      rows = await query.clone().limit(limit) // TODO orderBy
     } else { // mongo
       const filter = {
         $or: [
@@ -291,7 +291,7 @@ module.exports = express.Router()
       }
       if (parentTableColName !== undefined && parentTableColVal !== undefined) filter[parentTableColName] = parentTableColVal // AND filter - OK
       rows = await svc.get(conn).mongo.db.collection(tableName).find(filter)
-        .limit(Number(limit)).toArray() // TBD sort
+        .limit(Number(limit)).toArray() // TODO sort
     }
     rows = rows.map(row => ({
       key: row[key],
@@ -307,7 +307,7 @@ module.exports = express.Router()
     let rv = {}
     if (table.db === 'knex') {
       let columns = [`${table.name}.*`]
-      if (table.select) columns = table.select.split(',') // custom columns... TBD need to add table name?
+      if (table.select) columns = table.select.split(',') // custom columns... TODO need to add table name?
   
       let query = svc.get(table.conn).knex(table.name).where(where)
   
@@ -364,7 +364,7 @@ module.exports = express.Router()
       const col = table.cols[key]
       if (col?.ui?.writeType) body[key] = body[key][col.ui.writeType] // select a value from object
       if (col.auto && col.auto === 'user') {
-        body[key] = 'TBD USER ID'
+        body[key] = 'TODO USER ID'
       } else if (col.auto && col.auto === 'ts') {
         body[key] = (new Date()).toISOString()
       } else {
@@ -418,7 +418,7 @@ module.exports = express.Router()
       const col = table.cols[key]
       if (col?.ui?.writeType) body[key] = body[key][col.ui.writeType] // select a value from object
       if (col.auto && col.auto === 'user') {
-        body[key] = 'TBD USER ID'
+        body[key] = 'TODO USER ID'
       } else if (col.auto && col.auto === 'ts') {
         body[key] = (new Date()).toISOString()
       } else {
@@ -451,7 +451,7 @@ module.exports = express.Router()
     if (table.delete !== -1 && ids.length > table.delete) return res.status(400).json({ error: `Select up to ${table.delete} items` })
     if (ids.length < 1) return res.status(400).json({ error: 'No item selected' })
 
-    // TBD delete relations junction, do not delete if value is in use...
+    // TODO delete relations junction, do not delete if value is in use...
 
     if (table.pk) { // delete using pk
       if (table.db === 'knex')
@@ -518,7 +518,7 @@ for {
           }
           if (record.length === table.nonAuto.length) { // ok
             if (record.join('')) {
-              // TBD format before push?
+              // TODO format before push?
               output.push(record)
             } else {
               errors.push({ currLine, data: record.join(','), msg: 'Empty Row' })
@@ -534,8 +534,8 @@ for {
         for (let row of output) {
           line++
           try {
-            // TBD: also take care of auto populating fields?
-            // TBD: should add validation here
+            // TODO: also take care of auto populating fields?
+            // TODO: should add validation here
             const obj = {}
             for (let i=0; i<keys.length; i++) {
               obj[ keys[i] ] = row[i]

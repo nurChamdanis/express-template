@@ -32,7 +32,7 @@ module.exports = express.Router()
   //   'api-key': '88888888',
   //   'message-timestamp': '2020-10-28 07:54:38'
   // }
-  // TBD need to handle the Nexmo MO-SNS
+  // TODO need to handle the Nexmo MO-SNS
   .post('/nexmo-mo-sms', asyncWrapper(async (req, res) => {
     const { body, query, params} = req
     res.json({

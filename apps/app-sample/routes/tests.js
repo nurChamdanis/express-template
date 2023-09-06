@@ -122,7 +122,7 @@ module.exports = express.Router()
 
   // message queues
   .get('/mq-agenda', asyncWrapper(async (req, res) => { // test message queue - agenda
-    res.json({ job, note: 'TBD' })
+    res.json({ job, note: 'TODO' })
   }))
 
   // test websocket broadcast
@@ -131,7 +131,7 @@ module.exports = express.Router()
     res.send("ws broadcast")
   })
 
-  // TBD /esm/upload-fe-test.js
+  // TODO /esm/upload-fe-test.js
   // test uploads
   // body action: 'read' | 'write', filename: 'my-file.txt', bucket: 'bucket name'
   .post('/gcp-sign', asyncWrapper(gcp.getSignedUrl))
