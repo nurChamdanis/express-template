@@ -1,7 +1,9 @@
 # DO NOT EDIT
 !.gitignore
+!README.md
 !apploader.js
 !.env.sample
+!package.json
 
 # EDIT BELOW - comment out environments you want in your project
 # !.env.development

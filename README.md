@@ -1,21 +1,21 @@
-# Description
-
-> Built from [https://github.com/es-labs/express-template]() template
-
 ## Read Me FIRST!
 
-[https://github.com/ais-one/cookbook#important---read-me-first]()
+> Do NOT edit this README. Go to [apps/README.md]() to view and edit user README
+>
+> Built from [https://github.com/es-labs/express-template]().
+>
+> For template design principles, see [https://github.com/ais-one/cookbook#important---read-me-first]() 
 
-## Setup
+## Template Maintenance
 
-1. setup to allow incoming merge from upstream template update
+1 - Setup to allow incoming merge from upstream template update
 
 ```bash
 # run once only after you `clone`, or `fork` or `delete .git and run git init`
 ./setup-upstream.sh
 ```
 
-2. Setup for your custom code
+2 - Setup for your custom code
 
 ```bash
 # setup your env file
@@ -28,7 +28,7 @@ cp apps/.env.sample apps/.env # secret properties can be in apps/.env.secret
 - userland changes only in the `apps` folder
 - do note any conflicts to resolve when merging from upstream
 
-3. Updating the template
+3 - Updating the template
 
 ```bash
 # Commit and push to remote before running commands below
@@ -143,7 +143,7 @@ Refer to following files for SPA sample (uses fido2-lib in backend)
     - environment (uat for now, development does not deploy anything)
     - branch
 
-**NOTE** config/secret contents will not be in repo for CI/CD (so you can get errors), those should be put in VAULT
+**NOTE** secrets will not be in repo for CI/CD, those should be put in VAULT
 
 Current Github Secrets
 
@@ -155,9 +155,6 @@ VAULT="unused"
 
 # connect to a hashicorp vault and obtain secrets to merge
 VAULT={ url, token } # base64 encoded
-
- # pass in secrets, this way is insecure and not a good way to send in secrets
-VAULT={ secrets: { ... all your secrets here } } # base64 encoded
 ```
 
 ---
@@ -184,10 +181,14 @@ https://kentcdodds.com/blog/how-i-structure-express-apps
 |  |  +- uploads/ : for file uploads
 |  |  +- graphql-schema.js : application GraphQL schemas and resolvers
 |  |  +- dev.sqlite3 : sqlite DB with schema and data
-|  |  +- package.json : for app libraries
 |  |  +- test-playground.mongodb : mongoDB client VSCode plugin (MongoDB for VS Code - mongodb.mongodb-vscode)
 |  |  +- test.http : rest API commands testing VSCode plugin (Rest Client - humao.rest-client)
 |  |  +- test.py: run python from express
+|  +- .env.sample
+|  +- .gitignore
+|  +- apploader.js
+|  +- package.json : for app libraries
+|  +- README.md
 +- git-hooks/ : pre-commit and other hooks here
 +- middlewares/ : common middlewares
 +- router/ : common route / controller & services
@@ -208,13 +209,6 @@ https://kentcdodds.com/blog/how-i-structure-express-apps
 +- package.json
 +- README.md
 ```
-
-## If You Want To Use DTOs
-
-https://stackoverflow.com/questions/62504764/entities-dtos-in-javascript
-
-- Use AJV
-- ORM with Modeling
 
 ## Relational Database Schema
 
