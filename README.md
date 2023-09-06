@@ -4,23 +4,19 @@ An Express Template
 
 ## Read Me FIRST!
 
-TBD... Instructions on working with templates
+[https://github.com/ais-one/cookbook#important---read-me-first]()
 
 ## Setup
 
 1. setup to allow incoming merge from upstream template update
 
+run once only after you `clone`, or `fork` or `delete .git and run git init`
+
 ```bash
-# run once only after
-# - clone, or
-# - fork, or
-# - deleting .git and running git init
 ./setup-upstream.sh
 ```
 
-2. setup for your project
-
-# copy the sample environment
+2. setup for your custom code
 
 ```bash
 # setup your env file
@@ -28,22 +24,17 @@ cp apps/.env.sample apps/.env
 # move properties with secrets to apps/.env.secret
 ```
 
-To make your custom app you can either
-- 1. continue development in apps/app-sample
-- 2. rename apps/app-sample and develop from there
-- 3. make a copy of apps/app-sample and rename it and work from there
-
-In `apps/apploader.js`, change the `app-sample` to the folder you are using for development
+- You can develop custom code in `apps/app-sample` or rename it or copy it to another folder name
+- In apps/apploader.js`, change `app-sample` to the folder you are using
 
 3. Important notes for development
 
 - change only the package.json in `apps/<your custom code folder>` (default is app-sample)
-- do note any conflicts to resolve for anything outside the `apps` folder when merging from upstream
-- feedback for improvement is welcome
+- do note any conflicts to resolve when merging from upstream
 
 4. Updating the template
 
-Ensure that you have commited your changes and pushed to remote in case there are issues
+Ensure that you have commited your changes and pushed to remote origin first before running commands below:
 
 ```bash
 git fetch upstream
