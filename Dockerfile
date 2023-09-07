@@ -5,7 +5,6 @@
 
 ARG NODE_VERSION=18
 FROM node:${NODE_VERSION}-alpine AS build
-RUN apk update && apk add python make g++ && rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY package*.json ./
 RUN npm i --only=production
