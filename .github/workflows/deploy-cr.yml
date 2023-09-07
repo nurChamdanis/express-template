@@ -19,6 +19,7 @@ env:
   REPO_NAME: ${{ github.event.repository.name }}
   CR_PASSWORD: ${{ secrets.CR_PASSWORD }}
   CR_USERNAME: ${{ secrets.CR_USERNAME }}
+  CR_NS: ${{ vars.CR_NS }}
   DOCKERFILE_TARGET: production # follow value in docker file
 jobs:
   deploy_to_cr:
@@ -36,8 +37,8 @@ jobs:
           IMAGE_TARGET: production
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          echo ${{ env.CR_HOST }}
-          echo ${{ env.CR_NS }}
+          echo ${{ vars.CR_HOST }}
+          echo $CR_NS
           echo $CR_PASSWORD
           echo $CR_USERNAME
           echo $REPO_NAME
