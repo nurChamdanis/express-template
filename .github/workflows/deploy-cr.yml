@@ -40,8 +40,9 @@ jobs:
         run: |
           # cat password.txt |
           # docker login --username=${CR_USERNAME} --password=${CR_PASSWORD} ${CR_HOST}
-          echo "starting docker builds 1"
+          echo "starting docker builds 2"
           echo `ls`
+          pwd
           echo $CR_PASSWORD | docker login --username $CR_USERNAME --password-stdin $CR_HOST
           docker build -t $CR_HOST/$CR_NS/$REPO_NAME:${{ github.event.inputs.tag_repo }} --target $DOCKERFILE_TARGET --build-arg ARG_NODE_ENV=$DOCKERFILE_TARGET --build-arg ARG_API_PORT=3000 . || exit 1001
           docker push $CR_HOST/$CR_NS/$REPO_NAME:${{ github.event.inputs.tag_repo }}
