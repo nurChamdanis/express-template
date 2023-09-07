@@ -41,7 +41,7 @@ jobs:
           echo $CR_PASSWORD
           echo $CR_USERNAME
           echo $REPO_NAME
-          echo $ DOCKERFILE_TARGET
+          echo $DOCKERFILE_TARGET
           # cat password.txt |
           # docker login --username=${CR_USERNAME} --password=${CR_PASSWORD} ${CR_HOST}
           # echo ${CR_PASSWORD} | docker login --username ${CR_USERNAME} --password-stdin ${CR_HOST}
