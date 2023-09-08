@@ -7,11 +7,11 @@ on:
   workflow_dispatch:
     # Inputs the workflow accepts.
     inputs:
-      tag_repo:
-        description: 'repo branch or tag'
+      tag_gr:
+        description: 'git repo branch or tag'
         default: 'main'
         required: true
-      tag_cr:
+      tag_ci:
         description: 'container image tag'
         default: 'latest'
         required: true
@@ -28,11 +28,11 @@ jobs:
     name: Deploying CR
     steps:
       - name: Selected Branch/tag
-        run: echo ${{ github.event.inputs.tag_repo }}
+        run: echo ${{ github.event.inputs.tag_gr }}
       - name: Add checkout plugin
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.inputs.tag_repo }}
+          ref: ${{ github.event.inputs.tag_gr }}
       - name: Build and push image to CR
         env:
           IMAGE_TARGET: production
@@ -41,6 +41,6 @@ jobs:
           # cat password.txt |
           # docker login --username=${CR_USERNAME} --password=${CR_PASSWORD} ${CR_HOST}
           echo $CR_PASSWORD | docker login --username $CR_USERNAME --password-stdin $CR_HOST
-          docker build -t $CR_HOST/$CR_NS/$REPO_NAME:${{ github.event.inputs.tag_cr }} --target $DOCKERFILE_TARGET --build-arg ARG_NODE_ENV=$DOCKERFILE_TARGET --build-arg ARG_API_PORT=3000 . || exit 1001
-          docker push $CR_HOST/$CR_NS/$REPO_NAME:${{ github.event.inputs.tag_cr }}
+          docker build -t $CR_HOST/$CR_NS/$REPO_NAME:${{ github.event.inputs.tag_ci }} --target $DOCKERFILE_TARGET --build-arg ARG_NODE_ENV=$DOCKERFILE_TARGET --build-arg ARG_API_PORT=3000 . || exit 1001
+          docker push $CR_HOST/$CR_NS/$REPO_NAME:${{ github.event.inputs.tag_ci }}
           docker logout
