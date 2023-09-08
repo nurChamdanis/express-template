@@ -1,4 +1,4 @@
-## Read Me FIRST!
+## Read Me FIRST! - Requires NodeJS Version 18 or higher
 
 > Do NOT edit this README. Go to [apps/README.md]() to view and edit user README
 >
@@ -110,6 +110,8 @@ Features include SAML. OIDC, OAuth, Fido2 login, Push Notifications
   - selectable inputs
     - git repo branch / tag
     - container repo tag
+
+Build image and deploy to a container registry
 
 **NOTE** secrets will not be in repo for CI/CD, those should be put in VAULT
 
