@@ -96,7 +96,7 @@ See [https://github.com/es-labs/vue-antd-template]() for a SPA frontend template
 
 ---
 
-## Project Strcuture & Features
+## Project Structure & Features
 
 See [apps/README.md]()
 
