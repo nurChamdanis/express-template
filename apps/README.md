@@ -40,7 +40,7 @@ Refer to following files for SPA sample (uses fido2-lib in backend)
   - (1) Subscribe PN, (2) Send And Receive Test PN, (3) Unsubscribe PN
 - For Google FCM, setup your firebase account and messaging, also FCM server key in backend
 
-## Project Strcuture
+## Project Structure
 
 ```
 +- .github/ : github related CICD and automations
