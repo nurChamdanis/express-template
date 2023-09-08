@@ -123,38 +123,9 @@ Current Github Variables
 - CR_HOST: container registry host (for deployment)
 - CR_NS container registry namespace (for deployment)
 
-
-```bash
-# do not merge
-VAULT="unused"
-
-# connect to a hashicorp vault and obtain secrets to merge
-VAULT={ url, token } # base64 encoded
-```
-
 ---
 
 ## References
 
 - https://softwareengineering.stackexchange.com/questions/338597/folder-by-type-or-folder-by-feature
 - https://kentcdodds.com/blog/how-i-structure-express-apps
-
-- https://ideas.digitalocean.com/storage/p/deploy-static-sites-to-spacescdn
-- https://docs.digitalocean.com/products/spaces/reference/s3-compatibility
-- https://es-labs.sgp1-static.digitaloceanspaces.com
-
-
-PUT ?website HTTP/1.1
-Host: example.com.s3.<Region>.amazonaws.com
-Content-Length: 256
-Date: Thu, 27 Jan 2011 12:00:00 GMT
-Authorization: signatureValue
-
-<WebsiteConfiguration xmlns='http://s3.amazonaws.com/doc/2006-03-01/'>
-    <IndexDocument>
-        <Suffix>index.html</Suffix>
-    </IndexDocument>
-    <ErrorDocument>
-        <Key>index.html</Key>
-    </ErrorDocument>
-</WebsiteConfiguration>
