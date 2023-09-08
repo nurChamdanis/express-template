@@ -123,7 +123,8 @@ Current Github Secrets
 Current Github Variables
 
 - CR_HOST: container registry host (for deployment)
-- CR_NS container registry namespace (for deployment)
+- CR_NS: container registry namespace (for deployment)
+- CR_IMAGENAME: The image name. If not specified, the repository name will be used
 
 ---
 
