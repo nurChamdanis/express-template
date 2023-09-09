@@ -37,7 +37,7 @@ if (HTTPS_CERTIFICATE) {
   https_opts.cert = HTTPS_CERTIFICATE;
   // UNUSED AT THE MOMENT
   // passphrase = (fs.readFileSync('passphrase.txt')).toString()
-  // pfx = fs.readFileSync('./8ab20f7b-51b9-4c09-a2e0-1918bb9fb37f.pfx')
+  // pfx = fs.readFileSync('8ab20f7b-51b9-4c09-a2e0-1918bb9fb37f.pfx')
   // ca = fs.readFileSync('ca.cert')
 }
 const server = HTTPS_CERTIFICATE

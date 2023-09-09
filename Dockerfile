@@ -3,13 +3,18 @@
 # ARG SETTINGS
 # RUN ./run/init-stuff $SETTINGS
 
+# Set Node Version
 ARG NODE_VERSION=18
+
+# base build
 FROM node:${NODE_VERSION}-alpine AS build
+WORKDIR /app/apps
+COPY apps/package*.json ./
+RUN npm i --only=production
 WORKDIR /app
 COPY package*.json ./
 RUN npm i --only=production
 COPY . .
-
 
 # FROM gcr.io/distroless/nodejs:debug
 FROM gcr.io/distroless/nodejs:${NODE_VERSION} AS production
