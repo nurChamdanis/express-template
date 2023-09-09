@@ -45,6 +45,7 @@ Refer to following files for SPA sample (uses fido2-lib in backend)
 ```
 +- .github/ : github related CICD and automations
 +- apps : custom apps are here in this folder
+|  +- app-auth/ : authentication implementations... Oauth, SAML, OIDC, and own rollout
 |  +- app-sample/ : sample custom application (prefixed with app-)
 |  |  +- controllers/
 |  |  +- deploy/ : deployment folder (see README.md within the deploy folder)

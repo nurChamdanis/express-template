@@ -9,4 +9,5 @@
 # !.env.development
 
 # EDIT BELOW - comment out folders you want in your project
+!app-auth
 !app-sample
