@@ -90,6 +90,16 @@ See package.json
 npm run test
 ```
 
+## Running Using Docker/Podman
+
+For running using docker/podman
+
+```bash
+docker build -t express-template --target development --build-arg ARG_NODE_ENV=development --build-arg ARG_API_PORT=3000 .
+docker run -p 3000:3000 express-template
+```
+
+
 ### Vite SPA Setup & Run - development environment
 
 See [https://github.com/es-labs/vue-antd-template]() for a SPA frontend template that can be used with projects based on this template

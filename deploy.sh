@@ -49,13 +49,13 @@ fi
 # cross-env NODE_ENV=development VAULT="$VAULT" PORT=3001 DEBUG=app:* nodemon --ignore '*.test.js' --watch src bin/www
 # read && exit
 
-# XXXX="docker build -t gcr.io/$GCP_PROJECT_ID/$APP_NAME-$1:$BUILD_TS --target $1 --build-arg ARG_NODE_ENV=$1 --build-arg ARG_API_PORT=3000 --build-arg ARG_VAULT=$VAULT ."
+# XXXX="docker build -t gcr.io/$GCP_PROJECT_ID/$APP_NAME-$1:$BUILD_TS --target $1 --build-arg ARG_NODE_ENV=$1 --build-arg ARG_API_PORT=3000 ."
 # echo $XXXX
 # exit
 
 # deploy to cloud run etc...
 gcloud auth configure-docker gcr.io
-docker build -t gcr.io/$GCP_PROJECT_ID/$APP_NAME-$1:$BUILD_TS --target $1 --build-arg ARG_NODE_ENV=$1 --build-arg ARG_API_PORT=3000 --build-arg ARG_VAULT=$VAULT . || exit 1001
+docker build -t gcr.io/$GCP_PROJECT_ID/$APP_NAME-$1:$BUILD_TS --target $1 --build-arg ARG_NODE_ENV=$1 --build-arg ARG_API_PORT=3000 . || exit 1001
 docker push gcr.io/$GCP_PROJECT_ID/$APP_NAME-$1:$BUILD_TS || exit 1002
 gcloud run deploy $APP_NAME-$1-svc --image gcr.io/$GCP_PROJECT_ID/$APP_NAME-$1:$BUILD_TS --platform managed --region asia-southeast1 --allow-unauthenticated --port=3000
 
