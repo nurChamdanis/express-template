@@ -5,6 +5,6 @@ const router = require('express').Router()
 module.exports = function (app) {
   app.use('/api',
     router.use('/', require('./base')),
-    router.use('/t4t', require('./t4t')),
+    router.use('/t4t', require('./t4t'))
   )
 }
