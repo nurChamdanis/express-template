@@ -117,19 +117,18 @@ try {
   // https://github.com/expressjs/express/issues/3748
 
 // https://stackoverflow.com/questions/44327291/express-js-wrap-every-middleware-route-in-decorator
-const Layer          = require('express/lib/router/layer');
-const handle_request = Layer.prototype.handle_request;
+const Layer          = require('express/lib/router/layer')
+const handle_request = Layer.prototype.handle_request
 Layer.prototype.handle_request = function(req, res, next) {
-
   if (!this.isWrapped && this.method) {
-    let handle  = this.handle;
+    let handle  = this.handle
     this.handle = function(req, res, next) { // this is basically your wrapper
       handle.apply(this, arguments).then(result => result).catch(error => next(error))
-    };
-    this.isWrapped = true;
+    }
+    this.isWrapped = true
   }
   return handle_request.apply(this, arguments)
-};
+}
 
 try {
   require(`./apps/apploader`)(app); // add your APIs here

@@ -1,5 +1,5 @@
 {
-  "name": "app-sample",
+  "name": "apps",
   "version": "1.0.0",
   "description": "",
   "private": true,
@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "base64url": "^3.0.1",
+    "csv-parse": "^5.5.0",
     "fido2-lib": "^3.4.1",
+    "json2csv": "^5.0.7",
     "pdfkit": "^0.13.0",
     "selfsigned": "^2.1.1"
   },
