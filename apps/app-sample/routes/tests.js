@@ -55,12 +55,12 @@ module.exports = express.Router()
     req.something.missing = 10
     res.json({ message: 'OK' })
   })
-  .get('/error-handled-rejection', asyncWrapper(async (req, res) => {
+  .get('/error-handled-rejection', async (req, res) => {
     await Promise.reject(new Error('handled rejection of promise'))
-  }))
-  .get('/error-unhandled-rejection', asyncWrapper(async (req, res, next) => { // catching error in unhandledException
+  })
+  .get('/error-unhandled-rejection', async (req, res, next) => { // catching error in unhandledException
     Promise.reject(new Error('unhandled rejection of promise')) // call on.process unhandledRejection - promise rejection, unhandled
-  }))
+  })
 
 
   .get('/stream', async (req, res) => {
@@ -121,9 +121,9 @@ module.exports = express.Router()
   })
 
   // message queues
-  .get('/mq-agenda', asyncWrapper(async (req, res) => { // test message queue - agenda
+  .get('/mq-agenda', async (req, res) => { // test message queue - agenda
     res.json({ job, note: 'TODO' })
-  }))
+  })
 
   // test websocket broadcast
   .get('/ws-broadcast', async (req, res) => {
@@ -134,7 +134,7 @@ module.exports = express.Router()
   // TODO /esm/upload-fe-test.js
   // test uploads
   // body action: 'read' | 'write', filename: 'my-file.txt', bucket: 'bucket name'
-  .post('/gcp-sign', asyncWrapper(gcp.getSignedUrl))
+  .post('/gcp-sign', gcp.getSignedUrl)
   .post('/upload-disk', storageUpload(UPLOAD_STATIC[0]).any(), (req,res) => { // avatar is form input name // single('filedata')
     try {
       // console.log('files', req, req.files)

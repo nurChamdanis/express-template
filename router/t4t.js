@@ -103,10 +103,10 @@ function kvDb2Col (row, joinCols, linkCols) { // a key value from DB to column
 module.exports = express.Router()
   .get('/test', (req, res) => res.send('t4t ok'))
 
-  .get('/config/:table', authUser, generateTable, asyncWrapper(async (req, res) => {
+  .get('/config/:table', authUser, generateTable, async (req, res) => {
     res.json(req.table) // return the table info...
-  }))
-  .get('/find/:table', authUser, generateTable, asyncWrapper(async (req, res) => { // page is 1 based
+  })
+  .get('/find/:table', authUser, generateTable, async (req, res) => { // page is 1 based
     const { table } = req
     let { page = 1, limit = 25, filters = null, sorter = null, csv = '' } = req.query
     page = parseInt(page) // 1-based
@@ -273,9 +273,9 @@ module.exports = express.Router()
       })
       return res.json(rv) 
     }
-  }))
+  })
 
-  .get('/autocomplete', asyncWrapper(async (req, res) => {
+  .get('/autocomplete', async (req, res) => {
     let rows = {}
     let { dbName, conn, tableName, limit = 20, key, text, search, parentTableColName, parentTableColVal } = req.query
     if (dbName === 'knex') {
@@ -298,9 +298,9 @@ module.exports = express.Router()
       text: text ? row[text] : row[key]
     }))
     res.json(rows)
-  }))
+  })
 
-  .get('/find-one/:table', authUser, generateTable, asyncWrapper(async (req, res) => {
+  .get('/find-one/:table', authUser, generateTable, async (req, res) => {
     const { table } = req
     const where = formUniqueKey(table, req.query.__key)
     if (!where) return res.status(400).json({}) // bad request
@@ -344,9 +344,9 @@ module.exports = express.Router()
       rv = await svc.get(table.conn).mongo.db.collection(table.name).findOne(where)
     }    
     return res.json(rv)  
-  }))
+  })
 
-  .patch('/update/:table/:id?', authUser, generateTable, storageUpload(UPLOAD_STATIC[0]).any(), processJson, asyncWrapper(async (req, res) => {
+  .patch('/update/:table/:id?', authUser, generateTable, storageUpload(UPLOAD_STATIC[0]).any(), processJson, async (req, res) => {
     const { body, table } = req
     const where = formUniqueKey(table, req.query.__key)
     let count = 0
@@ -404,9 +404,9 @@ module.exports = express.Router()
       }
     }
     return res.json({count})
-  }))
+  })
 
-  .post('/create/:table', authUser, generateTable, storageUpload(UPLOAD_STATIC[0]).any(), processJson, asyncWrapper(async (req, res) => {
+  .post('/create/:table', authUser, generateTable, storageUpload(UPLOAD_STATIC[0]).any(), processJson, async (req, res) => {
     const { table, body } = req
     for (let key in table.cols) {
       const { rules, type } = table.cols[key]
@@ -442,9 +442,9 @@ module.exports = express.Router()
       await svc.get(table.conn).mongo.db.collection(table.name).insertOne(body) // rv.insertedId, rv.result.ok
     }
     return res.status(201).json(rv)
-  }))
+  })
 
-  .post('/remove/:table', authUser, generateTable, asyncWrapper(async (req, res) => {
+  .post('/remove/:table', authUser, generateTable, async (req, res) => {
     const { table } = req
     const { ids } = req.body
     if (!table.delete) return res.status(400).json({ error: 'Delete not allowed' })
@@ -479,7 +479,7 @@ module.exports = express.Router()
       }
     }
     return res.json()
-  }))
+  })
 
 /*
 const trx = await svc.get(table.conn).knex.transaction()
@@ -499,7 +499,7 @@ for {
   // code,name
   // zzz,1234
   // ddd,5678
-  .post('/upload/:table', authUser, generateTable, memoryUpload(UPLOAD_MEMORY[0]).single('csv-file'), async (req, res) => { // do not use asyncWrapper
+  .post('/upload/:table', authUser, generateTable, memoryUpload(UPLOAD_MEMORY[0]).single('csv-file'), async (req, res) => {
     const { table } = req
     const csv = req.file.buffer.toString('utf-8')
     const output = []

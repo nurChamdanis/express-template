@@ -33,9 +33,9 @@ module.exports = express.Router()
   //   'message-timestamp': '2020-10-28 07:54:38'
   // }
   // TODO need to handle the Nexmo MO-SNS
-  .post('/nexmo-mo-sms', asyncWrapper(async (req, res) => {
+  .post('/nexmo-mo-sms', async (req, res) => {
     const { body, query, params} = req
     res.json({
       body, query, params
     })
-  }))
+  })

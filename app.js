@@ -60,8 +60,7 @@ const cleanup = async (
 ) => {
   console.log(message);
   console.log(`
-  nodemon win - can see messages
-  nodemon bash - can see messages
+  nodemon win & bash - can see messages
   node win - cannot see messages
   node bash - can see messages
   `);
@@ -84,14 +83,54 @@ const cleanup = async (
 };
 
 // SERVICES
-services.start();
+services.start()
 try {
   authService.setup(services.get("keyv"), services.get("knex1")); // setup authorization
 } catch (e) {
-  console.log(e);
+  console.log(e)
 }
 
 // ROUTES
+
+  // 1. asyncWrapper
+  // https://strongloop.com/strongblog/async-error-handling-expressjs-es7-promises-generators/#usinges7asyncawait
+  // https://gist.github.com/Hiswe/fe83c97d1c7c8eee9557939d1b9bc086
+  // Caveats:
+  // 1. You must have all your asynchronous code return promises (except emitters). Raw callbacks simply don’t have the facilities for this to work.
+  // 2. Event emitters (like streams) can still cause uncaught exceptions. So make sure you are handling the error event properly e.g. stream.on('error', next).pipe(res)
+
+  // DOs:
+  // DO use throw, and try/catch when needed
+  // DO use custom error classes like BadRequestError as it makes sorting errors out easier
+
+  // const asyncWrapper = fn => (...args) => fn(...args).catch(args[2])
+  // module.exports = asyncWrapper
+  // USAGE:
+  // const wrap = require('./<path-to>/asyncWrapper')
+  // app.get('/', wrap(async (req, res) => { ... }))
+  // replaced by - express-async-errors, will be native in express 5
+  // global.asyncWrapper = fn => (...args) => fn(...args).catch(args[2]) //  proceed to error handler
+  // https://github.com/express-promise-router/express-promise-router
+  // https://github.com/davidbanham/express-async-errors
+  // https://stackoverflow.com/questions/44327291/express-js-wrap-every-middleware-route-in-decorator
+  // https://github.com/expressjs/express/issues/4256
+  // https://github.com/expressjs/express/issues/3748
+
+// https://stackoverflow.com/questions/44327291/express-js-wrap-every-middleware-route-in-decorator
+const Layer          = require('express/lib/router/layer');
+const handle_request = Layer.prototype.handle_request;
+Layer.prototype.handle_request = function(req, res, next) {
+
+  if (!this.isWrapped && this.method) {
+    let handle  = this.handle;
+    this.handle = function(req, res, next) { // this is basically your wrapper
+      handle.apply(this, arguments).then(result => result).catch(error => next(error))
+    };
+    this.isWrapped = true;
+  }
+  return handle_request.apply(this, arguments)
+};
+
 try {
   require(`./apps/apploader`)(app); // add your APIs here
   require("./router")(app); // common routes
@@ -99,37 +138,20 @@ try {
     res.status(404).json({ error: "Not Found" })
   );
 } catch (e) {
-  console.log("Route loading exception", e.toString());
+  console.log("Route loading exception", e.toString())
 }
 // END ROUTES
 
-// Add OpenAPI
-// const { OPENAPI_OPTIONS } = process.env
-// const openApiOptions = JSON.parse(OPENAPI_OPTIONS || null)
-const openApiOptions = {
-  info: {
-    version: "0.0.1",
-    title: "Express Template",
-    description:
-      "Please log in an get token (could be http-only) from http://127.0.0.1:3000/refresh-token.html, also logout there (for http-only tokens)",
-    license: {
-      name: "MIT",
-    },
-  },
-  security: {
-    BearerAuth: {
-      type: "http",
-      scheme: "bearer",
-    },
-  },
-  baseDir: __dirname,
-  filesPattern: ["./**/*.js"],
-};
+// OpenAPI
+const { OPENAPI_OPTIONS } = process.env
+const openApiOptions = JSON.parse(OPENAPI_OPTIONS || null)
 if (openApiOptions) {
+  openApiOptions.baseDir = __dirname
   const expressJSDocSwagger = require("express-jsdoc-swagger");
   expressJSDocSwagger(app)(openApiOptions);
 }
 
+// websockets
 server.on("upgrade", (request, socket, head) => {
   const pathname = url.parse(request.url).pathname;
   if (pathname === "/subscriptions") {
