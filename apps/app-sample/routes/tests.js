@@ -16,10 +16,7 @@ const { UPLOAD_STATIC, UPLOAD_MEMORY } = process.env
 module.exports = express.Router()
   .get('/', (req, res) => {
     res.json({
-      endpoints: [
-        '/stream',
-        '/get-html'
-      ]
+      endpoints: ['/stream', '/get-html']
     })
   })
   .get('/python', (req, res) => {
@@ -42,14 +39,16 @@ module.exports = express.Router()
     res.json({})
   })
 
-  // stream back data
-  .get('/restart-mongo', async (req, res) => { // SHOULD NOT HAVE TO DO THIS! restart mongo that cannot initially connect
-    res.json({})
-  })
-
   .post('/test-cors-post', (req, res) => { res.send('Cors Done') }) // check CORS
   .post('/test-post-json', (req, res) => { res.json(req.body) }) // check if send header as application/json but body is text
 
+  // test outbound unblocked
+  .get('/outbound', async (req, res) => {
+    const url = req.query.url || 'https://httpbin.org/get'
+    const rv = await fetch(url)
+    const data = await rv.json()
+    res.json(data)
+  })
   // test errors
   .get('/error', (req, res) => { // error caught by error middleware
     req.something.missing = 10

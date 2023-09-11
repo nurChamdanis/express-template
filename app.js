@@ -123,7 +123,10 @@ Layer.prototype.handle_request = function(req, res, next) {
   if (!this.isWrapped && this.method) {
     let handle  = this.handle
     this.handle = function(req, res, next) { // this is basically your wrapper
-      handle.apply(this, arguments).then(result => result).catch(error => next(error))
+      // console.log(req.url)
+      const rv = handle.apply(this, arguments)
+      if (rv instanceof Promise) rv.then(result => result).catch(error => next(error))
+      else return rv
     }
     this.isWrapped = true
   }
