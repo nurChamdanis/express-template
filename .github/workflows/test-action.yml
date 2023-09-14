@@ -30,3 +30,4 @@ jobs:
           echo `node -v`
           echo $SECRET_KEY
           echo The Key ${{ secrets.CR_USERNAME }}
+          echo The VARS ${{ vars.CR_HOST }}
