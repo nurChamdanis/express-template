@@ -10,9 +10,9 @@ on:
       secret_key:
         description: 'key to required secret'
         default: ''
-        required: true
+        required: false
 env:
-  SECRET_KEY: ${{ github.event.inputs.secret_key }} || 'No Key'
+  SECRET_KEY: ${{ github.event.inputs.secret_key || 'No Key' }} 
 jobs:
   test-action:
     name: Running Test Action
