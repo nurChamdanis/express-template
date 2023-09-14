@@ -12,7 +12,7 @@ on:
         default: ''
         required: true
 env:
-  SECRET_KEY: ${{ github.event.inputs.secret_key }}
+  SECRET_KEY: ${{ github.event.inputs.secret_key }} || 'No Key'
 jobs:
   test-action:
     name: Running Test Action
@@ -28,4 +28,5 @@ jobs:
       - name: Run commands 
         run: |
           echo `node -v`
+          echo $SECRET_KEY
           echo The Key ${{ secrets.CR_IMAGENAME }}
