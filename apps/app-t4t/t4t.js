@@ -14,8 +14,7 @@ const authUser = async (req, res, next) => next()
 console.log('WARNING Auth bypass in t4t.js')
 
 const csvParse = require('csv-parse')
-const { Parser } = require('json2csv')
-// const { json2csv } = require("esm")(module)("@es-labs/esm/json2csv")
+const { Parser } = require('@json2csv/plainjs')
 
 const { memoryUpload, storageUpload } = require('@es-labs/node/express/upload')
 
