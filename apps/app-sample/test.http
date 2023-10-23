@@ -12,10 +12,10 @@ Accept: application/json
 
 ### Test healthcheck
 # GET http://127.0.0.1:3000/api/healthcheck
-
 # GET http://pay.t2tkn.com:3100/api/healthcheck
-GET http://127.0.0.1:3000/api/app-sample/healthcheck
-Accept: application/json
+# GET http://127.0.0.1:3000/api/app-sample/healthcheck
+GET http://127.0.0.1:3000/api/app-sample/check-db
+
 
 ### Test Login - Username & Password
 POST http://127.0.0.1:3000/api/auth/login
