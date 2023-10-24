@@ -4,7 +4,7 @@ const auth = require('@es-labs/node/auth')
 const own = require('@es-labs/node/express/controller/auth/own')
 const oauth = require('@es-labs/node/express/controller/auth/oauth')
 const oidc = require('@es-labs/node/express/controller/auth/oidc')
-const saml = require('@es-labs/node/express/controller/auth/oidc')
+const saml = require('@es-labs/node/express/controller/auth/saml')
 
 exports.myauthRoute = express.Router()
   .post('/login', own.login)
