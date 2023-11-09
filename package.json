@@ -41,7 +41,9 @@
     "test:env:win": "set EDITOR=vim && echo $EDITOR",
     "lint": "eslint . --ext .js",
     "lint:fix": "eslint --fix --no-fix-warnings --no-report-warnings .",
-    "update-commit-hash": "git rev-parse --verify --short HEAD > commit-hash"
+    "update-commit-hash": "git rev-parse --verify --short HEAD > commit-hash",
+    "prettier:check": "prettier --write apps/**/*.{js,json}",
+    "prettier:write": "prettier --write apps/**/*.{js,json}"
   },
   "dependencies": {
     "@es-labs/esm": "^0.0.21",
@@ -56,6 +58,7 @@
     "jest": "^29.7.0",
     "node-mocks-http": "^1.13.0",
     "nodemon": "^3.0.1",
+    "prettier": "^3.0.3",
     "supertest": "^6.3.3"
   }
 }
