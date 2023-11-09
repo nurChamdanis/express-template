@@ -1,4 +1,5 @@
 #!/bin/bash
+# TBD
 # $0. The name of script itself.
 # $$ Process id of current shell.
 # $* Values of all the arguments. ...

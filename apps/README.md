@@ -4,8 +4,8 @@
 
 ## Configuration (Environment Files)
 
-- .env : non-sensitive config values
-- .env.secret : values that are secret (should be in `vault` service for production)
+- .env.<env> : non-sensitive config values
+- .env.secret.<env> : values that are secret (should be in `vault` service for production)
 - JSON values are supported, be aware of syntax errors when setting up
 
 ## Some Features

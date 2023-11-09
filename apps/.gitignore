@@ -6,7 +6,18 @@
 !package.json
 
 # EDIT BELOW - comment out environments you want in your project
-# !.env.development
+
+# local machine 
+!.env.development
+# !.env.secret.development
+
+# server deployment 
+!.env.dev
+# !.env.secret.dev
+# !.env.uat
+# !.env.secret.uat
+# !.env.prd
+# !.env.secret.prd
 
 # EDIT BELOW - comment out folders you want in your project
 !app-auth

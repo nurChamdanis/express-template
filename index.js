@@ -7,7 +7,7 @@
   console.info('Globals setup and config done. Starting app... ')
 
   // if development && hostname == localhost allow TLS - call after config load
-  if (process.env.NODE_ENV === 'development') process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0
+  if (process.env.NODE_ENV === 'development') process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 
   const { server } = require('./app')
   const { API_PORT, HTTPS_CERTIFICATE } = process.env

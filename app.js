@@ -1,9 +1,9 @@
-"use strict";
+'use strict';
 
-const url = require("url");
-const http = require("http");
-const https = require("https");
-const express = require("express");
+const url = require('url');
+const http = require('http');
+const https = require('https');
+const express = require('express');
 const app = express();
 
 // using CJS in ESM sibling-module.js is a CommonJS module
@@ -11,9 +11,9 @@ const app = express();
 // const require = createRequire(import.meta.url)
 // const siblingModule = require('./sibling-module')
 
-const { sleep } = require("esm")(module)("@es-labs/esm/sleep");
+const { sleep } = require('esm')(module)('@es-labs/esm/sleep');
 
-require("@es-labs/node/express/init")();
+require('@es-labs/node/express/init')();
 
 // setup graceful exit
 const handleExitSignal = async (signal) => await cleanup(`Signal ${signal}`, 0); // NOSONAR
@@ -24,11 +24,11 @@ const handleExitException = async (err, origin) =>
   ); // NOSONAR
 const handleExitRejection = async (reason, promise) =>
   await cleanup(`Unhandled Rejection. reason: ${reason?.stack || reason}`, 1); // NOSONAR
-process.on("SIGINT", handleExitSignal);
-process.on("SIGTERM", handleExitSignal);
-process.on("SIGQUIT", handleExitSignal);
-process.on("uncaughtException", handleExitException);
-process.on("unhandledRejection", handleExitRejection);
+process.on('SIGINT', handleExitSignal);
+process.on('SIGTERM', handleExitSignal);
+process.on('SIGQUIT', handleExitSignal);
+process.on('uncaughtException', handleExitException);
+process.on('unhandledRejection', handleExitRejection);
 
 const { HTTPS_PRIVATE_KEY, HTTPS_CERTIFICATE } = process.env;
 const https_opts = {};
@@ -46,10 +46,10 @@ const server = HTTPS_CERTIFICATE
 
 // USERLAND - Add APM tool
 
-require("@es-labs/node/express/preRoute")(app, express);
-const graphqlWsServer = require("@es-labs/node/express/graphql")(app, server);
-const services = require("@es-labs/node/services");
-const authService = require("@es-labs/node/auth");
+require('@es-labs/node/express/preRoute')(app, express);
+const graphqlWsServer = require('@es-labs/node/express/graphql')(app, server);
+const services = require('@es-labs/node/services');
+const authService = require('@es-labs/node/auth');
 
 // CLEANUP
 const cleanup = async (
@@ -75,9 +75,9 @@ const cleanup = async (
       }
     });
   }
-  console.log("cleaning up and awaiting exit...");
+  console.log('cleaning up and awaiting exit...');
   await sleep(timeOutMs); // from here on... does not get called on uncaught exception crash
-  console.log("exiting"); // require('fs').writeSync(process.stderr.fd, `bbbbbbbbbbbb`)
+  console.log('exiting'); // require('fs').writeSync(process.stderr.fd, `bbbbbbbbbbbb`)
   return coreDump ? process.abort : process.exit(exitCode);
   // setTimeout(() => console.log('exiting'), timeOutMs).unref()
 };
@@ -85,7 +85,7 @@ const cleanup = async (
 // SERVICES
 services.start()
 try {
-  authService.setup(services.get("keyv"), services.get("knex1")); // setup authorization
+  authService.setup(services.get('keyv'), services.get('knex1')); // setup authorization
 } catch (e) {
   console.log(e)
 }
@@ -134,13 +134,13 @@ Layer.prototype.handle_request = function(req, res, next) {
 }
 
 try {
-  require(`./apps/apploader`)(app); // add your APIs here
-  require("./router")(app); // common routes
-  app.use("/api/**", (req, res) =>
-    res.status(404).json({ error: "Not Found" })
+  require('./apps/apploader')(app); // add your APIs here
+  require('./router')(app); // common routes
+  app.use('/api/**', (req, res) =>
+    res.status(404).json({ error: 'Not Found' })
   );
 } catch (e) {
-  console.log("Route loading exception", e.toString())
+  console.log('Route loading exception', e.toString())
 }
 // END ROUTES
 
@@ -149,36 +149,36 @@ const { OPENAPI_OPTIONS } = process.env
 const openApiOptions = JSON.parse(OPENAPI_OPTIONS || null)
 if (openApiOptions) {
   openApiOptions.baseDir = __dirname
-  const expressJSDocSwagger = require("express-jsdoc-swagger");
+  const expressJSDocSwagger = require('express-jsdoc-swagger');
   expressJSDocSwagger(app)(openApiOptions);
 }
 
 // websockets
-server.on("upgrade", (request, socket, head) => {
+server.on('upgrade', (request, socket, head) => {
   const pathname = url.parse(request.url).pathname;
-  if (pathname === "/subscriptions") {
+  if (pathname === '/subscriptions') {
     // upgrade the graphql server
     graphqlWsServer.handleUpgrade(request, socket, head, (ws) => {
-      graphqlWsServer.emit("connection", ws, request);
+      graphqlWsServer.emit('connection', ws, request);
     });
   }
-  console.log("upgrade event");
+  console.log('upgrade event');
 });
 
-require("@es-labs/node/express/postRoute")(app, express);
+require('@es-labs/node/express/postRoute')(app, express);
 
 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
 // 'Bad Request': 400, 'Unauthorized': 401, 'Forbidden': 403, 'Not Found': 404, 'Conflict': 409, 'Unprocessable Entity': 422, 'Internal Server Error': 500,
 app.use((error, req, res, next) => {
   // error middleware - 200s should not reach here
   // console.log('typeof error', error instanceof Error)
-  console.log("error middleware", error);
-  let message = "Unknown Error";
+  console.log('error middleware', error);
+  let message = 'Unknown Error';
   if (error.message) {
     // console.log('Error Object', error.name, error.name, error.stack)
     message =
-      process.env.NODE_ENV === "development" ? error.stack : error.message;
-  } else if (typeof error === "string") {
+      process.env.NODE_ENV === 'development' ? error.stack : error.message;
+  } else if (typeof error === 'string') {
     message = error;
   } else if (error?.toString) {
     message = error.toString();
