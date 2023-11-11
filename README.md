@@ -23,9 +23,9 @@ cp apps/.env.sample apps/.env # secret properties can be in apps/.env.secret
 ```
 
 **Important notes**
-- You can develop custom code in `apps/app-sample` or rename it or copy it to another folder name
+- DO NOT develop custom code in `apps/app-sample`. Rename it or copy it to another folder name
 - In apps/apploader.js, change `app-sample` to the folder you are using
-- userland changes only in the `apps` folder
+- userland changes ONLY in the `apps` folder, NEVER outside the folder. Contact template maintainer if you need something outside `apps`
 - do note any conflicts to resolve when merging from upstream
 
 3 - Updating the template
