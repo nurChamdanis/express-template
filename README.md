@@ -4,7 +4,7 @@
 >
 > Built from [https://github.com/es-labs/express-template]().
 >
-> For template design principles, see [https://github.com/ais-one/cookbook#important---read-me-first]() 
+> For template design principles, see [https://github.com/ais-one/cookbook#important---read-me-first]()
 
 ## Template Maintenance
 
@@ -66,11 +66,12 @@ If need to **migrate** and **seed**, refer to `dbdeploy` package in `tools` work
 - http://127.0.0.1:3000/api/healthcheck - app is running normally
 - http://127.0.0.1:3000 - Website served by Express with functional samples and demos
 - http://127.0.0.1:3000/docs - OpenAPI documentation
-- http://127.0.0.1:3000/native/index.html - 
+- http://127.0.0.1:3000/native/index.html -
 
 **NOTES**
 
 - Mongo DB
+
   - MongoDB sample codes needs MongoDB to work
   - If some env entries are not present there maybe some console log errors (but it is ok to ignore) and websockets will not work. Quick start is still usable. Use the README.md to fill up
 
@@ -95,10 +96,9 @@ npm run test
 For running using docker/podman
 
 ```bash
-docker build -t express-template --target development --build-arg ARG_NODE_ENV=development --build-arg ARG_API_PORT=3000 .
+docker build -t express-template --target production --build-arg ARG_NODE_ENV=dev --build-arg ARG_API_PORT=3000 .
 docker run -p 3000:3000 express-template
 ```
-
 
 ### Vite SPA Setup & Run - development environment
 

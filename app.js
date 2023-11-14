@@ -134,11 +134,15 @@ Layer.prototype.handle_request = function(req, res, next) {
 }
 
 try {
+  console.log('Start App Routes Load')
   require('./apps/apploader')(app) // add your APIs here
-  require('./router')(app) // common routes
+  console.log('Start Common Routes Load')
+  require('./router')(app); // common routes
+  console.log('Start Fallback Routes Load')
   app.use('/api/**', (req, res) =>
     res.status(404).json({ error: 'Not Found' })
   )
+  console.log('Routes Load Completed')
 } catch (e) {
   console.log('Route loading exception', e.toString())
 }
