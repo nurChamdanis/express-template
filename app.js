@@ -1,22 +1,22 @@
-"use strict";
+"use strict"
 
-const url = require("url");
-const http = require("http");
-const https = require("https");
-const express = require("express");
-const app = express();
+const url = require("url")
+const http = require("http")
+const https = require("https")
+const express = require("express")
+const app = express()
 
 // using CJS in ESM sibling-module.js is a CommonJS module
 // import { createRequire } from 'module'
 // const require = createRequire(import.meta.url)
 // const siblingModule = require('./sibling-module')
 
-const { sleep } = require("esm")(module)("@es-labs/esm/sleep");
+const { sleep } = require("esm")(module)("@es-labs/esm/sleep")
 
-require("@es-labs/node/express/init")();
+require("@es-labs/node/express/init")()
 
 // setup graceful exit
-const handleExitSignal = async (signal) => await cleanup(`Signal ${signal}`, 0); // NOSONAR
+const handleExitSignal = async (signal) => await cleanup(`Signal ${signal}`, 0) // NOSONAR
 const handleExitException = async (err, origin) =>
   await cleanup(
     `Uncaught Exception. error: ${err?.stack || err} origin: ${origin}`,
@@ -134,11 +134,15 @@ Layer.prototype.handle_request = function(req, res, next) {
 }
 
 try {
-  require(`./apps/apploader`)(app); // add your APIs here
+  console.log('Start App Routes Load')
+  require(`./apps/apploader`)(app) // add your APIs here
+  console.log('Start Common Routes Load')
   require("./router")(app); // common routes
+  console.log('Start Fallback Routes Load')
   app.use("/api/**", (req, res) =>
     res.status(404).json({ error: "Not Found" })
-  );
+  )
+  console.log('Routes Load Completed')
 } catch (e) {
   console.log("Route loading exception", e.toString())
 }
