@@ -17,13 +17,8 @@ require('@es-labs/node/express/init')()
 
 // setup graceful exit
 const handleExitSignal = async (signal) => await cleanup(`Signal ${signal}`, 0) // NOSONAR
-const handleExitException = async (err, origin) =>
-  await cleanup(
-    `Uncaught Exception. error: ${err?.stack || err} origin: ${origin}`,
-    1
-  ) // NOSONAR
-const handleExitRejection = async (reason, promise) =>
-  await cleanup(`Unhandled Rejection. reason: ${reason?.stack || reason}`, 1) // NOSONAR
+const handleExitException = async (err, origin) => await cleanup(`Uncaught Exception. error: ${err?.stack || err} origin: ${origin}`, 1) // NOSONAR
+const handleExitRejection = async (reason, promise) => await cleanup(`Unhandled Rejection. reason: ${reason?.stack || reason}`, 1) // NOSONAR
 process.on('SIGINT', handleExitSignal)
 process.on('SIGTERM', handleExitSignal)
 process.on('SIGQUIT', handleExitSignal)
@@ -40,9 +35,7 @@ if (HTTPS_CERTIFICATE) {
   // pfx = fs.readFileSync('8ab20f7b-51b9-4c09-a2e0-1918bb9fb37f.pfx')
   // ca = fs.readFileSync('ca.cert')
 }
-const server = HTTPS_CERTIFICATE
-  ? https.createServer(https_opts, app)
-  : http.createServer(app)
+const server = HTTPS_CERTIFICATE ? https.createServer(https_opts, app) : http.createServer(app)
 
 // USERLAND - Add APM tool
 
@@ -52,12 +45,7 @@ const services = require('@es-labs/node/services')
 const authService = require('@es-labs/node/auth')
 
 // CLEANUP
-const cleanup = async (
-  message,
-  exitCode = 0,
-  coreDump = false,
-  timeOutMs = 1000
-) => {
+const cleanup = async (message, exitCode = 0, coreDump = false, timeOutMs = 1000) => {
   console.log(message)
   console.log(`
   nodemon win & bash - can see messages

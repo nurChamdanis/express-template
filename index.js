@@ -4,7 +4,7 @@
   // exit(1)
   console.log('NODE_ENV', process.env.NODE_ENV)
   
-  await require('@es-labs/node/config')( __dirname, process.cwd() )
+  await require('@es-labs/node/config')(__dirname, process.cwd())
   console.info('Globals setup and config done. Starting app... ')
 
   // if development && hostname == localhost allow TLS - call after config load
