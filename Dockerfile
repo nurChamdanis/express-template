@@ -9,10 +9,10 @@ ARG NODE_VERSION=18
 # base build
 FROM node:${NODE_VERSION}-alpine AS build
 WORKDIR /app/apps
-COPY apps/package*.json ./
+COPY apps/package.json ./
 RUN npm i --only=production
 WORKDIR /app
-COPY package*.json ./
+COPY package.json ./
 RUN npm i --only=production
 COPY . .
 

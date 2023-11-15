@@ -2,17 +2,9 @@
 
 const fs = require('fs')
 const express = require('express')
-// TOREMOVE const ws = require('@es-labs/node/services/websocket')
 const { authUser } = require('@es-labs/node/auth')
 
 const { APP_NAME, APP_VERSION, API_PORT, HTTPS_CERTIFICATE } = process.env
-
-function openMissingFile() {
-  fs.readFile('somefile4.txt', (err, data) => {
-    if (err) throw err // will cause node JS to crash if throw error in error handler. just handle error inside here or "return next(err)"
-  })
-}
-// openMissingFile() // test error handling
 
 module.exports = express.Router({caseSensitive: true})
   /**

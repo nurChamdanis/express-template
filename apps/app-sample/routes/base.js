@@ -3,6 +3,13 @@
 const express = require('express')
 const s = require('@es-labs/node/services')
 
+function openMissingFile() {
+  fs.readFile('somefile4.txt', (err, data) => {
+    if (err) throw err // will cause node JS to crash if throw error in error handler. just handle error inside here or "return next(err)"
+  })
+}
+// openMissingFile() // test error handling
+
 module.exports = express.Router()
   .get('/', (req, res) => res.send({ status: 'app-sample OK' }))
   .get('/healthcheck', (req, res) => res.send({ status: 'app-sample/healthcheck OK' }))
