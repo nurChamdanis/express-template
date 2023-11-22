@@ -13,7 +13,7 @@
     "@json2csv/plainjs": "^7.0.3",
     "base64url": "^3.0.1",
     "csv-parse": "^5.5.2",
-    "fido2-lib": "^3.4.1",
+    "fido2-lib": "^3.4.3",
     "pdfkit": "^0.14.0",
     "selfsigned": "^2.4.1"
   },
