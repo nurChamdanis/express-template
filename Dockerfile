@@ -4,7 +4,7 @@
 # RUN ./run/init-stuff $SETTINGS
 
 # Set Node Version
-ARG NODE_VERSION=20
+ARG NODE_VERSION=18
 
 # base build
 FROM node:${NODE_VERSION}-alpine AS build
