@@ -10,6 +10,10 @@ function openMissingFile() {
 }
 // openMissingFile() // test error handling
 
+// How to Define Healthiness of an Application
+// Server can respond to requests.
+// Server can respond to requests and can connect to database.
+// Server can respond to requests, can connect to database, and can connect with other third-party systems and integrations
 module.exports = express.Router()
   .get('/', (req, res) => res.send({ status: 'app-sample OK' }))
   .get('/healthcheck', (req, res) => res.send({ status: 'app-sample/healthcheck OK' }))
