@@ -12,6 +12,11 @@ Always finding new things to implement / improve in this list!
 ### 0.0.3
 - [chore] update README.md
 
+### 0.0.4
+- [chore] update README.md
+
+### 0.0.5
+- [chore] update README.md
 
 ### For next sprint / version
 - [feat] add commitizen, add semantic-release?
