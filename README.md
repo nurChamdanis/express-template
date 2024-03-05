@@ -32,9 +32,10 @@ cp apps/.env.sample apps/.env # secret properties can be in apps/.env.secret
 
 ```bash
 # Commit and push to remote before running commands below
-# git fetch --tags upstream
-git fetch --all
-git merge upstream/<branch or tag> # or 'git merge upstream/<branch or tag> --allow-unrelated-histories'
+# TOREMOVE git fetch --tags upstream
+git fetch upstream
+git pull upstream <branch or tag> --no-rebase
+# NO MORE IN USE git merge upstream/<branch or tag> # or 'git merge upstream/<branch or tag> --allow-unrelated-histories'
 # main = stable, dev = development, <tag> = previous stable
 # There may be some template related merge conflicts to resolve.
 ```
