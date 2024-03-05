@@ -32,13 +32,21 @@ cp apps/.env.sample apps/.env # secret properties can be in apps/.env.secret
 
 ```bash
 # Commit and push to remote before running commands below
-# TOREMOVE git fetch --tags upstream
-git fetch upstream
+git fetch upstream # includes tags
 git pull upstream <branch or tag> --no-rebase
-# NO MORE IN USE git merge upstream/<branch or tag> # or 'git merge upstream/<branch or tag> --allow-unrelated-histories'
-# main = stable, dev = development, <tag> = previous stable
+# NO MORE IN USE git merge upstream/<branch or tag> --allow-unrelated-histories
 # There may be some template related merge conflicts to resolve.
 ```
+
+**Suggested Conventions**
+- branch
+  - main = stable
+  - dev = development
+  - feat-<issue number>
+  - bugfix-<issue number>
+- release tags
+  - use semver, e.g. 1.2.3
+  - should tag main branch
 
 ---
 
