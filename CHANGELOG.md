@@ -9,6 +9,9 @@ Always finding new things to implement / improve in this list!
 - [chore] update packages
   - breaking change in @es-labs/node@0.0.37
 
+### 0.0.3
+- [chore] update README.md
+
 
 ### For next sprint / version
 - [feat] add commitizen, add semantic-release?
