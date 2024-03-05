@@ -75,6 +75,8 @@ Refer to following files for SPA sample (uses fido2-lib in backend)
 +- .dockerignore
 +- .editorconfig
 +- .env.sample
++- .env.dev : on dev server
++- .env.development : on local dev machine
 +- .eslintrc.js
 +- .gitignore
 +- app.js : the express app boilerplate
