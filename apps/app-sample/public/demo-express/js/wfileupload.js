@@ -1,4 +1,4 @@
-import * as mod from '/esm/upload-fe-test.js'
+import * as mod from '/esm/upload-fe-testing.js'
 
 var files = []
 var p = true

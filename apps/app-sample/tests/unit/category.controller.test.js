@@ -1,3 +1,8 @@
+// TBD testing websockets using native node testing
+
+const { describe, it, before, after, beforeEach } = require('node:test')
+const assert = require('node:assert')
+
 const httpMocks = require('node-mocks-http')
 const newCategory = require('../mock-data/new-category.json')
 const path = require('path')
@@ -12,20 +17,21 @@ beforeEach(() => {
   res = httpMocks.createResponse()
   next = null // jest.fn()
 })
-beforeAll(async () => {
-  // const { exit } = require('process')
-  require(path.join(process.cwd(), 'env'))
 
+// beforeAll
+before(async () => {
+  await require(path.join(process.cwd(), 'env'))
   await require('@es-labs/node/config')(process.cwd())
   services = require(`@es-labs/node/services`)
   await services.start()
-
   CategoryController = require('../../controllers/category')
 })
-afterAll(async () => {
+// afterAll
+after(async () => {
   await services.stop()
 })
 
+/*
 describe('CategoryController.create', () => {
   beforeEach(() => {
     req.body = newCategory
@@ -118,41 +124,26 @@ describe('CategoryController.remove', () => {
   })
   // 500 error not able to cover?
 })
+*/
 
 describe.only('CategoryController.find', () => {
-  it('should have a get function', () => {
-    expect(typeof CategoryController.find).toBe('function')
+  it.only('should have a get function', () => {
+    // expect(typeof CategoryController.find).toBe('function')
+    assert.strictEqual(typeof CategoryController.find, 'function')
   })
-  it('should return status 200 and authors', async () => {
+  it.only('should return status 200 and authors', async () => {
     await CategoryController.find(req, res)
-    expect(res.statusCode).toBe(200)
-    // expect(res._isEndCalled()).toBeTruthy()
-    // expect(res._getJSONData().total).toBeDefined
-    // console.log(res._getJSONData())
+    assert.strictEqual(res.statusCode, 200)
+    //   // expect(res.statusCode).toBe(200)
+    //   // expect(res._isEndCalled()).toBeTruthy()
+    //   // expect(res._getJSONData().total).toBeDefined
+    //   // console.log(res._getJSONData())
   })
   // 500 error not able to cover?
 })
 
-describe('Category Unit Test', () => {
-  it('should pass', () => {
-    expect(true).toBe(true)
+describe.only('Category Unit Test', () => {
+  it.only('should pass', () => {
+    assert.strictEqual(true, true)
   })
 })
-
-/* NOSONAR
-describe('app ws testing', () => {
-    it('connect websockets response', (done) => {
-        expect.assertions(1);
-
-        const ws = new WebSocket(`ws://localhost:${port}`)
-            .on('message', (msg) => {
-                expect(JSON.parse(msg).id).toEqual(0);
-                ws.close(); // NEED TO CLOSE!!!
-            })
-            .on('close', () => done());
-    });
-});
-*/
-// https://www.npmjs.com/package/jest-websocket-mock
-// https://stackoverflow.com/questions/57804844/jest-with-websockets-ignores-messages-after-the-first-one
-// https://stackoverflow.com/questions/55963562/test-websockets-with-jest

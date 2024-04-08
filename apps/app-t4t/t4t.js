@@ -117,7 +117,6 @@ module.exports = express.Router()
     if (page < 1) page = 1
     let rv = { results: [], total: 0 }
     let rows
-    let where = {} // for mongo
     let query = null // for knex
     let sort = []
 
@@ -199,62 +198,6 @@ module.exports = express.Router()
         rows = await query.clone().column(...columns).orderBy(sorter).limit(limit).offset((page > 0 ? page - 1 : 0) * limit)
         rows = rows.map((row) => kvDb2Col(row, joinCols))
       }
-    } else { // mongo
-      // TODO Joins for MongoDB
-      //   db.orders.aggregate([
-      //     { $match: { <query> } },
-      //     { $skip: <positive integer> },
-      //     { $limit: <positive integer> },
-      //     {
-      //        $lookup: {
-      //           from: "items",
-      //           localField: "item",    // field in the orders collection
-      //           foreignField: "item",  // field in the items collection
-      //           as: "fromItems"
-      //        }
-      //     },
-      //     { $sort: { <field1>: <sort order>, <field2>: <sort order> ... } },
-      //     // { $project: { fromItems: 0 } }
-      //  ])
-      sort = sorter && sorter.length ? [ [sorter[0].column, sorter[0].order === 'asc' ? 1 : -1] ] : []
-      const or = [] // { "$or" : [] }
-      const and = [] // { "$and" : [] }
-      for (filter of filters) {
-        const key = filter.key
-        const op = filter.op
-        // TRANSFORM INPUT
-        const val = table.cols[key].type === 'integer' || table.cols[key].type === 'number' ? Number(filter.val)
-          : table.cols[key].type === 'datetime' || table.cols[key].type === 'date' || table.cols[key].type === 'time' ? new Date(filter.val)
-          : filter.val
-        let exp
-        if (op === '=') exp = { [key]: val }
-        else if (op === 'like') exp = { [key]: { $regex: val, $options: 'i' } }
-        else if (op === '!=') exp = { [key]: { $ne: val } }
-        else if (op === '>') exp = { [key]: { $gt: val } } //  TODO type casting?...
-        else if (op === '>=') exp = { [key]: { $gte: val } }
-        else if (op === '<') exp = { [key]: { $lt: val } }
-        else if (op === '<=') exp = { [key]: { $lte: val } }
-        // TODO empty string? null?
-        // else if (op === 'in') exp = {[key]: { $in: val } } // convert val from string to array?
-        if (filter.andOr === 'and') and.push(exp)
-        else or.push(exp)
-      }
-      if (or.length) where['$or'] = or
-      if (and.length) where['$and'] = and
-      // console.log('mongo where', or, and)
-      if (limit === 0 || csv) {
-        rows = await svc.get(table.conn).mongo.db.collection(table.name).find(where).toArray()
-        rv.total = rows.length
-      } else {
-        rv.total = await svc.get(table.conn).mongo.db.collection(table.name).find(where).count()
-        const maxPage = Math.ceil(rv.total / limit)
-        if (page > maxPage) page = maxPage
-        rows = await svc.get(table.conn).mongo.db.collection(table.name).find(where)
-          .sort(sort)
-          .skip((page > 0 ? page - 1 : 0) * limit)
-          .limit(limit)
-          .toArray()
-      }
     }
     if (csv) {
       const parser = new Parser({})
@@ -282,16 +225,6 @@ module.exports = express.Router()
       const query = svc.get(conn).knex(tableName).where(key, 'like', `%${search}%`).orWhere(text, 'like', `%${search}%`)
       if (parentTableColName !== undefined && parentTableColVal !== undefined) query.andWhere(parentTableColName, parentTableColVal) // AND filter - OK
       rows = await query.clone().limit(limit) // TODO orderBy
-    } else { // mongo
-      const filter = {
-        $or: [
-          { [key]: { $regex: search, $options: 'i' } },
-          { [text]: { $regex: search, $options: 'i' } }  
-        ]
-      }
-      if (parentTableColName !== undefined && parentTableColVal !== undefined) filter[parentTableColName] = parentTableColVal // AND filter - OK
-      rows = await svc.get(conn).mongo.db.collection(tableName).find(filter)
-        .limit(Number(limit)).toArray() // TODO sort
     }
     rows = rows.map(row => ({
       key: row[key],
@@ -340,8 +273,6 @@ module.exports = express.Router()
 
       rv = await query.column(...columns).first()
       rv = kvDb2Col(rv, joinCols, linkCols)
-    } else { // mongodb
-      rv = await svc.get(table.conn).mongo.db.collection(table.name).findOne(where)
     }    
     return res.json(rv)  
   })
@@ -395,13 +326,6 @@ module.exports = express.Router()
       if (!count) {
         // do insert ?
       }
-    } else { // mongodb
-      try {
-        if (body._id) delete body._id
-        await svc.get(table.conn).mongo.db.collection(table.name).updateOne(where, { $set: body })
-      } catch (e) {
-        console.error(e.toString())
-      }
     }
     return res.json({count})
   })
@@ -438,8 +362,6 @@ module.exports = express.Router()
       if (rv && rv[0]) { // id
         // disallow link tables input... for creation
       }
-    } else { // mongodb
-      await svc.get(table.conn).mongo.db.collection(table.name).insertOne(body) // rv.insertedId, rv.result.ok
     }
     return res.status(201).json(rv)
   })
@@ -454,10 +376,9 @@ module.exports = express.Router()
     // TODO delete relations junction, do not delete if value is in use...
 
     if (table.pk) { // delete using pk
-      if (table.db === 'knex')
+      if (table.db === 'knex') {
         await svc.get(table.conn).knex(table.name).whereIn('id', ids).delete()
-      else
-        await svc.get(table.conn).mongo.db.collection(table.name).deleteMany({ _id: { $in: ids.map(id => svc.get(table.conn).setId(id)) } })
+      }
     } else { // delete using keys
       const keys = ids.map(id => {
         let id_a = id.split('|')
@@ -468,8 +389,6 @@ module.exports = express.Router()
         }
         if (table.db === 'knex') {
           return svc.get(table.conn).knex(table.name).where(multiKey).delete() 
-        } else {          
-          return { deleteOne: { "filter": multiKey } } // svc.get(table.conn).mongo.db.collection(table.name).deleteOne(multiKey)
         }
       })
       if (table.db === 'knex') {
@@ -542,8 +461,6 @@ for {
             }
             if (table.db === 'knex') {
               writes.push(svc.get(table.conn).knex(table.name).insert(obj))
-            } else {
-              writes.push(svc.get(table.conn).mongo.db.collection(table.name).insertOne(obj))
             }
           } catch (e) {
             errors.push({ line, data: row.join(','), msg: 'Caught exception: ' + e.toString() })

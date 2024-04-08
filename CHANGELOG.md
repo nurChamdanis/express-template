@@ -18,6 +18,12 @@ Always finding new things to implement / improve in this list!
 ### 0.0.5
 - [chore] update README.md
 
+### 0.0.6
+- [chore] remove MongoDB sample & http-proxy-middleware
+- [chore] update @es-labs/node to 0.0.39
+- [chore] update to eslint 9
+- [chore] convert from jest to native node test runner
+
 ### For next sprint / version
 - [feat] add commitizen, add semantic-release?
 - [next-in-pipeline] add more express-jsdoc-swagger to routes
@@ -26,8 +32,8 @@ Always finding new things to implement / improve in this list!
 - [next-in-pipeline] to use Typescript and tsoa ? or use JSDoc?
 - [research] use ESM instead of CJS - https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 - [frontend] aria
-- [iaac-cicd] terraform, GKE, Kubernetes
-- [backend-testing] research websocket testing - https://stackoverflow.com/questions/55963562/test-websockets-with-jest
+- [iaac-cicd] terraform, Kubernetes
+- [backend-testing] research websocket testing
 
 ### For future product improvement
 - [@es-labs/esm/bwc-combobox.js] - enhancement: replace datalist (so can check multiple times on dropdown instead of closing after each check)

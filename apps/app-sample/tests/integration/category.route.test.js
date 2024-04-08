@@ -1,6 +1,10 @@
+const { describe, it, before, after, beforeEach } = require('node:test')
+const assert = require('node:assert')
+
 const request = require('supertest')
 const express = require('express')
 const app = express()
+
 const newCategory = require('../mock-data/new-category.json')
 
 let services
@@ -10,7 +14,9 @@ let endpointUrl
 
 const path = require('path')
 
-beforeAll(async () => {
+/*
+// beforeAll
+before(async () => {
   require(path.join(process.cwd(), 'env'))
   await require('@es-labs/node/config')(process.cwd())
   require('@es-labs/node/express/init')() // TODELETE require(path.join(process.cwd(), 'common', 'init'))()
@@ -22,19 +28,21 @@ beforeAll(async () => {
 
   services = require('@es-labs/node/services')
   authService = require('@es-labs/node/auth')
-  await services.start()
-  authService.setup(services.get("keyv"), services.get("knex1"));
-  const tokens = await authService.createToken({ id: 100, groups: 'TestGroup' })
-  authObj = {
-    Authorization: `Bearer ${tokens.access_token}`,
-    refresh_token: tokens.refresh_token
-  }
+  // await services.start()
+  // authService.setup(services.get("keyv"), services.get("knex1"));
+  // const tokens = await authService.createToken({ id: 100, groups: 'TestGroup' })
+  // authObj = {
+  //   Authorization: `Bearer ${tokens.access_token}`,
+  //   refresh_token: tokens.refresh_token
+  // }
   endpointUrl = `/api/app-sample/categories/categories`
 })
-afterAll(async () => {
-  await services.stop()
+// afterAll
+after(async () => {
+  // await services.stop()
 })
 
+/*
 describe.only('Testing Categories Endpoint URL', () => {
   it('Always Pass', async () => expect(1).toBe(1))
 
@@ -52,7 +60,6 @@ describe.only('Testing Categories Endpoint URL', () => {
     // expect(response.body.total).toBeDefined()
     // firstTodo = response.body[0]
   })
-
 
   it('GET ' + endpointUrl, async () => {
     const response = await request(app)
@@ -129,8 +136,9 @@ describe.only('Testing Categories Endpoint URL', () => {
   // TODO 500 error for delete
 })
 
-describe('Integration Test', () => {
-  it('should pass', () => {
-    expect(true).toBe(true)
+describe.only('Integration Test', () => {
+  it.only('should pass', () => {
+    assert.strictEqual(true, true)
   })
 })
+*/

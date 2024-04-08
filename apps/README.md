@@ -60,9 +60,10 @@ Refer to following files for SPA sample (uses fido2-lib in backend)
 |  |  +- uploads/ : for file uploads
 |  |  +- graphql-schema.js : application GraphQL schemas and resolvers
 |  |  +- dev.sqlite3 : sqlite DB with schema and data
-|  |  +- test-playground.mongodb : mongoDB client VSCode plugin (MongoDB for VS Code - mongodb.mongodb-vscode)
 |  |  +- test.http : rest API commands testing VSCode plugin (Rest Client - humao.rest-client)
 |  |  +- test.py: run python from express
+|  +- .env.dev : on dev server
+|  +- .env.development : on local dev machine
 |  +- .env.sample
 |  +- .gitignore
 |  +- apploader.js
@@ -74,18 +75,15 @@ Refer to following files for SPA sample (uses fido2-lib in backend)
 +- tests/ : Jest tests for expressjs
 +- .dockerignore
 +- .editorconfig
-+- .env.sample
-+- .env.dev : on dev server
-+- .env.development : on local dev machine
-+- .eslintrc.js
 +- .gitignore
 +- app.js : the express app boilerplate
 +- CHANGELOG.md
 +- deploy.sh: TODO deployment script
 +- Dockerfile
 +- ecosystem.config.js: for pm2
++- env.js
++- eslint.config.js
 +- index.js
-+- jest.config.js: JEST testing
 +- LICENCE
 +- package.json
 +- README.md

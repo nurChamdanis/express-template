@@ -5,11 +5,7 @@
 + <env>.gcp.json (need to create your own)
 + <env>.gcp.cors.json (need to create your own)
 + <env>.pem (need to create your own)
-+ db (example running scripts used to populate knex-supported db and mongodb)
-  + knex
-  + mongo
-  + icc.json
-  + state.json
++ db (example running scripts used to populate knex-supported db)
 
 
 ### <env>.gcp.json Example
@@ -74,7 +70,3 @@ No longer in use...
 "knex": "cross-env NODE_ENV=%npm_package_config_env% npx knex migrate:latest --knexfile=deploy/knexfile.js && cross-env NODE_ENV=%npm_package_config_env% npx knex seed:run --knexfile=deploy/knexfile.js"
 }
 ```
-
-## MongoDB
-
-N.A.

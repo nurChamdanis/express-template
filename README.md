@@ -81,11 +81,6 @@ If need to **migrate** and **seed**, refer to `dbdeploy` package in `tools` work
 
 **NOTES**
 
-- Mongo DB
-
-  - MongoDB sample codes needs MongoDB to work
-  - If some env entries are not present there maybe some console log errors (but it is ok to ignore) and websockets will not work. Quick start is still usable. Use the README.md to fill up
-
 - No bundler frontend
   - import only vue & vue-router at index.html, pure vanilla JS no webpack or other bundler
   - export const store = reactive({}) used [instead of Vuex](https://pinia.vuejs.org/introduction.html#Why-should-I-use-Pinia)

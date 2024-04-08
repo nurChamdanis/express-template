@@ -10,7 +10,7 @@ module.exports = {
   export: true,
   multiSelect: true, // multiple selection
   cols: {
-    id: { // primary key column, _id for mongodb (can cause error in mongodb)
+    id: { // primary key column
       label: 'ID',
       auto: 'pk',
       hide: true,
