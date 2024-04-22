@@ -48,7 +48,6 @@ const authService = require('@es-labs/node/auth')
 const cleanup = async (message, exitCode = 0, coreDump = false, timeOutMs = 1000) => {
   console.log(message)
   console.log(`
-  nodemon win & bash - can see messages
   node win - cannot see messages
   node bash - can see messages
   `)

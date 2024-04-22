@@ -26,24 +26,21 @@
     "npm": ">=9"
   },
   "scripts": {
-    "prepare": "git config core.hooksPath ./git-hooks || echo 'Can not set git hooks'",
+    "app": "node --trace-warnings --watch --watch-path=./apps index.js",
+    "build:lib": "npm i @es-labs/node@latest",
     "git:hash": "git rev-parse --verify --short HEAD",
     "git:branch": "git rev-parse --abbrev-ref HEAD",
-    "start": "NODE_ENV=development npm run app",
-    "start:win": "set NODE_ENV=development&&npm run app",
-    "build:lib": "npm i @es-labs/node@latest",
-    "dev": "NODE_ENV=development PORT=3001 DEBUG=app:* nodemon --ignore tests/ --ignore apps/app-sample/public/ --watch src bin/www",
-    "dev:win": "set NODE_ENV=development PORT=3001 DEBUG=app:* nodemon --ignore tests/ --ignore apps/app-sample/public/ --watch src bin/www",
-    "app": "nodemon --trace-warnings index.js",
-    "app:lint": "nodemon --ignore tests/ --ignore apps/app-sample/public/ --exec \"npm run lint && node\" index.js",
-    "test:native": "NODE_ENV=development node --test --test-only",
-    "test:win": "set NODE_ENV=development&&node --test --test-only",
-    "test:env:win": "set EDITOR=vim && echo $EDITOR",
     "lint": "eslint .",
     "lint:fix": "eslint --fix --no-fix-warnings --no-report-warnings .",
-    "update-commit-hash": "git rev-parse --verify --short HEAD > commit-hash",
-    "prettier:check": "prettier --write apps/**/*.{js,json}",
-    "prettier:write": "prettier --write apps/**/*.{js,json}"
+    "prepare": "git config core.hooksPath ./git-hooks || echo 'Can not set git hooks'",
+    "prettier:check": "prettier --check apps/**/*.{js,json}",
+    "prettier:write": "prettier --write apps/**/*.{js,json}",
+    "start": "NODE_ENV=development npm run app",
+    "start:win": "set NODE_ENV=development&&npm run app",
+    "test": "NODE_ENV=development node --test --test-only",
+    "test:win": "set NODE_ENV=development&&node --test --test-only",
+    "test:env:win": "set EDITOR=vim && echo $EDITOR",
+    "update-commit-hash": "git rev-parse --verify --short HEAD > commit-hash"
   },
   "dependencies": {
     "@es-labs/esm": "^0.0.21",
@@ -55,9 +52,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
-    "eslint": "^9.0.0",
+    "eslint": "^9.1.0",
     "node-mocks-http": "^1.14.1",
-    "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
     "supertest": "^6.3.4"
   }
