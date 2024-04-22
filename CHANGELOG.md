@@ -23,6 +23,7 @@ Always finding new things to implement / improve in this list!
 - [chore] update @es-labs/node to 0.0.39
 - [chore] update to eslint 9
 - [chore] convert from jest to native node test runner
+- [chore] remove nodemon, use native --watch instead
 
 ### For next sprint / version
 - [feat] add commitizen, add semantic-release?
