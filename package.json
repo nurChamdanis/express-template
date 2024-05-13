@@ -52,9 +52,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
-    "eslint": "^9.1.0",
+    "eslint": "^9.2.0",
     "node-mocks-http": "^1.14.1",
-    "prettier": "^3.2.5",
-    "supertest": "^6.3.4"
+    "prettier": "^3.2.5"
   }
 }
