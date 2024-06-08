@@ -40,6 +40,7 @@
     "test": "NODE_ENV=development node --test --test-only",
     "test:win": "set NODE_ENV=development&&node --test --test-only",
     "test:env:win": "set EDITOR=vim && echo $EDITOR",
+    "test:e2e": "start-server-and-test start http://localhost:8080 test",
     "update-commit-hash": "git rev-parse --verify --short HEAD > commit-hash"
   },
   "dependencies": {
@@ -54,6 +55,7 @@
     "@eslint/js": "^9.0.0",
     "eslint": "^9.4.0",
     "node-mocks-http": "^1.14.1",
-    "prettier": "^3.3.0"
+    "prettier": "^3.3.1",
+    "start-server-and-test": "^2.0.4"
   }
 }
