@@ -57,10 +57,11 @@ git pull upstream <branch or tag> --no-rebase
 git clone https://github.com/es-labs/express-template.git
 cd express-template
 npm i
-cd apps/<your custom development folder> default is `app-sample`
+cd apps
 npm i
+# Note your custom development folder is `<project root>/apps/app-sample`
 
-cd ../../.. # go back up
+cd .. # go back up
 npm run start # see ./package.json scripts
 # windows npm run start:win
 
