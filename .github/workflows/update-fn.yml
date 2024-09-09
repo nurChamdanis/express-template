@@ -6,12 +6,27 @@ on:
     inputs:
       fn_servicename:
         description: 'service name'
-        default: 'btv-finance-fc'
+        default: 'btv-binance-fc'
         required: true
       fn_functionname:
         description: 'function name'
         default: ''
         required: true
+      mode:
+        default: 'AK'
+        description: 'Aliyun CLI Authentication mode, valid vaules are [AK|StsToken] here'
+      region:
+        default: 'ap-southeast-1'
+        required: true
+        description: 'Region of your service, e.g. ap-southeast-1'
+      # access-key-id:
+      #   required: true
+      #   description: 'Access key ID of your account'
+      # access-key-secret:
+      #   required: true
+      #   description: 'Secret of the access key'
+      # sts-token:
+      #   description: 'StsToken, required in StsToken mode'
 jobs:
   update_function:
     runs-on: ubuntu-latest
@@ -27,4 +42,14 @@ jobs:
         run: |
           which aliyun
           aliyun version
+          command="aliyun configure set \
+            --mode ${{ github.event.inputs.mode }} \
+            --region ${{ github.event.inputs.region }} \
+            --access-key-id ${{ secrets.AK_ID }} \
+            --access-key-secret ${{ secrets.AK_SECRET }}"
+          if [ -n "${{ inputs.sts-token }}" ]; then
+            command="${command} --sts-token ${{ inputs.sts-token }}"
+          fi
+          $command
+
 # aliyun fc-open PUT /2021-04-06/services/testServiceName/functions/testFunctionName --body "{\"description\":\"update function\"}"
