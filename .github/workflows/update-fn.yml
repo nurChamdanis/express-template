@@ -1,0 +1,29 @@
+name: Update Function
+
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      fn_servicename:
+        description: 'service name'
+        default: 'btv-finance-fc'
+        required: true
+      fn_functionname:
+        description: 'function name'
+        default: ''
+        required: true
+jobs:
+  update_function:
+    runs-on: ubuntu-latest
+    name: Updating Function
+    steps:
+      - name: Service & Function Names
+        run: |
+          echo ${{ github.event.inputs.fn_servicename }}
+          echo ${{ github.event.inputs.fn_functionname }}
+      - name: Update Function
+        uses: aliyun/setup-aliyun-cli-action@v1
+        run: |
+          which aliyun
+          aliyun version
+# aliyun fc-open PUT /2021-04-06/services/testServiceName/functions/testFunctionName --body "{\"description\":\"update function\"}"
