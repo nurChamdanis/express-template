@@ -21,8 +21,9 @@ jobs:
         run: |
           echo ${{ github.event.inputs.fn_servicename }}
           echo ${{ github.event.inputs.fn_functionname }}
-      - name: Update Function
+      - name: Install Aliyun Cli
         uses: aliyun/setup-aliyun-cli-action@v1
+      - name: Update Function
         run: |
           which aliyun
           aliyun version
