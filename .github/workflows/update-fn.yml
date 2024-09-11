@@ -4,13 +4,17 @@ on:
   workflow_dispatch:
     # Inputs the workflow accepts.
     inputs:
+      fn_csp:
+        description: 'Cloud Service Provider - aliyun, azure, aws, digitalocean, gcp'
+        default: 'aliyun'
+        required: true
       fn_servicename:
         description: 'service name'
         default: 'btv-binance-fc'
         required: true
       fn_functionname:
         description: 'function name'
-        default: ''
+        default: 'fc-test-api'
         required: true
       mode:
         default: 'AK'
@@ -19,18 +23,23 @@ on:
         default: 'ap-southeast-1'
         required: true
         description: 'Region of your service, e.g. ap-southeast-1'
-      # access-key-id:
-      #   required: true
-      #   description: 'Access key ID of your account'
-      # access-key-secret:
-      #   required: true
-      #   description: 'Secret of the access key'
+      ak_id:
+        description: 'Access key ID of your account (optional)'
+        required: false
+      ak_secret:
+        description: 'Access key Secret of your account (optional)'
+        required: false
       # sts-token:
       #   description: 'StsToken, required in StsToken mode'
+env:
+  AK_ID: ${{ github.event.inputs.ak_id || secrets.AK_ID }}
+  AK_SECRET: ${{ github.event.inputs.ak_secret || secrets.AK_SECRET }}
 jobs:
   update_function:
+    #vif: vars.BUCKET_TYPE == 'oss'
+    # name: Deploying To Aliyun OSS - Node Version TBD
     runs-on: ubuntu-latest
-    name: Updating Function
+    name: Updating Function - Aliyun
     steps:
       - name: Service & Function Names
         run: |
@@ -45,11 +54,10 @@ jobs:
           command="aliyun configure set \
             --mode ${{ github.event.inputs.mode }} \
             --region ${{ github.event.inputs.region }} \
-            --access-key-id ${{ secrets.AK_ID }} \
-            --access-key-secret ${{ secrets.AK_SECRET }}"
-          if [ -n "${{ inputs.sts-token }}" ]; then
-            command="${command} --sts-token ${{ inputs.sts-token }}"
+            --access-key-id $AK_ID \
+            --access-key-secret $AK_SECRET"
+          if [ -n "${{ github.event.inputs.sts-token }}" ]; then
+            command="${command} --sts-token ${{ github.event.inputs.sts-token }}"
           fi
           $command
-
-# aliyun fc-open PUT /2021-04-06/services/testServiceName/functions/testFunctionName --body "{\"description\":\"update function\"}"
+          # aliyun fc-open PUT /2021-04-06/services/${{ github.event.inputs.fn_servicename }}/functions/${{ github.event.inputs.fn_functionname }} --body "{\"description\":\"update function\"}"
