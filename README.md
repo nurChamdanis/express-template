@@ -62,11 +62,11 @@ npm i
 # Note your custom development folder is `<project root>/apps/app-sample`
 
 cd .. # go back up
-npm run start # see ./package.json scripts
-# windows npm run start:win
+npm run local # see ./package.json scripts
+# For Windows OS: npm run local:win
 
-# OR to include eslint checks - linux
-NODE_ENV=development npm run app:lint # ok?
+# OR to run eslint checks - linux
+NODE_ENV=development npm run lint
 ```
 
 Local development sample sqlite DB `apps/app-sample/dev.sqlite3` already created and populated

@@ -7,8 +7,8 @@ let sqldb
 
 require('../env')
 
-if (false) {
-
+const RUN_TEST = false
+if (RUN_TEST) {
 
 before(async () => {
   await require('@es-labs/node/config')(process.cwd())
