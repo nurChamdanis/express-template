@@ -60,4 +60,4 @@ jobs:
             command="${command} --sts-token ${{ github.event.inputs.sts-token }}"
           fi
           $command
-          # aliyun fc-open PUT /2021-04-06/services/${{ github.event.inputs.fn_servicename }}/functions/${{ github.event.inputs.fn_functionname }} --body "{\"description\":\"update function\"}"
+          # aliyun fc-open PUT /2021-04-06/services/${{ github.event.inputs.fn_servicename }}/functions/${{ github.event.inputs.fn_functionname }} --body "{\"timeout\": \"62\"}"
