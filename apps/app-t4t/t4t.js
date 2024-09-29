@@ -241,9 +241,7 @@ module.exports = express.Router()
     if (table.db === 'knex') {
       let columns = [`${table.name}.*`]
       if (table.select) columns = table.select.split(',') // custom columns... TODO need to add table name?
-  
-      let query = svc.get(table.conn).knex(table.name).where(where)
-  
+      let query = svc.get(table.conn).knex(table.name).where(where)  
       const joinCols = {}
       const linkCols = {}
       for (let key in table.cols) {
@@ -277,7 +275,12 @@ module.exports = express.Router()
     return res.json(rv)  
   })
 
-  .patch('/update/:table/:id?', authUser, generateTable, storageUpload(UPLOAD_STATIC[0]).any(), processJson, async (req, res) => {
+  .patch('/update/:table/:id?',
+    authUser,
+    generateTable,
+    storageUpload(UPLOAD_STATIC[0]).any(),
+    processJson,
+    async (req, res) => {
     const { body, table } = req
     const where = formUniqueKey(table, req.query.__key)
     let count = 0
