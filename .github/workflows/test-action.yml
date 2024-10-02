@@ -22,7 +22,7 @@ jobs:
         node-version: [18.x]
     steps:
       - name: Testing
-        uses: ./.github/myactions/make-tag.yml
+        uses: ./.github/myactions/make-tag
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
