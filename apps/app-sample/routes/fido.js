@@ -8,7 +8,6 @@
 // https://github.com/webauthn-open-source/fido2-lib
 
 const express = require('express')
-// NOSONAR const base64url = require('base64url') // TOREMOVE in Node 16 LTS - use Buffer.from('hello world', 'base64url')
 const { Fido2Lib } = require("fido2-lib")
 
 const b64_b64url = (inStr) => inStr.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
