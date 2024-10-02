@@ -21,6 +21,8 @@ jobs:
       matrix:
         node-version: [18.x]
     steps:
+      - name: Add checkout plugin
+        uses: actions/checkout@v3
       - name: Testing
         uses: ./../.github/myactions/make-tag
       - name: Use Node.js ${{ matrix.node-version }}
