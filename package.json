@@ -26,7 +26,8 @@
     "npm": ">=9"
   },
   "scripts": {
-    "app": "node --trace-warnings --watch --watch-path=./apps index.js",
+    "app": "node --trace-warnings index.js",
+    "app:watch": "node --trace-warnings --watch --watch-preserve-output --watch-path=./apps index.js",
     "build:lib": "npm i @es-labs/node@latest",
     "git:hash": "git rev-parse --verify --short HEAD",
     "git:branch": "git rev-parse --abbrev-ref HEAD",
@@ -49,12 +50,13 @@
     "esm": "^3.2.25",
     "express": "^4.21.0",
     "express-jsdoc-swagger": "^1.8.0",
+    "mysql": "^2.18.1",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
-    "eslint": "^9.11.1",
-    "node-mocks-http": "^1.16.0",
+    "eslint": "^9.12.0",
+    "node-mocks-http": "^1.16.1",
     "prettier": "^3.3.3",
     "start-server-and-test": "^2.0.8"
   }

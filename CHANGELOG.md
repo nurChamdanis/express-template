@@ -25,7 +25,7 @@ Always finding new things to implement / improve in this list!
 - [chore] convert from jest to native node test runner
 - [chore] remove nodemon, use native --watch instead
 
-### 0.0.6
+### 0.0.7
 - [chore] update README.md, update dependencies, removed base64url package
 - [chore] improve table editor app
 

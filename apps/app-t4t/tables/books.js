@@ -64,7 +64,6 @@ module.exports = {
         parentCol: '', // use column to get parent value affecting a child
         parentTableColName: '', // the column name in the parent table
         childCol: '', // affect child column in this table
-        dbName: 'knex',
         conn: 'knex1',
         tableName: 'categories',
         limit: 8,
@@ -88,7 +87,6 @@ module.exports = {
         parentCol: '',
         parentTableColName: '',
         childCol: '',
-        dbName: 'knex',
         conn: 'knex1',
         tableName: 'authors',
         limit: 8,

@@ -36,7 +36,7 @@ import { downloadData } from '/esm/util.js'
 
 const { onMounted, ref, reactive } = Vue
 
-const tableName = 'person' // country, person
+const tableName = 'books' // country, person
 
 export default {
   template,

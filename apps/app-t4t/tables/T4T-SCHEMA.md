@@ -1,11 +1,19 @@
-// for UI usage only...
-module.exports = {
+### NOTE: removed
+- country.js
+- state.js
+- person.js
+- grade.js
+
+### Reference
+
+```js
+{
   db: 'knex',
   conn: 'knex1',
-  name: 'pages',
+  name: 'authors',
   create: true,
   update: true,
-  delete: -1,
+  delete: 0,
   import: true,
   export: true,
   multiSelect: true, // multiple selection
@@ -14,38 +22,30 @@ module.exports = {
       label: 'ID',
       auto: 'pk',
       hide: true,
-      add: 'hide',
+      add: 'readonly',
       edit: 'readonly'
     },
-    content: {
-      label: 'Content',
+    name: {
+      label: 'Name',
+      type: 'string', // string, integer, number, date, time, datetime
+      filter: true,
+      default: '',
+      ui: { // for UI
+        tag: 'input'
+      },
+      rules: { // for rules
+
+      }
+    },
+    avatar: {
+      label: 'Avatar',
       type: 'string',
       filter: true,
       default: '',
       ui: {
-        tag: 'input'
+        tag: 'input',
+        // attrs: { type: 'file' }
       },
-    },
-    bookId: {
-      label: 'Book', // need to check on auto complete
-      type: 'integer', // string
-      filter: true,
-      options: {
-        parentCol: '', // use column to get parent value affecting a child
-        parentTableColName: '', // the column name in the parent table
-        childCol: '', // affect child column in this table
-        conn: 'knex1',
-        tableName: 'books',
-        limit: 8,
-        strict: true, // cannot enter own values, must be selected
-        key: 'id',
-        text: 'name'
-      },
-      ui: {
-        tag: 'bwc-combobox', // input
-        valueType: 'text',
-        writeType: 'key',
-      }
     },
     created_at: {
       label: 'Created At',
@@ -71,3 +71,5 @@ module.exports = {
   nonAuto: []
   // {id: 1, name: 'book1', categoryId: 1, rating: 5, yearPublished: '2004', created_at: mkDt() },
 }
+```
+

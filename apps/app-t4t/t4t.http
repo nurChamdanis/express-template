@@ -1,0 +1,77 @@
+## http testing for t4t
+# tables
+# books
+# categories
+# authors
+# pages
+
+## Variables
+@table = person
+@url = http://127.0.0.1:3000/api/t4t
+
+### Get table config info
+#
+GET {{url}}/config/{{table}}
+Content-Type: application/json
+
+### autocomplete
+#
+GET {{url}}/{{table}}/autocomplete
+Content-Type: application/json
+
+{
+  "limit": 20,
+  "key": "key",
+  "text": "text",
+  "search": "search_value",
+  "parentTableColName": "",
+  "parentTableColVal": ""
+}
+
+### List records
+# page: is 1 based
+# filters: ignore where col === null, sort it 'or' first then 'and' // [ { col, op, val, andOr } ]
+# sorter: [ { column, order: 'asc' } ] / [] order = asc, desc
+# csv: ''
+#
+GET {{url}}/find/{{table}}?page=1&limit=25&filters=&sorter=&csv=
+Content-Type: application/json
+
+
+### Get one record
+# can find: __key=first|last
+# cant find: __key=first|loo
+GET {{url}}/find-one/{{table}}?__key=first|last
+Content-Type: application/json
+
+
+#### Update a record 
+# able to upload files also
+# TBD how is key formed
+PATCH {{url}}/update/{{table}}?__key=first|last
+Content-Type: application/json
+
+{
+  "remarks": "hello world 93"
+}
+
+### Create a record
+POST {{url}}/create/{{table}}
+Content-Type: application/json
+
+{
+}
+
+### Delete record / records
+
+POST {{url}}/remove/{{table}}
+Content-Type: application/json
+
+{
+  "ids": []
+}
+
+### TBD UPLOAD CSV
+
+POST {{url}}/upload/{{table}}
+# csv-file

@@ -1,5 +1,17 @@
 # Deployment Configs & Files
 
+## Alicloud
+
+### Function Compute
+
+### ECI
+
+## AWS
+
+### Lambda
+
+### Fargate
+
 ## Files & Folders
 
 + <env>.gcp.json (need to create your own)
@@ -56,17 +68,4 @@ For SSH to VM
 
 # DB Migration & Seeds
 
-## Knex
-
-No longer in use...
-
-```json
-{
-"db:migrate:make": "knex migrate:make",
-"db:migrate": "knex migrate:latest",
-"db:migrate:rollback": "knex migrate:rollback",
-"db:seed:make": "knex seed:make",
-"db:seed": "knex seed:run",
-"knex": "cross-env NODE_ENV=%npm_package_config_env% npx knex migrate:latest --knexfile=deploy/knexfile.js && cross-env NODE_ENV=%npm_package_config_env% npx knex seed:run --knexfile=deploy/knexfile.js"
-}
-```
+If need to **migrate** and **seed**, refer to `dbdeploy` package in `tools` workspace of [https://github.com/es-labs/jscommon]()

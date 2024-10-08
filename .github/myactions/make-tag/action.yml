@@ -22,3 +22,12 @@ runs:
         calculatedSha=$(git rev-parse --short ${{ github.sha }})
         echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
       shell: bash
+    # - name: Set Greeting
+    #   run: echo "Hello $INPUT_WHO_TO_GREET."
+    #   shell: bash
+    #   env:
+    #     INPUT_WHO_TO_GREET: ${{ inputs.who-to-greet }}
+    # - name: Random Number Generator
+    #   id: random-number-generator
+    #   run: echo "random-number=$(echo $RANDOM)" >> $GITHUB_OUTPUT
+    #   shell: bash
