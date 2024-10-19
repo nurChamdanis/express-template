@@ -136,7 +136,7 @@ export default {
     onMounted(async () => {
       // addEventListener('testevent', (e) => console.log('testevent', e), true)
       console.log('ui2 mounted!')
-      t4t.setTableName('person')
+      t4t.setTableName('student')
       // form.config = await t4t.getConfig()
       // form.record = await t4t.findOne('5f3a35197dc9e61b64e0dea9')
       // Object.assign(test, form.config)

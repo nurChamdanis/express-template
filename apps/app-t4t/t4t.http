@@ -6,16 +6,20 @@
 # pages
 
 ## Variables
-@table = person
+@table = country
 @url = http://127.0.0.1:3000/api/t4t
 
+# ----------------------------------------
+
+### Healthcheck
+GET {{url}}/healthcheck
+Content-Type: application/json
+
 ### Get table config info
-#
 GET {{url}}/config/{{table}}
 Content-Type: application/json
 
 ### autocomplete
-#
 GET {{url}}/{{table}}/autocomplete
 Content-Type: application/json
 
@@ -30,18 +34,21 @@ Content-Type: application/json
 
 ### List records
 # page: is 1 based
-# filters: ignore where col === null, sort it 'or' first then 'and' // [ { col, op, val, andOr } ]
-# sorter: [ { column, order: 'asc' } ] / [] order = asc, desc
+# filters: ignore where key === null, sort it 'or' first then 'and' // [ { key, op, val, andOr } ]
+# sorter: [ { column: 'name', order: 'asc' } ] / [] order = asc, desc
 # csv: ''
 #
-GET {{url}}/find/{{table}}?page=1&limit=25&filters=&sorter=&csv=
+GET {{url}}/find/{{table}}?page=1&limit=25
+# GET {{url}}/find/{{table}}?page=1&limit=25&filters=&sorter=[{ "column": "id", "order": "desc" }]&csv=
+# GET {{url}}/find/{{table}}?page=1&limit=25&filters=[{ "key": "id", "op": ">", "val": 100 }]&sorter=&csv=
 Content-Type: application/json
 
 
 ### Get one record
 # can find: __key=first|last
 # cant find: __key=first|loo
-GET {{url}}/find-one/{{table}}?__key=first|last
+GET {{url}}/find-one/{{table}}?__key=1
+# GET {{url}}/find-one/{{table}}?__key=first|last
 Content-Type: application/json
 
 
@@ -75,3 +82,25 @@ Content-Type: application/json
 
 POST {{url}}/upload/{{table}}
 # csv-file
+
+
+### Create a record
+POST {{url}}/create/country
+Content-Type: application/json
+
+{
+  "code": "XX",
+  "name": "Xavierland"
+}
+
+### Get one record
+GET {{url}}/find-one/country?__key=241
+Content-Type: application/json
+
+###
+POST {{url}}/remove/country
+Content-Type: application/json
+
+{
+  "ids": [242]
+}

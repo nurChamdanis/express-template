@@ -1,0 +1,41 @@
+conn: knex1
+name: categories
+create: true
+update: true
+delete: -1
+import: true
+export: true
+multiSelect: true
+cols:
+  id:
+    label: ID
+    auto: pk
+    hide: true
+    add: readonly
+    edit: readonly
+  name:
+    label: Name
+    type: string
+    filter: true
+    add: ''
+    edit: ''
+    default: ''
+    ui:
+      tag: input
+  created_at:
+    label: Created At
+    auto: ts
+    hide: true
+    add: hide
+    edit: readonly
+  updated_at:
+    label: Updated At
+    auto: ts
+    hide: true
+    add: hide
+    edit: readonly
+pk: ''
+multiKey: []
+required: []
+auto: []
+nonAuto: []

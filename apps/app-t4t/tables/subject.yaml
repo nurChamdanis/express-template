@@ -1,0 +1,29 @@
+conn: knex1 # connection name
+name: subject # table name
+create: true
+update: true
+delete: 0
+import: true
+export: true
+multiSelect: false
+cols:
+  # id:
+  #   label: ID
+  #   # add: readonly
+  #   edit: readonly
+  code:
+    label: Code
+    type: string
+    edit: readonly
+    multiKey: true
+  name:
+    label: Name
+    type: string
+  passingGrade:
+    label: Passing Grade
+    type: string
+pk: ''
+multiKey: []
+required: []
+auto: []
+nonAuto: []

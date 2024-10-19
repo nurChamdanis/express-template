@@ -45,17 +45,18 @@
     "update-commit-hash": "git rev-parse --verify --short HEAD > commit-hash"
   },
   "dependencies": {
-    "@es-labs/esm": "^0.0.22",
-    "@es-labs/node": "^0.0.41",
+    "@es-labs/esm": "^0.0.23",
+    "@es-labs/node": "^0.0.42",
     "esm": "^3.2.25",
-    "express": "^4.21.0",
+    "express": "^4.21.1",
     "express-jsdoc-swagger": "^1.8.0",
+    "js-yaml": "^4.1.0",
     "mysql": "^2.18.1",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
-    "eslint": "^9.12.0",
+    "eslint": "^9.13.0",
     "node-mocks-http": "^1.16.1",
     "prettier": "^3.3.3",
     "start-server-and-test": "^2.0.8"

@@ -62,6 +62,7 @@ Refer to following files for SPA sample (uses fido2-lib in backend)
 |  |  +- dev.sqlite3 : sqlite DB with schema and data
 |  |  +- test.http : rest API commands testing VSCode plugin (Rest Client - humao.rest-client)
 |  |  +- test.py: run python from express
+|  +- app-t4t/ : universal database interface application
 |  +- .env.dev : on dev server
 |  +- .env.development : on local dev machine
 |  +- .env.sample

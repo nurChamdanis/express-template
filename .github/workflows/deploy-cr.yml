@@ -29,14 +29,14 @@ on:
         description: 'git repo branch or tag'
         default: 'main'
         required: true
-      tag_ci:
-        description: 'container image tag'
-        default: 'latest'
-        required: true
       cr_imagename:
         description: 'container image name - leave blank to use GITHUB variables (if specified) or repo name'
         default: ''
         required: false
+      tag_ci:
+        description: 'container image tag'
+        default: 'latest'
+        required: true
       dockerfile_path:
         description: 'path to dockerfile'
         default: '.'
@@ -58,8 +58,13 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploying CR
     steps:
-      - name: Selected Branch/tag
-        run: echo ${{ github.event.inputs.tag_gr }}
+      - name: Workflow Inputs
+        run: |
+          echo "branch/tag: ${{ github.event.inputs.tag_gr }}"
+          echo "image name: ${{ github.event.inputs.cr_imagename }}"
+          echo "image tag: ${{ github.event.inputs.tag_ci }}"
+          echo "docker file path: ${{ github.event.inputs.dockerfile_path }}"
+          echo "environment: ${{ github.event.inputs.cr_env }}"
       - name: Add checkout plugin
         uses: actions/checkout@v3
         with:

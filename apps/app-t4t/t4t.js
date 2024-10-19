@@ -3,7 +3,9 @@
 // TODO use __key instead of key
 // TBD - DB set user For Audit Logs
 const express = require('express')
-// const fs = require('fs')
+const path = require('path')
+const fs = require('fs')
+const yaml = require('js-yaml')
 const csvParse = require('csv-parse')
 const { Parser } = require('@json2csv/plainjs')
 
@@ -11,7 +13,7 @@ const svc = require('@es-labs/node/services')
 const { validateColumn } = require('esm')(module)('@es-labs/esm/t4t-validate')
 const { memoryUpload, storageUpload } = require('@es-labs/node/express/upload')
 
-const { UPLOAD_STATIC, UPLOAD_MEMORY } = process.env
+const { TABLE_CONFIGS_FOLDER_PATH, UPLOAD_STATIC, UPLOAD_MEMORY } = process.env
 
 // const { authUser } = require('@es-labs/node/auth')
 const mockAuthUser = async (req, res, next) => {
@@ -41,8 +43,10 @@ const processJson = async (req, res, next) => {
 async function generateTable (req, res, next) { // TODO get config info from a table
   try {
     const tableKey = req.params.table // 'books' // its the table name also
-    const ref = require(`./tables/${tableKey}.js`) // get table from a file...
-    req.table = JSON.parse(JSON.stringify(ref))
+    // const docPath = path.resolve(__dirname, `./tables/${tableKey}.yaml`)
+    const docPath = TABLE_CONFIGS_FOLDER_PATH + `${tableKey}.yaml`
+    const doc = yaml.load(fs.readFileSync(docPath, 'utf8'));
+    req.table = JSON.parse(JSON.stringify(doc))
 
     const acStr = '/autocomplete'
     const acLen = acStr.length
@@ -113,7 +117,7 @@ function kvDb2Col (row, joinCols, linkCols) { // a key value from DB to column
 }
 
 module.exports = express.Router()
-  .get('/test', (req, res) => res.send('t4t ok'))
+  .get('/healthcheck', (req, res) => res.send('t4t ok - 0.0.1'))
 
   .post('/:table/autocomplete', generateTable, async (req, res) => {
     let rows = {}
@@ -221,6 +225,7 @@ module.exports = express.Router()
         }
       }
   
+      console.log('ssss', sorter)
       rows = await query.clone().column(...columns).orderBy(sorter).limit(limit).offset((page > 0 ? page - 1 : 0) * limit)
       rows = rows.map((row) => kvDb2Col(row, joinCols))
     }

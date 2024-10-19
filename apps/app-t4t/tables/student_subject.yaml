@@ -1,0 +1,30 @@
+conn: knex1
+name: student_subject
+create: false
+update: false
+delete: 0
+import: false
+export: false
+multiSelect: false
+cols:
+  studentId:
+    label: Student ID
+    add: readonly
+    edit: readonly
+    multiKey: true
+  subjectCode:
+    label: Subject Code
+    add: readonly
+    edit: readonly
+    multiKey: true
+  gradeFinal:
+    label: Final Grade
+    type: string
+  gradeDate:
+    label: Graded On
+    type: string # date
+pk: ''
+multiKey: []
+required: []
+auto: []
+nonAuto: []
