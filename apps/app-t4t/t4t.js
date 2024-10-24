@@ -1,7 +1,9 @@
 'use strict'
 // table for tables
-// TODO use __key instead of key
+// Test access rights
+// in progress: use __key instead of key
 // TBD - DB set user For Audit Logs
+// auto detect yaml / json
 const express = require('express')
 const path = require('path')
 const fs = require('fs')
@@ -104,15 +106,30 @@ function mapRelation (key, col) {
   return null
 }
 
-function kvDb2Col (row, joinCols, linkCols) { // a key value from DB to column
-  for (let k in joinCols) {
-    const v = joinCols[k]
-    row[k] = { key: row[k], text: row[v] }
-    delete row[v]
+function kvDb2Col (row, joinCols, linkCols, tableCols) { // a key value from DB to column
+  for (let k in row) {
+    if (tableCols[k].hide === 'omit') delete row[k]
+    else {
+      if (joinCols[k]) {
+        const v = joinCols[k]
+        row[k] = { key: row[k], text: row[v] }
+        delete row[v] //  why?
+      }
+      if (linkCols[k]) {
+        row[k] = linkCols[k]
+      }
+    }
   }
-  for (let k in linkCols) {
-    row[k] = linkCols[k]
-  }
+
+  // TOREMOVE later...
+  // for (let k in joinCols) {
+  //   const v = joinCols[k]
+  //   row[k] = { key: row[k], text: row[v] }
+  //   delete row[v]
+  // }
+  // for (let k in linkCols) {
+  //   row[k] = linkCols[k]
+  // }
   return row
 }
 
@@ -137,7 +154,6 @@ module.exports = express.Router()
     res.json(rows)
   })
 
-
   .get('/config/:table', authUser, generateTable, async (req, res) => {
     res.json(req.table) // return the table info...
   })
@@ -161,12 +177,11 @@ module.exports = express.Router()
     query = svc.get(table.conn)(table.name)
     query = query.where({})
 
-    // query = svc.get(table.conn)(table.name).where({})
     // TODO handle filters for joins...
     let prevFilter = {}
     const joinCols = {}
     if (filters && filters.length) for (let filter of filters) {
-      const key = filter.key
+      const key = filter.col
       const op = filter.op
       const value = op === 'like' ? `%${filter.val}%` : filter.val
 
@@ -224,10 +239,8 @@ module.exports = express.Router()
           }
         }
       }
-  
-      console.log('ssss', sorter)
       rows = await query.clone().column(...columns).orderBy(sorter).limit(limit).offset((page > 0 ? page - 1 : 0) * limit)
-      rows = rows.map((row) => kvDb2Col(row, joinCols))
+      rows = rows.map((row) => kvDb2Col(row, joinCols, {}, table.cols))
     }
     if (csv) {
       const parser = new Parser({})
@@ -249,6 +262,7 @@ module.exports = express.Router()
   })
 
   .get('/find-one/:table', authUser, generateTable, async (req, res) => {
+    // TBD: do not return hidden fields?
     const { table } = req
     const where = formUniqueKey(table, req.query.__key)
     if (!where) return res.status(400).json({}) // bad request
@@ -284,7 +298,7 @@ module.exports = express.Router()
     }
 
     rv = await query.column(...columns).first()
-    rv = rv ? kvDb2Col(rv, joinCols, linkCols) : null // return null if not found
+    rv = rv ? kvDb2Col(rv, joinCols, linkCols, table.cols) : null // return null if not found
     return res.status(rv ? 200 : 404).json(rv)  
   })
 
@@ -297,8 +311,8 @@ module.exports = express.Router()
     const { body, table } = req
     const where = formUniqueKey(table, req.query.__key)
     let count = 0
-    if (!where) return res.status(400).json({}) // bad request
 
+    if (!where) return res.status(400).json({}) // bad request
     const links = []
 
     for (let key in table.cols) { // add in auto fields
@@ -316,8 +330,8 @@ module.exports = express.Router()
         body[key] = (new Date()).toISOString()
       } else {
         // TRANSFORM INPUT
-        body[key] = table.cols[key].type === 'integer' || table.cols[key].type === 'number' ? Number(body[key])
-        : table.cols[key].type === 'datetime' || table.cols[key].type === 'date' || table.cols[key].type === 'time' ? (body[key] ? new Date(body[key]) : null)
+        body[key] = ['integer', 'decimal'].includes(table.cols[key].type) ? Number(body[key])
+        : ['datetime', 'date', 'time'].includes(table.cols[key].type) ? (body[key] ? new Date(body[key]) : null)
         : body[key]
       }
       if (col?.ui?.junction) { // process for junction/link table column
@@ -339,7 +353,8 @@ module.exports = express.Router()
       await svc.get(table.conn)(item.link).insert(item.ids)  
     }
     if (!count) {
-      // do insert ?
+      // nothing was updated...
+      // if (table.upsert) do insert ?
     }
     return res.json({count})
   })
@@ -361,8 +376,8 @@ module.exports = express.Router()
         body[key] = (new Date()).toISOString()
       } else {
         // TRANSFORM INPUT
-        body[key] = table.cols[key].type === 'integer' || table.cols[key].type === 'number' ? Number(body[key])
-        : table.cols[key].type === 'datetime' || table.cols[key].type === 'date' || table.cols[key].type === 'time' ? (body[key] ? new Date(body[key]) : null)
+        body[key] = ['integer', 'decimal'].includes(table.cols[key].type) ? Number(body[key])
+        : ['datetime', 'date', 'time'].includes(table.cols[key].type) ? (body[key] ? new Date(body[key]) : null)
         : body[key]
       }
       if (col.auto && col.auto === 'pk' && key in body) delete body[key]
