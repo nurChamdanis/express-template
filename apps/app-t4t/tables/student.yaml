@@ -8,20 +8,19 @@ export: true # can export from csv
 select: # comma seperated columns that you want only 
 multiSelect: true # can select multiple records
 cols:
-  # _id: # primary key column, _id for mongodb (can cause error in mongodb)
-  #   label: 'ID',
-  #   auto: 'pk', // should override multiKey
-  #   hide: 'omit', // if property not present = show column, if omit, do not return from API
-  #   filter: false, // default is exclude from filter
-  #   sort: false, // default is exclude from sort
-  #   add: 'hide', // hide, required
-  #   edit: 'readonly', // hide, readonly, required
-  #   input: 'link',
-  #   options: null { from: 'table-student', to: 'table-grade-slot' relatedCol: 'studentId' } # router link }
-  #
+  id: # primary key column, _id for mongodb (can cause error in mongodb)
+    label: ID
+    auto: pk # should override multiKey
+    # hide: omit, // if property not present = show column, if omit, do not return from API
+    #   filter: false, // default is exclude from filter
+    #   sort: false, // default is exclude from sort
+    add: hide # hide, required
+    edit: readonly # hide, readonly, required
+    #   input: 'link',
+    #   options: null { from: 'table-student', to: 'table-grade-slot' relatedCol: 'studentId' } # router link }
   firstName:
     label: First Name
-    multiKey: true # part of composite unique key - required!
+    # multiKey: true # part of composite unique key - required!
     filter: true # truthy means hide column on filter,
     sort: true # truthy allow column to be sorted
     add: required # 'hide', '' - empty string means can show and edit
@@ -43,7 +42,7 @@ cols:
     label: Last Name
     add: required
     edit: required
-    multiKey: true
+    # multiKey: true
     type: string
     filter: true
     ui:
@@ -115,6 +114,9 @@ cols:
     label: Subjects
     type: string
     ui:
+      link:
+        childTbl: table
+        childCol: col
       tag: input # select
       attrs:
         multiple: true
