@@ -1,6 +1,7 @@
 'use strict'
 // table for tables
 // Test access rights
+// Improve on validation...
 // in progress: use __key instead of key
 // TBD - DB set user For Audit Logs
 // auto detect yaml / json
