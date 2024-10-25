@@ -58,8 +58,8 @@ cols:
   country:
     label: Country # key text...
     type: string
-    hide: true
-    filter: true
+    # hide: true
+    # filter: true
     options:
       parentCol: '' # use column to get parent value affecting a child
       parentTableColName: '' # the column name in the parent table
@@ -71,13 +71,11 @@ cols:
       key: code
       text: name
     ui:
-      tag: bwc-combobox # input
-      valueType: '' # = string, otherwise it is object key to display
-      writeType: ''
+      tag: input
   state:
     label: State # key text...
     type: string
-    filter: true
+    # filter: true
     hide: true
     options:
       parentCol: country
@@ -88,13 +86,8 @@ cols:
       limit: 8
       key: code
       text: name
-    ui:
-      tag: bwc-combobox
-      valueType: ''
-      writeType: ''
-      attrs:
-        multiple: true
-        tagLimit: 3
+    # ui:
+    #   tag: input
   sex: # single select - fixed items
     label: Sex
     type: string
@@ -110,28 +103,19 @@ cols:
             value: M
           - label: Female
             value: F
-  subjects: # multi select - for the student_subject table - or use this for link...
+  subjects: # link to student_subject table...
     label: Subjects
-    type: string
+    type: link # link should not be updated or edited directly in this table
+    # TBD... display static text? count? elipsis?
+    link:
+      display: static # count, elipsis
+      text: View Subjects
+      # EL1,EM,AM,PHY,CHEM
+      keys: id # comma seperated
+      ctable: student_subject # comma seperated
+      ckeys: studentId # comma seperated
     ui:
-      link:
-        childTbl: table
-        childCol: col
-      tag: input # select
-      attrs:
-        multiple: true
-        size: '3'
-      options:
-        - key: EL1
-          text: English
-        - key: EM
-          text: E Maths
-        - key: AM
-          text: A Maths
-        - key: PHY
-          text: Physics
-        - key: CHEM
-          text: Chemistry
+      tag: input
   age: # integer
     label: Age
     type: integer

@@ -1,4 +1,9 @@
 'use strict'
+// file upload - to folder
+// file delete - to folder
+// file upload - to oss
+// file delete - to oss
+// import / export
 // table for tables
 // Test access rights
 // Improve on validation...
@@ -97,23 +102,17 @@ function formUniqueKey(table, args) {
 }
 
 function mapRelation (key, col) {
-  if (col?.ui?.tag !== 'bwc-combobox') return null
-  if (col.ui.tag?.valueType === '') return null // no need mapping
-  if (col?.ui?.attrs?.multiple) {
-    return {
-      type: 'manyToMany',      
-    }
-  } else {
-    const table2 = col?.options?.tableName
-    const table2Id = col?.options?.key
-    const table1Id = key
-    const table2Text = col?.options?.text  
-    if (table2 && table2Id && table2Text && table1Id) return { type: '1_n', table2, table2Id, table2Text, table1Id }
+  const table1Id = key
+  const table2 = col?.options?.tableName
+  const table2Id = col?.options?.key
+  const table2Text = col?.options?.text
+  if (table2 && table2Id && table2Text && table1Id) {
+    return { table2, table2Id, table2Text, table1Id }
   }
   return null
 }
 
-function kvDb2Col (row, joinCols, linkCols, tableCols) { // a key value from DB to column
+function kvDb2Col (row, joinCols, tableCols) { // a key value from DB to column
   for (let k in row) {
     if (tableCols[k]) {
       if (tableCols[k].hide === 'omit') delete row[k]
@@ -123,24 +122,11 @@ function kvDb2Col (row, joinCols, linkCols, tableCols) { // a key value from DB 
           row[k] = { key: row[k], text: row[v] }
           delete row[v] //  why?
         }
-        if (linkCols[k]) {
-          row[k] = linkCols[k]
-        }
       }
     } else {
       console.log(`Missing Col: ${k}`)
     }
   }
-
-  // TOREMOVE later...
-  // for (let k in joinCols) {
-  //   const v = joinCols[k]
-  //   row[k] = { key: row[k], text: row[v] }
-  //   delete row[v]
-  // }
-  // for (let k in linkCols) {
-  //   row[k] = linkCols[k]
-  // }
   return row
 }
 
@@ -180,7 +166,6 @@ module.exports = express.Router()
     let rv = { results: [], total: 0 }
     let rows
     let query = null
-    let sort = []
 
     let columns = [`${table.name}.*`]
     if (table.select) columns = table.select.split(',') // custom columns... TODO need to add table name?
@@ -195,26 +180,7 @@ module.exports = express.Router()
       const key = filter.col
       const op = filter.op
       const value = op === 'like' ? `%${filter.val}%` : filter.val
-
       let _key = key
-      const col = table.cols[key]
-      if (col?.ui?.junction) { // many to many
-        // do nothing here 
-      } else { // 1 to many, 1 to 1
-        const rel = mapRelation(key, table.cols[key])
-        if (rel) { // if has relation and is key-value
-          if (rel.type === 'manyToMany') {
-            // https://stackoverflow.com/questions/14869041/sql-query-on-multiple-tables-one-being-a-junction-table
-          } else {
-            const { table2, table2Id, table2Text, table1Id } = rel
-            query = query.join(table2, table.name + '.' + table1Id, '=', table2 + '.' + table2Id) // handles joins...
-            const joinCol = table1Id + '_' + table2Text
-            joinCols[table1Id] = joinCol
-            _key = table2 + '.' + table2Text
-          }
-        }
-      }
-
       if (prevFilter.andOr || prevFilter.andOr === 'and') query = query.andWhere(_key, op, value)
       else query = query.orWhere(_key, op, value)
       prevFilter = filter
@@ -228,30 +194,18 @@ module.exports = express.Router()
       const maxPage = Math.ceil(rv.total / limit)
       if (page > maxPage) page = maxPage
 
-      //xxx const joinCols = {}
       for (let key in table.cols) {
-        const col = table.cols[key]
-        if (col?.ui?.junction) { // many to many
-          // do nothing here 
-        } else { // 1 to many, 1 to 1
-          const rel = mapRelation(key, table.cols[key])
-          if (rel) { // if has relation and is key-value
-            if (rel.type === 'manyToMany') {
-              // https://stackoverflow.com/questions/14869041/sql-query-on-multiple-tables-one-being-a-junction-table
-            } else {
-              const { table2, table2Id, table2Text, table1Id } = rel
-              if (table1Id && !joinCols[table1Id]) {
-                query = query.join(table2, table.name + '.' + table1Id, '=', table2 + '.' + table2Id) // handles joins...
-                const joinCol = table1Id + '_' + table2Text
-                joinCols[table1Id] = joinCol
-              }
-              columns = [...columns, table2 + '.' + table2Text + ' as ' + joinCols[table1Id]] // add a join column
-            }
-          }
+        const rel = mapRelation(key, table.cols[key])
+        if (rel) { // if has relation and is key-value
+          const { table2, table2Id, table2Text, table1Id } = rel
+          query = query.leftOuterJoin(table2, table.name + '.' + table1Id, '=', table2 + '.' + table2Id) // handles joins...
+          const joinCol = table1Id + '_' + table2Text
+          joinCols[table1Id] = joinCol
+          columns = [...columns, table2 + '.' + table2Text + ' as ' + joinCols[table1Id]] // add a join column
         }
       }
       rows = await query.clone().column(...columns).orderBy(sorter).limit(limit).offset((page > 0 ? page - 1 : 0) * limit)
-      rows = rows.map((row) => kvDb2Col(row, joinCols, {}, table.cols))
+      rows = rows.map((row) => kvDb2Col(row, joinCols, table.cols))
     }
     if (csv) {
       const parser = new Parser({})
@@ -282,34 +236,20 @@ module.exports = express.Router()
     if (table.select) columns = table.select.split(',') // custom columns... TODO need to add table name?
     let query = svc.get(table.conn)(table.name).where(where)  
     const joinCols = {}
-    const linkCols = {}
     for (let key in table.cols) {
       const col = table.cols[key]
-      if (col?.ui?.junction) { // many to many
-        const rel = col?.ui?.junction
-        const { link, t1, t2, t1id, t2id, t2txt, refT1id, refT2id } = rel
-        const sql = `SELECT DISTINCT ${t2}.${t2id},${t2}.${t2txt} FROM ${link} JOIN ${t2} ON ${link}.${refT2id} = ${t2}.${t2id} AND ${link}.${refT1id} = ` + req.query.__key
-        // SELECT DISTINCT authors.id,authors.name FROM books_authors JOIN authors on books_authors.authorId = authors.id AND books_authors.bookId = 4
-        const links = await svc.get(table.conn).raw(sql)
-        linkCols[key] = links.map(item => ({ key: item[t2id], text: item[t2txt] }))
-      } else { // 1 to many, 1 to 1
-        const rel = mapRelation(key, table.cols[key])
-        if (rel) { // if has relation and is key-value
-          if (rel.type === 'manyToMany') {
-            // https://stackoverflow.com/questions/14869041/sql-query-on-multiple-tables-one-being-a-junction-table
-          } else {
-            const { table2, table2Id, table2Text, table1Id } = rel
-            query = query.join(table2, table.name + '.' + table1Id, '=', table2 + '.' + table2Id) // handles joins...
-            const joinCol = table1Id + '_' + table2Text
-            joinCols[table1Id] = joinCol
-            columns = [...columns, table2 + '.' + table2Text + ' as ' + joinCol] // add a join colomn
-          }
-        }
+      const rel = mapRelation(key, table.cols[key])
+      if (rel) { // if has relation and is key-value
+        const { table2, table2Id, table2Text, table1Id } = rel
+        query = query.leftOuterJoin(table2, table.name + '.' + table1Id, '=', table2 + '.' + table2Id) // handles joins...
+        const joinCol = table1Id + '_' + table2Text
+        joinCols[table1Id] = joinCol
+        columns = [...columns, table2 + '.' + table2Text + ' as ' + joinCol] // add a join colomn
       }
     }
 
     rv = await query.column(...columns).first()
-    rv = rv ? kvDb2Col(rv, joinCols, linkCols, table.cols) : null // return null if not found
+    rv = rv ? kvDb2Col(rv, joinCols, table.cols) : null // return null if not found
     return res.status(rv ? 200 : 404).json(rv)  
   })
 
@@ -334,7 +274,6 @@ module.exports = express.Router()
       }
 
       const col = table.cols[key]
-      if (col?.ui?.writeType) body[key] = body[key][col.ui.writeType] // select a value from object
       if (col.auto && col.auto === 'user') {
         body[key] = req?.decoded?.id || 'unknown'
       } else if (col.auto && col.auto === 'ts') {
@@ -344,14 +283,6 @@ module.exports = express.Router()
         body[key] = ['integer', 'decimal'].includes(table.cols[key].type) ? Number(body[key])
         : ['datetime', 'date', 'time'].includes(table.cols[key].type) ? (body[key] ? new Date(body[key]) : null)
         : body[key]
-      }
-      if (col?.ui?.junction) { // process for junction/link table column
-        const { link, refT1id, refT2id } = col.ui.junction
-        const ids = body[key].map(item => ({ [refT1id]: req.query.__key, [refT2id]: item.key }))
-        links.push({
-          link, ids, refT1id, // === req.query.__key
-        })
-        delete body[key] // also remove this column from the body...
       }
     }
     // return res.json({ count: 1 })
@@ -378,9 +309,7 @@ module.exports = express.Router()
         const invalid = validateColumn(rules, type, key, body, required)
         if (invalid) return res.status(400).json({ error: `Invalid ${key} - ${invalid}` })
       }
-
       const col = table.cols[key]
-      if (col?.ui?.writeType) body[key] = body[key][col.ui.writeType] // select a value from object
       if (col.auto && col.auto === 'user') {
         body[key] = req?.decoded?.id || 'unknown'
       } else if (col.auto && col.auto === 'ts') {
