@@ -19,10 +19,8 @@ cols:
     type: string
     filter: true
     multiKey: true
-    default: ''
     ui:
       tag: input
-  # pending','match','mismatch
   isCargoNumberAndLocationMatch:
     label: Cargo Number Location Match
     type: string
@@ -64,16 +62,16 @@ cols:
     auto: ts
     hide: true
     add: hide
-    edit: readonly
+    edit: hide
   updatedAt:
     label: Updated At
     auto: ts
     hide: true
     add: hide
-    edit: readonly
+    edit: hide
   deletedAt:
     label: Deleted At
     auto: ts
     hide: true
     add: hide
-    edit: readonly
+    edit: hide

@@ -29,16 +29,29 @@ cols:
   lock_status:
     label: Lock Status
     type: string
-    multiKey: true
+    default: pending
     ui:
-      tag: input
-  # 'auto','manual'
+      tag: select
+      attrs:
+        options:
+          - label: pending
+            value: pending
+          - label: locked
+            value: locked
+          - label: damaged
+            value: damaged
   scan_method:
     label: Scan Method
     type: string
-    multiKey: true
+    default: manual
     ui:
-      tag: input
+      tag: select
+      attrs:
+        options:
+          - label: manual
+            value: manual
+          - label: auto
+            value: auto
   file_name:
     label: File Name
     type: string

@@ -20,24 +20,32 @@ cols:
     label: Status
     type: string
     filter: true
-    default: ''
+    default: pending
     ui:
-      tag: input
+      tag: select
+      attrs:
+        options:
+          - label: pending
+            value: pending
+          - label: in progress
+            value: in progress
+          - label: done
+            value: done
   createdAt:
     label: Created At
     auto: ts
     hide: true
     add: hide
-    edit: readonly
+    edit: hide
   updatedAt:
     label: Updated At
     auto: ts
     hide: true
     add: hide
-    edit: readonly
+    edit: hide
   deletedAt:
     label: Deleted At
     auto: ts
     hide: true
     add: hide
-    edit: readonly
+    edit: hide
