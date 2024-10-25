@@ -1,0 +1,79 @@
+conn: knex1
+name: cargos
+create: true
+update: true
+delete: 0
+import: true
+export: true
+multiSelect: false
+cols:
+  cargo_number:
+    label: Cargo Number
+    type: string
+    filter: true
+    multiKey: true
+    ui:
+      tag: input
+  flight_number:
+    label: Flight Number
+    type: string
+    filter: true
+    multiKey: true
+    default: ''
+    ui:
+      tag: input
+  # pending','match','mismatch
+  isCargoNumberAndLocationMatch:
+    label: Cargo Number Location Match
+    type: string
+    default: pending
+    ui:
+      tag: select
+      attrs:
+        options:
+          - label: pending
+            value: pending
+          - label: match
+            value: match
+  location:
+    label: Location
+    type: string
+    filter: true
+    default: ''
+    ui:
+      tag: input
+  latch_status:
+    label: Latch Status
+    type: string
+    filter: true
+    default: ''
+    ui:
+      tag: input
+  is_cargo_lock_checked:
+    label: Lock Checked
+    type: integer
+    ui:
+      tag: input
+  is_cargo_number_checked:
+    label: Cargo Checked
+    type: integer
+    ui:
+      tag: input
+  createdAt:
+    label: Created At
+    auto: ts
+    hide: true
+    add: hide
+    edit: readonly
+  updatedAt:
+    label: Updated At
+    auto: ts
+    hide: true
+    add: hide
+    edit: readonly
+  deletedAt:
+    label: Deleted At
+    auto: ts
+    hide: true
+    add: hide
+    edit: readonly

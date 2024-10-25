@@ -50,6 +50,12 @@ async function generateTable (req, res, next) { // TODO get config info from a t
     const docPath = TABLE_CONFIGS_FOLDER_PATH + `${tableKey}.yaml`
     const doc = yaml.load(fs.readFileSync(docPath, 'utf8'));
     req.table = JSON.parse(JSON.stringify(doc))
+    // generated items
+    req.table.pk = ''
+    req.table.multiKey = []
+    req.table.required = []
+    req.table.auto = []
+    req.table.nonAuto = []
 
     const acStr = '/autocomplete'
     const acLen = acStr.length
@@ -109,16 +115,20 @@ function mapRelation (key, col) {
 
 function kvDb2Col (row, joinCols, linkCols, tableCols) { // a key value from DB to column
   for (let k in row) {
-    if (tableCols[k].hide === 'omit') delete row[k]
-    else {
-      if (joinCols[k]) {
-        const v = joinCols[k]
-        row[k] = { key: row[k], text: row[v] }
-        delete row[v] //  why?
+    if (tableCols[k]) {
+      if (tableCols[k].hide === 'omit') delete row[k]
+      else {
+        if (joinCols[k]) {
+          const v = joinCols[k]
+          row[k] = { key: row[k], text: row[v] }
+          delete row[v] //  why?
+        }
+        if (linkCols[k]) {
+          row[k] = linkCols[k]
+        }
       }
-      if (linkCols[k]) {
-        row[k] = linkCols[k]
-      }
+    } else {
+      console.log(`Missing Col: ${k}`)
     }
   }
 

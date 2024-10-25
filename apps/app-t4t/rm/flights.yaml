@@ -1,0 +1,43 @@
+conn: knex1
+name: flights
+create: true
+update: true
+delete: 0
+import: true
+export: true
+multiSelect: false
+cols:
+  flight_number:
+    label: Flight Number
+    # add: readonly
+    # edit: readonly
+    type: string
+    filter: true
+    multiKey: true
+    ui:
+      tag: input
+  status:
+    label: Status
+    type: string
+    filter: true
+    default: ''
+    ui:
+      tag: input
+  createdAt:
+    label: Created At
+    auto: ts
+    hide: true
+    add: hide
+    edit: readonly
+  updatedAt:
+    label: Updated At
+    auto: ts
+    hide: true
+    add: hide
+    edit: readonly
+  deletedAt:
+    label: Deleted At
+    auto: ts
+    hide: true
+    add: hide
+    edit: readonly
