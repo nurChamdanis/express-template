@@ -28,8 +28,3 @@ cols:
     type: string
     ui:
       tag: input
-pk: ''
-multiKey: []
-required: []
-auto: []
-nonAuto: []

@@ -23,8 +23,3 @@ cols:
   gradeDate:
     label: Graded On
     type: string # date
-pk: ''
-multiKey: []
-required: []
-auto: []
-nonAuto: []

@@ -67,8 +67,3 @@ cols:
     hide: true
     add: hide
     edit: readonly
-pk: ''
-multiKey: []
-required: []
-auto: []
-nonAuto: []

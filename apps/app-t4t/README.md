@@ -15,3 +15,28 @@ student
 grade
 country
 state
+
+
+## Validation
+
+### HTML input types
+
+- unhandled: button, image, hidden, reset, submit
+- undecided: month, week, search
+# checkbox, color, file, radio, range, tel, url, time
+- handled: date, datetime-local, email, number, password, text
+
+### input attributs
+- ignored
+  - size: text, search, tel, url, email, and password
+  - readonly
+  - step: number, range, date, datetime-local, month, time and week.
+- dynamic
+  - disabled
+  - required: text, search, url, tel, email, password, date pickers, number, checkbox, radio, and file
+- in use
+  - maxlength
+  - min, max: number, range, date, datetime-local, month, time and week
+  - multiple: email, file
+  - pattern: text, date, search, url, tel, email, and password.
+

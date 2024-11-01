@@ -18,10 +18,13 @@ const csvParse = require('csv-parse')
 const { Parser } = require('@json2csv/plainjs')
 
 const svc = require('@es-labs/node/services')
-const { validateColumn } = require('esm')(module)('@es-labs/esm/t4t-validate')
+const { validateColumn } = require('esm')(module)('@es-labs/esm/t4t-validate') // TOREMOVE use T4T config files to validate instead...
 const { memoryUpload, storageUpload } = require('@es-labs/node/express/upload')
 
 const { TABLE_CONFIGS_FOLDER_PATH, UPLOAD_STATIC, UPLOAD_MEMORY } = process.env
+
+const uploadStatic =  JSON.parse(UPLOAD_STATIC || [])
+const uploadMemory =  JSON.parse(UPLOAD_MEMORY || [])
 
 // const { authUser } = require('@es-labs/node/auth')
 const mockAuthUser = async (req, res, next) => {
@@ -34,9 +37,35 @@ const mockAuthUser = async (req, res, next) => {
 
 const authUser = mockAuthUser
 
+const inputTypeNumbers = ['number', 'range', 'date', 'datetime-local', 'month', 'time', 'week']
+const inputTypeText = ['text','tel','email','password','url','search']
+
+const isInvalidInput = (colUi, val) => {
+  // TBD check for required also...
+  if (colUi?.tag === 'input') {
+    const attrs = colUi?.attrs
+    if (attrs) {
+      if (inputTypeText.includes(attrs.type)) {
+        if (attrs.pattern) {
+          if ( !(new RegExp(attrs.pattern)).test(val) ) return { status: 'error', message: 'wrong format' }
+        }
+        if (attrs.maxLength) {
+          if (val.length > Number(attrs.maxlength)) return { status: 'error', message: 'max length exceeded' }
+        }
+      } else if (inputTypeNumbers.includes(attrs.type)) {
+        if (Number(val) < Number(attrs.min)) return { status: 'error', message: 'min exceeded' }
+        if (Number(val) > Number(attrs.max)) return { status: 'error', message: 'min exceeded' }
+      }
+    }
+  } else if (colUi?.tag === 'select') {
+    // if options present, validate with it
+  }
+  return false
+}
+
 const processJson = async (req, res, next) => {
   if (req.files) { // it is formdata
-    obj = {}
+    let obj = {}
     for (let key in req.body) {
       const part = req.body[key]
       obj = JSON.parse(part)
@@ -89,7 +118,7 @@ async function generateTable (req, res, next) { // TODO get config info from a t
 }
 
 function formUniqueKey(table, args) {
-  if (table.pk) return { [table.name + '.' + table.pk]: args } // return for pk
+  if (table.pk) return { [table.name + '.' + table.pk] : args } // return for pk
   const where = {} // return for multiKey
   const val_a = args.split('|')
   if (val_a.length !== table.multiKey.length) return null // error numbers do not match
@@ -112,22 +141,22 @@ function mapRelation (key, col) {
   return null
 }
 
-function kvDb2Col (row, joinCols, tableCols) { // a key value from DB to column
-  for (let k in row) {
-    if (tableCols[k]) {
-      if (tableCols[k].hide === 'omit') delete row[k]
+function kvDb2Col (_row, _joinCols, _tableCols) { // a key value from DB to column
+  for (let k in _row) {
+    if (_tableCols[k]) {
+      if (_tableCols[k].hide === 'omit') delete _row[k]
       else {
-        if (joinCols[k]) {
-          const v = joinCols[k]
-          row[k] = { key: row[k], text: row[v] }
-          delete row[v] //  why?
+        if (_joinCols[k]) {
+          const v = _joinCols[k]
+          _row[k] = { key: _row[k], text: _row[v] }
+          delete _row[v] // remove column created by join
         }
       }
     } else {
       console.log(`Missing Col: ${k}`)
     }
   }
-  return row
+  return _row
 }
 
 module.exports = express.Router()
@@ -256,7 +285,7 @@ module.exports = express.Router()
   .patch('/update/:table/:id?',
     authUser,
     generateTable,
-    storageUpload(UPLOAD_STATIC[0]).any(),
+    storageUpload(uploadStatic[0]).any(),
     processJson,
     async (req, res) => {
     const { body, table } = req
@@ -264,13 +293,11 @@ module.exports = express.Router()
     let count = 0
 
     if (!where) return res.status(400).json({}) // bad request
-    const links = []
-
-    for (let key in table.cols) { // add in auto fields
-      const { rules, type } = table.cols[key]
-      if (rules) {
-        const invalid = validateColumn(rules, type, key, body, false)
-        if (invalid) return res.status(400).json({ error: `Invalid ${key} - ${invalid}` })
+    for (let key in body) { // formally used table.cols, add in auto fields?
+      const { ui, type } = table.cols[key]
+      if (ui) {
+        const invalid = isInvalidInput(ui, body[key]);
+        if (invalid) return res.status(400).json(invalid)
       }
 
       const col = table.cols[key]
@@ -289,11 +316,7 @@ module.exports = express.Router()
 
     // transaction and promise all
     count = await svc.get(table.conn)(table.name).update(body).where(where)
-    // const promises = []
-    for (let item of links) {
-      await svc.get(table.conn)(item.link).where(item.refT1id, req.query.__key).delete() // test if all authors removed
-      await svc.get(table.conn)(item.link).insert(item.ids)  
-    }
+    // TBD delete all related records in other tables?
     if (!count) {
       // nothing was updated...
       // if (table.upsert) do insert ?
@@ -301,13 +324,13 @@ module.exports = express.Router()
     return res.json({count})
   })
 
-  .post('/create/:table', authUser, generateTable, storageUpload(UPLOAD_STATIC[0]).any(), processJson, async (req, res) => {
+  .post('/create/:table', authUser, generateTable, storageUpload(uploadStatic[0]).any(), processJson, async (req, res) => {
     const { table, body } = req
     for (let key in table.cols) {
-      const { rules, type, required } = table.cols[key]
-      if (rules) {
-        const invalid = validateColumn(rules, type, key, body, required)
-        if (invalid) return res.status(400).json({ error: `Invalid ${key} - ${invalid}` })
+      const { ui, type, required } = table.cols[key]
+      if (ui) {
+        const invalid = isInvalidInput(ui, body[key]);
+        if (invalid) return res.status(400).json(invalid)
       }
       const col = table.cols[key]
       if (col.auto && col.auto === 'user') {
@@ -377,7 +400,7 @@ for {
   // code,name
   // zzz,1234
   // ddd,5678
-  .post('/upload/:table', authUser, generateTable, memoryUpload(UPLOAD_MEMORY[0]).single('csv-file'), async (req, res) => {
+  .post('/upload/:table', authUser, generateTable, memoryUpload(uploadMemory[0]).single('csv-file'), async (req, res) => {
     const { table } = req
     const csv = req.file.buffer.toString('utf-8')
     const output = []
