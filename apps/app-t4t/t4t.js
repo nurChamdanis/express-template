@@ -1,5 +1,6 @@
 'use strict'
-// file upload - to folder
+// file upload options...?
+// file upload - to folder - done
 // file delete - to folder
 // file upload - to oss
 // file delete - to oss
@@ -16,15 +17,18 @@ const fs = require('fs')
 const yaml = require('js-yaml')
 const csvParse = require('csv-parse')
 const { Parser } = require('@json2csv/plainjs')
+const multer = require('multer')
 
 const svc = require('@es-labs/node/services')
-const { validateColumn } = require('esm')(module)('@es-labs/esm/t4t-validate') // TOREMOVE use T4T config files to validate instead...
-const { memoryUpload, storageUpload } = require('@es-labs/node/express/upload')
+const { memoryUpload } = require('@es-labs/node/express/upload')
+const { TABLE_CONFIGS_FOLDER_PATH, TABLE_CONFIGS_CSV_SIZE, TABLE_CONFIGS_UPLOAD_SIZE } = process.env
 
-const { TABLE_CONFIGS_FOLDER_PATH, UPLOAD_STATIC, UPLOAD_MEMORY } = process.env
+// const { validateColumn } = require('esm')(module)('@es-labs/esm/t4t-validate') // TOREMOVE use T4T config files to validate instead...
+// const uploadStatic =  JSON.parse(UPLOAD_STATIC || []) // UPLOAD_STATIC, UPLOAD_MEMORY
 
-const uploadStatic =  JSON.parse(UPLOAD_STATIC || [])
-const uploadMemory =  JSON.parse(UPLOAD_MEMORY || [])
+const uploadMemory =  {
+  limits: { files : 1, fileSize: Number(TABLE_CONFIGS_CSV_SIZE) || 500000 }
+}
 
 // const { authUser } = require('@es-labs/node/auth')
 const mockAuthUser = async (req, res, next) => {
@@ -75,6 +79,55 @@ const processJson = async (req, res, next) => {
   next()
 }
 
+const storageUpload = () => {
+  // validate binary file type... using npm file-type?
+  // https://dev.to/ayanabilothman/file-type-validation-in-multer-is-not-safe-3h8l
+  // const fileFilter = (req, file, cb) => {
+  //   if (['image/png', 'image/jpeg'].includes(file.mimetype)) {
+  //     cb(null, true);
+  //   } else {
+  //     cb(new Error('Invalid file type!'), false)
+  //   }
+  // }
+  return multer({
+    storage: multer.diskStorage({
+      // fileFilter
+      destination: (req, file, cb) => {
+        // const json = JSON.parse(req.body.json) // or extract using Object.values(...) from req.body
+        // console.log('json', json)
+        // console.log('destination', file)
+        const key = file.fieldname
+        const { folder } = req.table.fileConfig[key]
+        // console.log('folder, file', folder, file)
+        return cb(null, folder)
+      },
+      filename: (req, file, cb) => cb(null, file.originalname), // file.fieldname, file.originalname
+    }),
+    fileFilter: (req, file, cb) => {
+      // also check on file size
+      // console.log('filter', file, file.size)
+      // const fileSize = parseInt(req.headers["content-length"])
+      // console.log('fileSize', fileSize)
+      const key = file.fieldname
+      const { options } = req.table.fileConfig[key]
+
+      if (!req.fileCount) req.fileCount = { }
+      if (!req.fileCount[key]) req.fileCount[key] = 0
+      const maxFileLimit = options?.limits?.files || 1
+
+      if (req.fileCount[key] >= maxFileLimit) {
+        return cb(new Error(`Maximum Number Of Files Exceeded`), false);
+      }
+      req.fileCount[key]++ ; // Increment the file count for each processed file
+      cb(null, true); // Accept the file
+    },
+    limits: {
+      // files: 3,
+      fileSize: Number(TABLE_CONFIGS_UPLOAD_SIZE) || 8000000 // TBD
+    }
+  })
+}
+
 // __key is reserved property for identifying row in a multiKey table
 // | is reserved for seperating columns that make the multiKey
 async function generateTable (req, res, next) { // TODO get config info from a table
@@ -90,6 +143,7 @@ async function generateTable (req, res, next) { // TODO get config info from a t
     req.table.required = []
     req.table.auto = []
     req.table.nonAuto = []
+    req.table.fileConfig = {}
 
     const acStr = '/autocomplete'
     const acLen = acStr.length
@@ -98,8 +152,9 @@ async function generateTable (req, res, next) { // TODO get config info from a t
     // can return for autocomplete... req.path
     const cols = req.table.cols
     for (let key in cols) {
-      if (cols[key].auto) {
-        if (cols[key].auto === 'pk') {
+      const col = cols[key]
+      if (col.auto) {
+        if (col.auto === 'pk') {
           req.table.pk = key
         } else {
           req.table.auto.push(key)
@@ -107,8 +162,9 @@ async function generateTable (req, res, next) { // TODO get config info from a t
       } else {
         req.table.nonAuto.push(key)
       }
-      if (cols[key].multiKey) req.table.multiKey.push(key)
-      if (cols[key].required) req.table.required.push(key)
+      if (col.multiKey) req.table.multiKey.push(key)
+      if (col.required) req.table.required.push(key)
+      if (col?.ui?.tag === 'files') req.table.fileConfig[key] = col?.ui?.multer
     }
     // console.log(req.table)
     return next()
@@ -285,7 +341,7 @@ module.exports = express.Router()
   .patch('/update/:table/:id?',
     authUser,
     generateTable,
-    storageUpload(uploadStatic[0]).any(),
+    storageUpload().any(), // TBD what about multiple files? also need to find the column involved...
     processJson,
     async (req, res) => {
     const { body, table } = req
@@ -294,21 +350,21 @@ module.exports = express.Router()
 
     if (!where) return res.status(400).json({}) // bad request
     for (let key in body) { // formally used table.cols, add in auto fields?
-      const { ui, type } = table.cols[key]
+      const col = table.cols[key]
+
+      const { ui, type } = col // TBD handle better if its undefined ?
       if (ui) {
         const invalid = isInvalidInput(ui, body[key]);
         if (invalid) return res.status(400).json(invalid)
       }
-
-      const col = table.cols[key]
       if (col.auto && col.auto === 'user') {
         body[key] = req?.decoded?.id || 'unknown'
       } else if (col.auto && col.auto === 'ts') {
         body[key] = (new Date()).toISOString()
       } else {
         // TRANSFORM INPUT
-        body[key] = ['integer', 'decimal'].includes(table.cols[key].type) ? Number(body[key])
-        : ['datetime', 'date', 'time'].includes(table.cols[key].type) ? (body[key] ? new Date(body[key]) : null)
+        body[key] = ['integer', 'decimal'].includes(col.type) ? Number(body[key])
+        : ['datetime', 'date', 'time'].includes(col.type) ? (body[key] ? new Date(body[key]) : null)
         : body[key]
       }
     }
@@ -324,7 +380,7 @@ module.exports = express.Router()
     return res.json({count})
   })
 
-  .post('/create/:table', authUser, generateTable, storageUpload(uploadStatic[0]).any(), processJson, async (req, res) => {
+  .post('/create/:table', authUser, generateTable, storageUpload().any(), processJson, async (req, res) => {
     const { table, body } = req
     for (let key in table.cols) {
       const { ui, type, required } = table.cols[key]
@@ -400,7 +456,7 @@ for {
   // code,name
   // zzz,1234
   // ddd,5678
-  .post('/upload/:table', authUser, generateTable, memoryUpload(uploadMemory[0]).single('csv-file'), async (req, res) => {
+  .post('/upload/:table', authUser, generateTable, memoryUpload(uploadMemory).single('csv-file'), async (req, res) => {
     const { table } = req
     const csv = req.file.buffer.toString('utf-8')
     const output = []

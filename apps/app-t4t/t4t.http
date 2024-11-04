@@ -105,7 +105,7 @@ Content-Type: application/json
   "ids": [242]
 }
 
-### Update With File Upload
+### Update With File Upload - 1 file... them multiple files
 PATCH {{url}}/update/{{table}}?__key=1
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
@@ -113,18 +113,28 @@ Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0g
 Content-Disposition: form-data; name="json"
 Content-Type: application/json
 
-{ "avatar": "avatar.txt" }
+{
+  "avatar": "test.txt",
+  "kyc": "test-kyc-a.txt,test-kyc-b.txt"
+}
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="abcd.txt"; filename="t4t.js"
+Content-Disposition: form-data; name="avatar"; filename="test.txt"
 Content-Type: text/javascript
 
-< ./t4t.js
+< ./test.txt
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="efgh.txt"; filename="t4t.http"
+Content-Disposition: form-data; name="kyc"; filename="test-kyc-a.txt"
 Content-Type: text/javascript
 
-< ./t4t.http
+< ./test-kyc-a.txt
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="kyc"; filename="test-kyc-b.txt"
+Content-Type: text/javascript
+
+< ./test-kyc-b.txt
+
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
