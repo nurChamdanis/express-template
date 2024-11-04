@@ -63,7 +63,7 @@ cols:
     ui:
       tag: files
       attrs:
-        type: file
+        multiple: false
       multer:
         folder: apps/app-sample/uploads/avatar
         options:
@@ -78,7 +78,7 @@ cols:
     ui:
       tag: files
       attrs:
-        type: file
+        multiple: true
       multer:
         folder: apps/app-sample/uploads/kyc
         options:
