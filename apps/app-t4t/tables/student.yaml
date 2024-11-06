@@ -1,11 +1,13 @@
 conn: knex1 # connection name
 name: student # table name
+displayName: Students
 create: true # able to add record
 update: true # able to update record
 delete: -1 # able to delete record(s), -1(no delete limit), 0 (cannot delete), delete limit
 import: true # can import from csv
 export: true # can export from csv
-select: # comma seperated columns that you want only 
+select: # comma seperated columns that you want only
+audit: true
 multiSelect: true # can select multiple records
 cols:
   id: # primary key column, _id for mongodb (can cause error in mongodb)
@@ -61,9 +63,11 @@ cols:
     edit:
     type: string
     ui:
+      url: http://127.0.0.1:3000/uploads/avatar/ # can be served from URL
       tag: files
       attrs:
         multiple: false
+        accept: image/*,.pdf,.txt
       multer:
         folder: apps/app-sample/uploads/avatar
         options:
@@ -76,8 +80,10 @@ cols:
     edit:
     type: string
     ui:
+      url: http://127.0.0.1:3000/uploads/kyc/
       tag: files
       attrs:
+        accept: .pdf,.doc,.docx,.txt
         multiple: true
       multer:
         folder: apps/app-sample/uploads/kyc

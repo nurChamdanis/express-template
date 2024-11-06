@@ -12,7 +12,7 @@
 // TBD - DB set user For Audit Logs
 // auto detect yaml / json
 const express = require('express')
-const path = require('path')
+// const path = require('path')
 const fs = require('fs')
 const yaml = require('js-yaml')
 const csvParse = require('csv-parse')
@@ -24,25 +24,31 @@ const { memoryUpload } = require('@es-labs/node/express/upload')
 const { TABLE_CONFIGS_FOLDER_PATH, TABLE_CONFIGS_CSV_SIZE, TABLE_CONFIGS_UPLOAD_SIZE } = process.env
 
 // const { validateColumn } = require('esm')(module)('@es-labs/esm/t4t-validate') // TOREMOVE use T4T config files to validate instead...
+// const { authUser } = require('@es-labs/node/auth')
 // const uploadStatic =  JSON.parse(UPLOAD_STATIC || []) // UPLOAD_STATIC, UPLOAD_MEMORY
 
 const uploadMemory =  {
   limits: { files : 1, fileSize: Number(TABLE_CONFIGS_CSV_SIZE) || 500000 }
 }
 
-// const { authUser } = require('@es-labs/node/auth')
-const mockAuthUser = async (req, res, next) => {
-  console.log('WARNING Auth bypass in t4t.js')
-  req.decoded = {
-    id: 'testuser'
+function noAuthFunc (req, res, next) {
+    const message = 'no user auth middleware set'
+    console.log({
+      error: message,
+      expectedFormat: JSON.stringify({
+        'req.decoded': {
+          id: 'testuser',
+          groups: 'admin,user'
+        }
+      }, null, 2)
+    })
+    res.status(500).send(message)
   }
-  next()
-}
-
-const authUser = mockAuthUser
 
 const inputTypeNumbers = ['number', 'range', 'date', 'datetime-local', 'month', 'time', 'week']
 const inputTypeText = ['text','tel','email','password','url','search']
+
+const getConfigs = () => configs
 
 const isInvalidInput = (colUi, val) => {
   // TBD check for required also...
@@ -80,45 +86,32 @@ const processJson = async (req, res, next) => {
 }
 
 const storageUpload = () => {
-  // validate binary file type... using npm file-type?
-  // https://dev.to/ayanabilothman/file-type-validation-in-multer-is-not-safe-3h8l
-  // const fileFilter = (req, file, cb) => {
-  //   if (['image/png', 'image/jpeg'].includes(file.mimetype)) {
-  //     cb(null, true);
-  //   } else {
-  //     cb(new Error('Invalid file type!'), false)
-  //   }
-  // }
   return multer({
+    // TBD handle errors of missing properties
     storage: multer.diskStorage({
-      // fileFilter
       destination: (req, file, cb) => {
-        // const json = JSON.parse(req.body.json) // or extract using Object.values(...) from req.body
-        // console.log('json', json)
-        // console.log('destination', file)
         const key = file.fieldname
-        const { folder } = req.table.fileConfig[key]
-        // console.log('folder, file', folder, file)
+        const { folder } = req.table.fileConfigUi[key]?.multer // console.log('folder, file', folder, file)
         return cb(null, folder)
       },
       filename: (req, file, cb) => cb(null, file.originalname), // file.fieldname, file.originalname
     }),
     fileFilter: (req, file, cb) => {
-      // also check on file size
-      // console.log('filter', file, file.size)
-      // const fileSize = parseInt(req.headers["content-length"])
-      // console.log('fileSize', fileSize)
+      // TBD check on individual file size
       const key = file.fieldname
-      const { options } = req.table.fileConfig[key]
-
+      const { options } = req.table.fileConfigUi[key]?.multer
       if (!req.fileCount) req.fileCount = { }
       if (!req.fileCount[key]) req.fileCount[key] = 0
       const maxFileLimit = options?.limits?.files || 1
-
       if (req.fileCount[key] >= maxFileLimit) {
         return cb(new Error(`Maximum Number Of Files Exceeded`), false);
       }
       req.fileCount[key]++ ; // Increment the file count for each processed file
+      // TBD validate binary file type... using npm file-type?
+      // https://dev.to/ayanabilothman/file-type-validation-in-multer-is-not-safe-3h8l
+      // if (!['image/png', 'image/jpeg'].includes(file.mimetype)) {
+      //   return cb(new Error('Invalid file type!'), false)
+      // }
       cb(null, true); // Accept the file
     },
     limits: {
@@ -143,7 +136,7 @@ async function generateTable (req, res, next) { // TODO get config info from a t
     req.table.required = []
     req.table.auto = []
     req.table.nonAuto = []
-    req.table.fileConfig = {}
+    req.table.fileConfigUi = {}
 
     const acStr = '/autocomplete'
     const acLen = acStr.length
@@ -164,7 +157,7 @@ async function generateTable (req, res, next) { // TODO get config info from a t
       }
       if (col.multiKey) req.table.multiKey.push(key)
       if (col.required) req.table.required.push(key)
-      if (col?.ui?.tag === 'files') req.table.fileConfig[key] = col?.ui?.multer
+      if (col?.ui?.tag === 'files') req.table.fileConfigUi[key] = col?.ui
     }
     // console.log(req.table)
     return next()
@@ -215,9 +208,11 @@ function kvDb2Col (_row, _joinCols, _tableCols) { // a key value from DB to colu
   return _row
 }
 
-module.exports = express.Router()
-  .get('/healthcheck', (req, res) => res.send('t4t ok - 0.0.1'))
+const routes = (options) => {
+  const authUser = options?.authFunc || noAuthFunc
 
+  return express.Router()
+  .get('/healthcheck', (req, res) => res.send('t4t ok - 0.0.1'))
   .post('/:table/autocomplete', generateTable, async (req, res) => {
     let rows = {}
     const { table } = req
@@ -235,7 +230,6 @@ module.exports = express.Router()
     }))
     res.json(rows)
   })
-
   .get('/config/:table', authUser, generateTable, async (req, res) => {
     res.json(req.table) // return the table info...
   })
@@ -310,7 +304,6 @@ module.exports = express.Router()
       return res.json(rv) 
     }
   })
-
   .get('/find-one/:table', authUser, generateTable, async (req, res) => {
     // TBD: do not return hidden fields?
     const { table } = req
@@ -337,7 +330,6 @@ module.exports = express.Router()
     rv = rv ? kvDb2Col(rv, joinCols, table.cols) : null // return null if not found
     return res.status(rv ? 200 : 404).json(rv)  
   })
-
   .patch('/update/:table/:id?',
     authUser,
     generateTable,
@@ -379,7 +371,6 @@ module.exports = express.Router()
     }
     return res.json({count})
   })
-
   .post('/create/:table', authUser, generateTable, storageUpload().any(), processJson, async (req, res) => {
     const { table, body } = req
     for (let key in table.cols) {
@@ -411,7 +402,6 @@ module.exports = express.Router()
     }
     return res.status(201).json(rv)
   })
-
   .post('/remove/:table', authUser, generateTable, async (req, res) => {
     const { table } = req
     const { ids } = req.body
@@ -438,19 +428,19 @@ module.exports = express.Router()
     return res.json()
   })
 
-/*
-const trx = await svc.get(table.conn).transaction()
-for {
-  let err = false
-  try {
-    await svc.get(table.conn)(tableName).insert(data).transacting(trx)
-  } catch (e) {
-    err = true
+  /*
+  const trx = await svc.get(table.conn).transaction()
+  for {
+    let err = false
+    try {
+      await svc.get(table.conn)(tableName).insert(data).transacting(trx)
+    } catch (e) {
+      err = true
+    }
+    if (err) await trx.rollback()
+    else await trx.commit()
   }
-  if (err) await trx.rollback()
-  else await trx.commit()
-}
-*/
+  */
 
   // Test country collection upload using a csv file with following contents
   // code,name
@@ -514,3 +504,6 @@ for {
   //     else console.log(filePath +' deleted!')
   //   })  
   // }
+}
+
+module.exports = routes
