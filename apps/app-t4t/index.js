@@ -4,6 +4,7 @@ const router = require('express').Router()
 
 // export your routes here - make sure no clashes
 function mockAuthUser (req, res, next) {
+  console.log('req.decoded', req.decoded)
   console.log('WARNING Auth bypass in t4t.js')
   req.decoded = {
     id: 'testuser',
