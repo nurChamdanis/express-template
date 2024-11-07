@@ -2,7 +2,31 @@
 
 - [DONE] change tables loaded from JS to YAML
 - [DONE] make the API path configurable
-- make the directory to load the YAML files configurable
+- [DONE] make the directory to load the YAML files configurable
+- [DONE] single/multiple file upload - to folder
+
+// TBD - DB set user For Audit Logs
+// audit tables - in progress
+// RBAC - in progress
+// auto detect yaml / json
+// file upload options...? - in progress
+// file delete - to folder
+// file upload - to oss
+// file delete - to oss
+// import / export
+// table for tables
+// Test access rights
+
+// filter file inputs...
+// [UI] handle multiple images display...
+// [UI] required * label in form
+// [UI] UPLOAD CSV, Download CSV
+// [UI] AUTO COMPLETE
+// filters, create, delete (multi select)
+// [UI] i18n
+// [UI] clear all filters button
+
+
 
 ## Learning To Use
 

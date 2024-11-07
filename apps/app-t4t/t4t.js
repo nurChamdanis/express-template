@@ -1,16 +1,4 @@
 'use strict'
-// file upload options...?
-// file upload - to folder - done
-// file delete - to folder
-// file upload - to oss
-// file delete - to oss
-// import / export
-// table for tables
-// Test access rights
-// Improve on validation...
-// in progress: use __key instead of key
-// TBD - DB set user For Audit Logs
-// auto detect yaml / json
 const express = require('express')
 // const path = require('path')
 const fs = require('fs')
@@ -23,10 +11,6 @@ const svc = require('@es-labs/node/services')
 const { memoryUpload } = require('@es-labs/node/express/upload')
 const { TABLE_CONFIGS_FOLDER_PATH, TABLE_CONFIGS_CSV_SIZE, TABLE_CONFIGS_UPLOAD_SIZE } = process.env
 
-// const { validateColumn } = require('esm')(module)('@es-labs/esm/t4t-validate') // TOREMOVE use T4T config files to validate instead...
-// const { authUser } = require('@es-labs/node/auth')
-// const uploadStatic =  JSON.parse(UPLOAD_STATIC || []) // UPLOAD_STATIC, UPLOAD_MEMORY
-
 const uploadMemory =  {
   limits: { files : 1, fileSize: Number(TABLE_CONFIGS_CSV_SIZE) || 500000 }
 }
@@ -35,20 +19,18 @@ function noAuthFunc (req, res, next) {
     const message = 'no user auth middleware set'
     console.log({
       error: message,
-      expectedFormat: JSON.stringify({
+      expectedFormat: {
         'req.decoded': {
           id: 'testuser',
           groups: 'admin,user'
         }
-      }, null, 2)
+      }
     })
     res.status(500).send(message)
   }
 
 const inputTypeNumbers = ['number', 'range', 'date', 'datetime-local', 'month', 'time', 'week']
 const inputTypeText = ['text','tel','email','password','url','search']
-
-const getConfigs = () => configs
 
 const isInvalidInput = (colUi, val) => {
   // TBD check for required also...
