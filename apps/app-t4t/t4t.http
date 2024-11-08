@@ -59,7 +59,8 @@ PATCH {{url}}/update/{{table}}?__key=1
 Content-Type: application/json
 
 {
-  "remarks": "hello world 93"
+  "gpa": 1,
+  "remarks": "hello world 97"
 }
 
 ### Create a record

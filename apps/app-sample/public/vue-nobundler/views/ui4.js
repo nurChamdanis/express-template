@@ -71,8 +71,6 @@ export default {
       // do update here and display error message?
       const { data, error } = e.detail
       if (error) return alert('Validation Error')
-      const invalid = t4t.validate(data)
-      if (invalid) return alert(`Invalid ${invalid.col} - ${invalid.msg}`)
 
       // if (loading.value) return
       // loading.value = true

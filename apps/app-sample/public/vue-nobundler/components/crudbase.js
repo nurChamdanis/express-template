@@ -87,8 +87,6 @@ export default defineComponent({
       if (error) {
         return alert('Validation Error')
       }
-      const invalid = t4t.validate(data)
-      if (invalid) return alert(`Invalid ${invalid.col} - ${invalid.msg}`)
 
       try {
         if (mode.value === 'add') {

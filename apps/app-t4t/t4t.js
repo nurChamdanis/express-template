@@ -15,7 +15,7 @@ const uploadMemory =  {
   limits: { files : 1, fileSize: Number(TABLE_CONFIGS_CSV_SIZE) || 500000 }
 }
 
-function noAuthFunc (req, res, next) {
+const noAuthFunc = (req, res, next) => {
     const message = 'no user auth middleware set'
     console.log({
       error: message,
@@ -50,7 +50,7 @@ const isInvalidInput = (colUi, val) => {
       }
     }
   } else if (colUi?.tag === 'select') {
-    // if options present, validate with it
+    // TBD if options present, validate with it
   }
   return false
 }
@@ -103,9 +103,26 @@ const storageUpload = () => {
   })
 }
 
-// __key is reserved property for identifying row in a multiKey table
+// both are comma seperated strings
+let roleKey = ''
+const roleOperationMatch = (role, operation) => {
+  console.log(role, operation)
+  try {
+    const operations = operation.split(',')
+    const roles = role.split(',')
+    for (const _role of roles) {
+      for (const _operation of operations) {
+        if (_operation === _role) return true
+      }
+    }
+  } catch (e) {
+  }
+  return false
+}
+
+// __key is reserved property for identifying row in a table
 // | is reserved for seperating columns that make the multiKey
-async function generateTable (req, res, next) { // TODO get config info from a table
+const generateTable = async (req, res, next) => { // TODO get config info from a table
   try {
     const tableKey = req.params.table // 'books' // its the table name also
     // const docPath = path.resolve(__dirname, `./tables/${tableKey}.yaml`)
@@ -124,6 +141,14 @@ async function generateTable (req, res, next) { // TODO get config info from a t
     const acLen = acStr.length
     if (req.path.substring(req.path.length - acLen) === acStr) return next()
 
+    // permissions settings
+    req.table.view = roleOperationMatch(req.decoded[roleKey], req.table.view)
+    req.table.create = roleOperationMatch(req.decoded[roleKey], req.table.create)
+    req.table.update = roleOperationMatch(req.decoded[roleKey], req.table.update)
+    req.table.delete = roleOperationMatch(req.decoded[roleKey], req.table.delete)
+    req.table.import = roleOperationMatch(req.decoded[roleKey], req.table.import)
+    req.table.export = roleOperationMatch(req.decoded[roleKey], req.table.export)
+
     // can return for autocomplete... req.path
     const cols = req.table.cols
     for (let key in cols) {
@@ -140,6 +165,11 @@ async function generateTable (req, res, next) { // TODO get config info from a t
       if (col.multiKey) req.table.multiKey.push(key)
       if (col.required) req.table.required.push(key)
       if (col?.ui?.tag === 'files') req.table.fileConfigUi[key] = col?.ui
+
+      col.editor = !(col.editor && !roleOperationMatch(req.decoded[roleKey], col.editor))
+      if (!col.editor) col.edit = 'readonly'
+      col.creator = !(col.creator && !roleOperationMatch(req.decoded[roleKey], col.creator))
+      if (!col.creator) col.add = 'readonly'
     }
     // console.log(req.table)
     return next()
@@ -148,7 +178,7 @@ async function generateTable (req, res, next) { // TODO get config info from a t
   }
 }
 
-function formUniqueKey(table, args) {
+const formUniqueKey = (table, args) => {
   if (table.pk) return { [table.name + '.' + table.pk] : args } // return for pk
   const where = {} // return for multiKey
   const val_a = args.split('|')
@@ -161,7 +191,7 @@ function formUniqueKey(table, args) {
   return (Object.keys(where).length) ? where : null
 }
 
-function mapRelation (key, col) {
+const mapRelation = (key, col) => {
   const table1Id = key
   const table2 = col?.options?.tableName
   const table2Id = col?.options?.key
@@ -172,7 +202,7 @@ function mapRelation (key, col) {
   return null
 }
 
-function kvDb2Col (_row, _joinCols, _tableCols) { // a key value from DB to column
+const kvDb2Col = (_row, _joinCols, _tableCols) => { // a key value from DB to column
   for (let k in _row) {
     if (_tableCols[k]) {
       if (_tableCols[k].hide === 'omit') delete _row[k]
@@ -192,6 +222,7 @@ function kvDb2Col (_row, _joinCols, _tableCols) { // a key value from DB to colu
 
 const routes = (options) => {
   const authUser = options?.authFunc || noAuthFunc
+  roleKey = options?.roleKey || ''
 
   return express.Router()
   .get('/healthcheck', (req, res) => res.send('t4t ok - 0.0.1'))
@@ -213,9 +244,11 @@ const routes = (options) => {
     res.json(rows)
   })
   .get('/config/:table', authUser, generateTable, async (req, res) => {
+    if (!req.table.view) throw 'Forbidden - Table Info'
     res.json(req.table) // return the table info...
   })
   .get('/find/:table', authUser, generateTable, async (req, res) => { // page is 1 based
+    if (!req.table.view) throw new Error('Forbidden - List All')
     const { table } = req
     let { page = 1, limit = 25, filters = null, sorter = null, csv = '' } = req.query
     page = parseInt(page) // 1-based
@@ -287,7 +320,7 @@ const routes = (options) => {
     }
   })
   .get('/find-one/:table', authUser, generateTable, async (req, res) => {
-    // TBD: do not return hidden fields?
+    if (!req.table.view) throw new Error('Forbidden - List One')
     const { table } = req
     const where = formUniqueKey(table, req.query.__key)
     if (!where) return res.status(400).json({}) // bad request
@@ -318,61 +351,75 @@ const routes = (options) => {
     storageUpload().any(), // TBD what about multiple files? also need to find the column involved...
     processJson,
     async (req, res) => {
+    if (!req.table.update) throw new Error('Forbidden - Update')
     const { body, table } = req
     const where = formUniqueKey(table, req.query.__key)
     let count = 0
 
     if (!where) return res.status(400).json({}) // bad request
-    for (let key in body) { // formally used table.cols, add in auto fields?
-      const col = table.cols[key]
-
-      const { ui, type } = col // TBD handle better if its undefined ?
-      if (ui) {
-        const invalid = isInvalidInput(ui, body[key]);
-        if (invalid) return res.status(400).json(invalid)
-      }
-      if (col.auto && col.auto === 'user') {
-        body[key] = req?.decoded?.id || 'unknown'
-      } else if (col.auto && col.auto === 'ts') {
-        body[key] = (new Date()).toISOString()
-      } else {
-        // TRANSFORM INPUT
-        body[key] = ['integer', 'decimal'].includes(col.type) ? Number(body[key])
-        : ['datetime', 'date', 'time'].includes(col.type) ? (body[key] ? new Date(body[key]) : null)
-        : body[key]
+    for (const key in table.cols) { // formally used table.cols, add in auto fields?
+      if (body[key]) {
+        const col = table.cols[key]
+        if (!col.editor) delete body[key]
+        else {
+          const { ui, type } = col // TBD handle better if its undefined ?
+          if (ui) {
+            const invalid = isInvalidInput(ui, body[key]);
+            if (invalid) return res.status(400).json(invalid)
+          }
+          if (col.auto && col.auto === 'user') {
+            body[key] = req?.decoded?.id || 'unknown'
+          } else if (col.auto && col.auto === 'ts') {
+            body[key] = (new Date()).toISOString()
+          } else {
+            // TRANSFORM INPUT
+            body[key] = ['integer', 'decimal'].includes(col.type) ? Number(body[key])
+            : ['datetime', 'date', 'time'].includes(col.type) ? (body[key] ? new Date(body[key]) : null)
+            : body[key]
+          }
+        }
       }
     }
-    // return res.json({ count: 1 })
-
-    // transaction and promise all
-    count = await svc.get(table.conn)(table.name).update(body).where(where)
-    // TBD delete all related records in other tables?
+    if (Object.keys(body).length) { // update if there is something to update
+      // TBD transaction and promise all
+      count = await svc.get(table.conn)(table.name).update(body).where(where)
+      // TBD delete all related records in other tables?
+      // TBD delete images for failed update?
+    }
     if (!count) {
       // nothing was updated...
       // if (table.upsert) do insert ?
     }
-    return res.json({count})
+    return res.json({ count })
   })
-  .post('/create/:table', authUser, generateTable, storageUpload().any(), processJson, async (req, res) => {
+  .post('/create/:table',
+    authUser,
+    generateTable,
+    storageUpload().any(),
+    processJson, async (req, res) => {
+    if (!req.table.create) throw new Error('Forbidden - Create')
     const { table, body } = req
     for (let key in table.cols) {
-      const { ui, type, required } = table.cols[key]
-      if (ui) {
-        const invalid = isInvalidInput(ui, body[key]);
-        if (invalid) return res.status(400).json(invalid)
+      if (!col.creator) delete body[key]
+      else if (col.auto && col.auto === 'pk' && key in body) delete body[key]
+      else {
+        const { ui, type, required } = table.cols[key]
+        if (ui) {
+          const invalid = isInvalidInput(ui, body[key]);
+          if (invalid) return res.status(400).json(invalid)
+        }
+        const col = table.cols[key]
+        if (col.auto && col.auto === 'user') {
+          body[key] = req?.decoded?.id || 'unknown'
+        } else if (col.auto && col.auto === 'ts') {
+          body[key] = (new Date()).toISOString()
+        } else {
+          // TRANSFORM INPUT
+          body[key] = ['integer', 'decimal'].includes(table.cols[key].type) ? Number(body[key])
+          : ['datetime', 'date', 'time'].includes(table.cols[key].type) ? (body[key] ? new Date(body[key]) : null)
+          : body[key]
+        }
       }
-      const col = table.cols[key]
-      if (col.auto && col.auto === 'user') {
-        body[key] = req?.decoded?.id || 'unknown'
-      } else if (col.auto && col.auto === 'ts') {
-        body[key] = (new Date()).toISOString()
-      } else {
-        // TRANSFORM INPUT
-        body[key] = ['integer', 'decimal'].includes(table.cols[key].type) ? Number(body[key])
-        : ['datetime', 'date', 'time'].includes(table.cols[key].type) ? (body[key] ? new Date(body[key]) : null)
-        : body[key]
-      }
-      if (col.auto && col.auto === 'pk' && key in body) delete body[key]
     }
 
     let rv = null
@@ -385,10 +432,10 @@ const routes = (options) => {
     return res.status(201).json(rv)
   })
   .post('/remove/:table', authUser, generateTable, async (req, res) => {
+    if (!req.table.delete) throw new Error('Forbidden - Delete')
     const { table } = req
     const { ids } = req.body
-    if (!table.delete) return res.status(400).json({ error: 'Delete not allowed' })
-    if (table.delete !== -1 && ids.length > table.delete) return res.status(400).json({ error: `Select up to ${table.delete} items` })
+    if (table.deleteLimit > 0 && ids.length > table.deleteLimit) return res.status(400).json({ error: `Select up to ${table.deleteLimit} items` })
     if (ids.length < 1) return res.status(400).json({ error: 'No item selected' })
 
     // TODO delete relations junction, do not delete if value is in use...
@@ -409,7 +456,6 @@ const routes = (options) => {
     }
     return res.json()
   })
-
   /*
   const trx = await svc.get(table.conn).transaction()
   for {
@@ -423,12 +469,12 @@ const routes = (options) => {
     else await trx.commit()
   }
   */
-
   // Test country collection upload using a csv file with following contents
   // code,name
   // zzz,1234
   // ddd,5678
   .post('/upload/:table', authUser, generateTable, memoryUpload(uploadMemory).single('csv-file'), async (req, res) => {
+    if (!req.table.import) throw new Error('Forbidden - Upload')
     const { table } = req
     const csv = req.file.buffer.toString('utf-8')
     const output = []

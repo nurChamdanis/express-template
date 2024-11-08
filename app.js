@@ -167,8 +167,7 @@ app.use((error, req, res, next) => {
   let message = 'Unknown Error'
   if (error.message) {
     // console.log('Error Object', error.name, error.name, error.stack)
-    message =
-      process.env.NODE_ENV === 'development' ? error.stack : error.message
+    message = (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'dev') ? error.stack : error.message
   } else if (typeof error === 'string') {
     message = error
   } else if (error?.toString) {

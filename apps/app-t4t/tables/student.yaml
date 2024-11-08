@@ -1,11 +1,14 @@
 conn: knex1 # connection name
 name: student # table name
 displayName: Students
-create: true # able to add record
-update: true # able to update record
-delete: -1 # able to delete record(s), -1(no delete limit), 0 (cannot delete), delete limit
-import: true # can import from csv
-export: true # can export from csv
+# view: admin,editor,viewer # user defined roles
+view: dddd
+update: admin,editor # able to update record
+create: admin # able to add record
+delete: admin
+deleteLimit: 1 # 0 = no limit, requires multiSelect
+import: admin,editor # can import from csv
+export: admin,editor # can export from csv
 select: # comma seperated columns that you want only
 audit: true
 multiSelect: true # can select multiple records
@@ -27,6 +30,8 @@ cols:
     sort: true # truthy allow column to be sorted
     add: required # 'hide', '' - empty string means can show and edit
     edit: required # 'hide', 'readonly', '' - empty string means can show and edit
+    creator: admin # additional field permissions
+    editor: admin # additional field permissions
     default: '' # a default value (today? now?)
     type: string # string, integer, decimal, datetime, date, time, boolean, link (follows the DB datatype)
     ui:
@@ -78,6 +83,8 @@ cols:
     label: KYC Files
     add:
     edit:
+    creator:
+    editor:
     type: string
     ui:
       url: http://127.0.0.1:3000/uploads/kyc/
@@ -215,6 +222,7 @@ cols:
     ui:
       tag: input
   remarks: # textarea
+    editor: nobody
     label: Remarks
     type: string
     add:

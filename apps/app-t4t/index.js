@@ -4,19 +4,16 @@ const router = require('express').Router()
 
 // export your routes here - make sure no clashes
 function mockAuthUser (req, res, next) {
-  console.log('req.decoded', req.decoded)
   console.log('WARNING Auth bypass in t4t.js')
   req.decoded = {
     id: 'testuser',
-    groups: 'admin,user'
+    groups: 'admin,editor,viewer'
   }
   next()
 }
 
-const t4t = require('./t4t')({ authFunc: mockAuthUser })
+const t4t = require('./t4t')({ authFunc: mockAuthUser, roleKey: 'groups' })
 
 module.exports = ({ app, routePrefix }) => {
-  app.use(routePrefix,
-    router.use('/', t4t)
-  )
+  app.use(routePrefix, router.use('/', t4t))
 }

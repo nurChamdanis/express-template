@@ -45,8 +45,8 @@
     "update-commit-hash": "git rev-parse --verify --short HEAD > commit-hash"
   },
   "dependencies": {
-    "@es-labs/esm": "^0.0.26",
-    "@es-labs/node": "^0.0.44",
+    "@es-labs/esm": "^0.0.27",
+    "@es-labs/node": "^0.0.45",
     "esm": "^3.2.25",
     "express": "^4.21.1",
     "express-jsdoc-swagger": "^1.8.0",
