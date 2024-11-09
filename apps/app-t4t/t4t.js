@@ -105,8 +105,8 @@ const storageUpload = () => {
 
 // both are comma seperated strings
 let roleKey = ''
-const roleOperationMatch = (role, operation) => {
-  console.log(role, operation)
+const roleOperationMatch = (role, operation, col = null) => {
+  // console.log('roleOperationMatch (col, role, operation)', col, role, operation)
   try {
     const operations = operation.split(',')
     const roles = role.split(',')
@@ -149,6 +149,9 @@ const generateTable = async (req, res, next) => { // TODO get config info from a
     req.table.import = roleOperationMatch(req.decoded[roleKey], req.table.import)
     req.table.export = roleOperationMatch(req.decoded[roleKey], req.table.export)
 
+    // sanitize
+    req.table.deleteLimit = Number(req.table.deleteLimit) || -1
+
     // can return for autocomplete... req.path
     const cols = req.table.cols
     for (let key in cols) {
@@ -166,9 +169,9 @@ const generateTable = async (req, res, next) => { // TODO get config info from a
       if (col.required) req.table.required.push(key)
       if (col?.ui?.tag === 'files') req.table.fileConfigUi[key] = col?.ui
 
-      col.editor = !(col.editor && !roleOperationMatch(req.decoded[roleKey], col.editor))
+      col.editor = !(col.editor && !roleOperationMatch(req.decoded[roleKey], col.editor, key))
       if (!col.editor) col.edit = 'readonly'
-      col.creator = !(col.creator && !roleOperationMatch(req.decoded[roleKey], col.creator))
+      col.creator = !(col.creator && !roleOperationMatch(req.decoded[roleKey], col.creator, key))
       if (!col.creator) col.add = 'readonly'
     }
     // console.log(req.table)
@@ -439,9 +442,8 @@ const routes = (options) => {
     if (ids.length < 1) return res.status(400).json({ error: 'No item selected' })
 
     // TODO delete relations junction, do not delete if value is in use...
-
     if (table.pk) { // delete using pk
-      await svc.get(table.conn)(table.name).whereIn('id', ids).delete()
+      await svc.get(table.conn)(table.name).whereIn(table.pk, ids).delete()
     } else { // delete using keys
       const keys = ids.map(id => {
         let id_a = id.split('|')
@@ -456,19 +458,6 @@ const routes = (options) => {
     }
     return res.json()
   })
-  /*
-  const trx = await svc.get(table.conn).transaction()
-  for {
-    let err = false
-    try {
-      await svc.get(table.conn)(tableName).insert(data).transacting(trx)
-    } catch (e) {
-      err = true
-    }
-    if (err) await trx.rollback()
-    else await trx.commit()
-  }
-  */
   // Test country collection upload using a csv file with following contents
   // code,name
   // zzz,1234
@@ -481,7 +470,7 @@ const routes = (options) => {
     let errors = []
     let keys = []
     let currLine = 0
-    csvParse(csv)
+    csvParse.parse(csv)
       .on('error', (e) => console.error(e.message))
       .on('readable', function () {
         let record
@@ -525,6 +514,19 @@ const routes = (options) => {
       })
   })
 
+  /*
+  const trx = await svc.get(table.conn).transaction()
+  for {
+    let err = false
+    try {
+      await svc.get(table.conn)(tableName).insert(data).transacting(trx)
+    } catch (e) {
+      err = true
+    }
+    if (err) await trx.rollback()
+    else await trx.commit()
+  }
+  */
   // delete file
   // export async function deleteFile(filePath) {
   //   fs.unlink(filePath, e => {

@@ -1,11 +1,14 @@
 conn: knex1
 name: student_subject
-create: false
-update: false
-delete: 0
-import: false
-export: false
-multiSelect: false
+displayName: Student Subjects
+view: admin,editor,viewer # user defined roles
+update: admin,editor # able to update record
+create: admin # able to add record
+delete: admin
+deleteLimit: 2 # 0 = no limit, requires multiSelect
+import: admin,editor # can import from csv
+export: admin,editor # can export from csv
+multiSelect: true
 cols:
   studentId:
     label: Student ID

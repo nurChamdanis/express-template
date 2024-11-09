@@ -1,10 +1,14 @@
+# TBD test deletion of foreign keys...
 conn: knex1
 name: state
-create: false
-update: false
-delete: 0
-import: true
-export: true
+displayName: State
+view: admin,editor,viewer # user defined roles
+update: admin,editor # able to update record
+create: admin # able to add record
+delete: admin
+deleteLimit: 1 # 0 = no limit, requires multiSelect
+import: admin,editor # can import from csv
+export: admin,editor # can export from csv
 multiSelect: true
 cols:
   id:

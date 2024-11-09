@@ -1,8 +1,7 @@
 conn: knex1 # connection name
 name: student # table name
 displayName: Students
-# view: admin,editor,viewer # user defined roles
-view: dddd
+view: admin,editor,viewer # user defined roles
 update: admin,editor # able to update record
 create: admin # able to add record
 delete: admin
@@ -11,7 +10,7 @@ import: admin,editor # can import from csv
 export: admin,editor # can export from csv
 select: # comma seperated columns that you want only
 audit: true
-multiSelect: true # can select multiple records
+multiSelect: false # can select multiple records
 cols:
   id: # primary key column, _id for mongodb (can cause error in mongodb)
     label: ID
@@ -73,6 +72,7 @@ cols:
       attrs:
         multiple: false
         accept: image/*,.pdf,.txt
+        maxCount: 1 # ant design vue a-upload
       multer:
         folder: apps/app-sample/uploads/avatar
         options:
@@ -92,6 +92,7 @@ cols:
       attrs:
         accept: .pdf,.doc,.docx,.txt
         multiple: true
+        maxCount: 2 # ant design vue a-upload
       multer:
         folder: apps/app-sample/uploads/kyc
         options:

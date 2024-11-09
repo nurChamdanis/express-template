@@ -1,24 +1,36 @@
 conn: knex1 # connection name
 name: subject # table name
-create: true
-update: true
-delete: 0
-import: true
-export: true
-multiSelect: false
+displayName: Subjects
+view: admin,editor,viewer # user defined roles
+update: admin,editor # able to update record
+create: admin # able to add record
+delete: admin
+deleteLimit: 2 # 0 = no limit, requires multiSelect
+import: admin,editor # can import from csv
+export: admin,editor # can export from csv
+multiSelect: true
 cols:
-  # id:
-  #   label: ID
-  #   # add: readonly
-  #   edit: readonly
   code:
     label: Code
-    type: string
-    edit: readonly
     multiKey: true
+    edit: readonly
+    type: string
+    ui:
+      tag: input
+      attrs:
+        type: text
   name:
     label: Name
+    multiKey: true
     type: string
+    ui:
+      tag: input
+      attrs:
+        type: text
   passingGrade:
     label: Passing Grade
     type: string
+    ui:
+      tag: input
+      attrs:
+        type: text

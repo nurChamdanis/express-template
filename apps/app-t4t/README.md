@@ -1,20 +1,21 @@
+## TOIMPROVE
+
+- import / export - replace all? append (ignore duplicates)? append (replace duplicates) - to improve error handling and response and scaling
+- UI replace text with suitable icons+ popover
+
 ## TODO
 
-// audit tables - in progress
-// auto detect yaml / json
-// file delete - to folder
-// file upload - to oss
-// file delete - to oss
-// import / export - replace all? append (ignore duplicates)? append (replace duplicates)
-// own self view?
-
-// filter file inputs...
-// [UI] handle multiple images display...
-// [UI] required * label in form
-// [UI] UPLOAD CSV, Download CSV
-// [UI] AUTO COMPLETE
-// delete (multi select)
-// [UI] i18n
+- [BE] audit tables - in progress
+- [UI + BE] handle multiple images display...
+- [UI + BE] filter file upload inputs...
+- [UI + BE] AUTO COMPLETE
+- [UI] required * label in form
+- [BE] file delete - folder
+- [BE] file upload - oss
+- [BE] file delete - oss
+- [UI + BE] own self view?
+- [UI] i18n
+- [BE] auto detect yaml / json
 
 
 
