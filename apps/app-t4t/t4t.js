@@ -125,10 +125,12 @@ const roleOperationMatch = (role, operation, col = null) => {
 const generateTable = async (req, res, next) => { // TODO get config info from a table
   try {
     const tableKey = req.params.table // 'books' // its the table name also
+
     // const docPath = path.resolve(__dirname, `./tables/${tableKey}.yaml`)
     const docPath = TABLE_CONFIGS_FOLDER_PATH + `${tableKey}.yaml`
     const doc = yaml.load(fs.readFileSync(docPath, 'utf8'));
     req.table = JSON.parse(JSON.stringify(doc))
+
     // generated items
     req.table.pk = ''
     req.table.multiKey = []
@@ -136,6 +138,9 @@ const generateTable = async (req, res, next) => { // TODO get config info from a
     req.table.auto = []
     req.table.nonAuto = []
     req.table.fileConfigUi = {}
+
+    const { database, filename } = svc.get(req?.table?.conn)?.client?.config?.connection || {}
+    req.table.db = database || filename || 'DB Not Found'
 
     const acStr = '/autocomplete'
     const acLen = acStr.length
@@ -223,13 +228,26 @@ const kvDb2Col = (_row, _joinCols, _tableCols) => { // a key value from DB to co
   return _row
 }
 
+const setAuditData = (req, op = 'UNKNOWN', body = {}) => ({
+  user: req?.decoded?.id,
+  timestamp: new Date(),
+  db_name: req.table.db,
+  table_name: req.table.name,
+  op,
+  where_cols: req?.table?.pk || req?.table?.multiKey?.join('|') || '',
+  where_vals: req.query?.__key || '',
+  cols_changed: JSON.stringify(Object.keys(body)),
+  prev_values: '',
+  new_values: JSON.stringify(Object.values(body)),
+})
+
 const routes = (options) => {
   const authUser = options?.authFunc || noAuthFunc
   roleKey = options?.roleKey || ''
 
   return express.Router()
   .get('/healthcheck', (req, res) => res.send('t4t ok - 0.0.1'))
-  .post('/:table/autocomplete', generateTable, async (req, res) => {
+  .post('/autocomplete/:table', authUser, generateTable, async (req, res) => {
     let rows = {}
     const { table } = req
 
@@ -384,38 +402,21 @@ const routes = (options) => {
       }
     }
     if (Object.keys(body).length) { // update if there is something to update
-      // TBD transaction and promise all
-      // count = await svc.get(table.conn)(table.name).update(body).where(where)
       // TBD delete all related records in other tables?
       // TBD delete images for failed update?
-	  
-		  const trx = await svc.get(table.conn).transaction();
-		  let err = false;
+	  	const trx = await svc.get(table.conn).transaction();
 		  try {
 			  count = await svc.get(table.conn)(table.name).update(body).where(where).transacting(trx);
-			  const audit = {			    
-				user: '',
-				timestamp: new Date(),
-				db_name: '',
-				table_name: table.name,
-				op: 'UPDATE',
-				where_cols: '',
-				where_vals: '',
-				cols_changed: JSON.stringify(Object.keys(body)),
-				prev_values: '',
-				new_values: JSON.stringify(Object.values(body)),
-			  }
-			  await svc.get(table.conn)('audit_logs').insert(audit);		   
+        const audit = setAuditData(req, 'UPDATE', body)
+			  await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
+        await trx.commit()
 		  } catch (e) {
-		    err = true;
+        console.log(e) // TBD
+		    await trx.rollback();
 		  }
-		  if (err) await trx.rollback();
-		  else await trx.commit();
-	  
     }
     if (!count) {
-      // nothing was updated...
-      // if (table.upsert) do insert ?
+      // nothing was updated..., if (table.upsert) do insert ?
     }
     return res.json({ count })
   })
@@ -449,13 +450,22 @@ const routes = (options) => {
       }
     }
 
+  	// const trx = await svc.get(table.conn).transaction();
+		// try {
+		//   count = await svc.get(table.conn)(table.name).update(body).where(where).transacting(trx);
+    //   const audit = setAuditData(req, 'INSERT', body)
+		//   await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
+    //   await trx.commit()
+		// } catch (e) {
+    //   console.log(e) // TBD
+		//   await trx.rollback();
+		// }
+
     let rv = null
     let query = svc.get(table.conn)(table.name).insert(body)
     if (table.pk) query = query.returning(table.pk)
     rv = await query.clone()
-    if (rv && rv[0]) { // id
-      // disallow link tables input... for creation
-    }
+    const recordKey = rv?.[0] // id - also... disallow link tables input... for creation
     return res.status(201).json(rv)
   })
   .post('/remove/:table', authUser, generateTable, async (req, res) => {
@@ -479,6 +489,16 @@ const routes = (options) => {
         return svc.get(table.conn)(table.name).where(multiKey).delete() 
       })
       await Promise.allSettled(keys)
+	  	// const trx = await svc.get(table.conn).transaction();
+		  // try {
+			//   count = await svc.get(table.conn)(table.name).update(body).where(where).transacting(trx);
+      //   const audit = setAuditData(req, 'DELETE')
+			//   await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
+      //   await trx.commit()
+		  // } catch (e) {
+      //   console.log(e) // TBD
+		  //   await trx.rollback();
+		  // }
     }
     return res.json()
   })

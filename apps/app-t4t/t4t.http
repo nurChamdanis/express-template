@@ -20,7 +20,7 @@ GET {{url}}/config/{{table}}
 Content-Type: application/json
 
 ### autocomplete
-GET {{url}}/{{table}}/autocomplete
+GET {{url}}/autocomplete/{{table}}
 Content-Type: application/json
 
 {

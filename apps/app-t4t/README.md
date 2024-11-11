@@ -6,6 +6,7 @@
 ## TODO
 
 - [BE] audit tables - in progress
+- [UI] t4t-fe.js to use... /autocomplete/:table
 - [UI + BE] handle multiple file images/pdf preview/text, display...
 - [UI + BE] AUTO COMPLETE
 - [UI] required * label in form
