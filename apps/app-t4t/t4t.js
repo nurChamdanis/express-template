@@ -385,9 +385,20 @@ const routes = (options) => {
     }
     if (Object.keys(body).length) { // update if there is something to update
       // TBD transaction and promise all
-      count = await svc.get(table.conn)(table.name).update(body).where(where)
+      // count = await svc.get(table.conn)(table.name).update(body).where(where)
       // TBD delete all related records in other tables?
       // TBD delete images for failed update?
+	  
+		const trx = await svc.get(table.conn).transaction();
+		let err = false;
+		try {
+		count = await svc.get(table.conn)(table.name).update(body).where(where).transacting(trx);
+		} catch (e) {
+		err = true;
+		}
+		if (err) await trx.rollback();
+		else await trx.commit();
+	  
     }
     if (!count) {
       // nothing was updated...
