@@ -393,14 +393,17 @@ const routes = (options) => {
 		  let err = false;
 		  try {
 			  count = await svc.get(table.conn)(table.name).update(body).where(where).transacting(trx);
-			  const audit = {
-			    user: '',
-			    timestamp: new Date(),
-			    db_name: '',
-			    table_name: table.name,
-			    operation: 'UPDATE',
-			    record_selection_key: '',
-			    values_changed: '',
+			  const audit = {			    
+				user: '',
+				timestamp: new Date(),
+				db_name: '',
+				table_name: table.name,
+				op: 'UPDATE',
+				where_cols: '',
+				where_vals: '',
+				cols_changed: JSON.stringify(Object.keys(body)),
+				prev_values: '',
+				new_values: JSON.stringify(Object.values(body)),
 			  }
 			  await svc.get(table.conn)('audit_logs').insert(audit);		   
 		  } catch (e) {
