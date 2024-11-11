@@ -389,15 +389,25 @@ const routes = (options) => {
       // TBD delete all related records in other tables?
       // TBD delete images for failed update?
 	  
-		const trx = await svc.get(table.conn).transaction();
-		let err = false;
-		try {
-		count = await svc.get(table.conn)(table.name).update(body).where(where).transacting(trx);
-		} catch (e) {
-		err = true;
-		}
-		if (err) await trx.rollback();
-		else await trx.commit();
+		  const trx = await svc.get(table.conn).transaction();
+		  let err = false;
+		  try {
+			  count = await svc.get(table.conn)(table.name).update(body).where(where).transacting(trx);
+			  const audit = {
+			    user: '',
+			    timestamp: new Date(),
+			    db_name: '',
+			    table_name: table.name,
+			    operation: 'UPDATE',
+			    record_selection_key: '',
+			    values_changed: '',
+			  }
+			  await svc.get(table.conn)('audit_logs').insert(audit);		   
+		  } catch (e) {
+		    err = true;
+		  }
+		  if (err) await trx.rollback();
+		  else await trx.commit();
 	  
     }
     if (!count) {
