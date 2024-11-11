@@ -6,13 +6,11 @@
 ## TODO
 
 - [BE] audit tables - in progress
-- [UI + BE] handle multiple images display...
-- [UI + BE] filter file upload inputs...
+- [UI + BE] handle multiple file images/pdf preview/text, display...
 - [UI + BE] AUTO COMPLETE
 - [UI] required * label in form
 - [BE] file delete - folder
-- [BE] file upload - oss
-- [BE] file delete - oss
+- [BE] file upload, delete, list - oss
 - [UI + BE] own self view?
 - [UI] i18n
 - [BE] auto detect yaml / json
