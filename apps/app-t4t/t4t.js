@@ -407,8 +407,10 @@ const routes = (options) => {
 	  	const trx = await svc.get(table.conn).transaction()
 		  try {
 			  count = await svc.get(table.conn)(table.name).update(body).where(where).transacting(trx)
-        const audit = setAuditData(req, 'UPDATE', req.query.__key, body)
-			  await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
+        if (table.audit) {
+          const audit = setAuditData(req, 'UPDATE', req.query.__key, body)
+			    await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
+        }
         await trx.commit()
 		  } catch (e) {
         console.log(e) // TBD
@@ -457,8 +459,10 @@ const routes = (options) => {
       let query = svc.get(table.conn)(table.name).insert(body)
       if (table.pk) query = query.returning(table.pk)
       rv = await query.clone().transacting(trx)
-      const audit = setAuditData(req, 'INSERT', '', body)
-      await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
+      if (table.audit) {
+        const audit = setAuditData(req, 'INSERT', '', body)
+        await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
+      }
       await trx.commit()
 		} catch (e) {
       console.log(e) // TBD
@@ -497,8 +501,10 @@ const routes = (options) => {
         })
         await Promise.allSettled(keys)
       }
-      const audit = setAuditData(req, 'DELETE', ids.join(','))
-      await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
+      if (table.audit) {
+        const audit = setAuditData(req, 'DELETE', ids.join(','))
+        await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
+      }
       await trx.commit()
       return res.json({
         deletedRows: ids.length
