@@ -9,7 +9,7 @@ deleteLimit: 1 # 0 = no limit, requires multiSelect
 import: admin,editor # can import from csv
 export: admin,editor # can export from csv
 select: # comma seperated columns that you want only
-audit: true
+audit: true # false, true, save - save will record previous values for delete/update  operation (requires read)
 multiSelect: false # can select multiple records
 cols:
   id: # primary key column, _id for mongodb (can cause error in mongodb)
@@ -101,7 +101,7 @@ cols:
             fileSize: 10000000
   country:
     label: Country # key text...
-    type: string
+    type: string # change to auto complete
     # hide: true
     # filter: true
     options:
@@ -119,7 +119,7 @@ cols:
       tag: input
   state:
     label: State # key text...
-    type: string
+    type: string # change to auto complete
     # filter: true
     hide: true
     options:
@@ -217,6 +217,7 @@ cols:
       tag: input
       attrs:
         type: datetime-local
+      tz: iso
   website:
     label: URL
     type: string
@@ -238,7 +239,13 @@ cols:
     hide: omit # this column will be removed and not be sent
   updated_at:
     label: Updated At
+    filter: true
     auto: ts
     hide:
     add: hide
     edit: readonly
+    type: datetime
+    ui:
+      tag: input
+      attrs:
+        type: datetime-local

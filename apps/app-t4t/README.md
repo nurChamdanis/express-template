@@ -9,13 +9,13 @@
 
 ## TODO
 
-- [BE] audit tables - in progress
-- [UI] t4t-fe.js to use... /autocomplete/:table
-- [UI + BE] handle multiple file images/pdf preview/text, display...
-- [UI + BE] AUTO COMPLETE
+- [UI+BE] fix filter search for date time range
+- fix... saving... always keys... displays always text
+- [UI+BE] handle multiple file images/pdf preview/text, display...
+- [UI+BE] AUTO COMPLETE /autocomplete/:table
 - [UI] required * label in form
-- [BE] file delete - folder
 - [BE] file upload, delete, list - oss
+- [BE] file delete - folder
 - [UI + BE] own self view?
 - [UI] i18n
 - [BE] auto detect yaml / json
@@ -29,12 +29,13 @@
 
 ## Schema
 
-student
-subject
-country
-state
-student_subject
-
+- student
+- subject
+- country (a field used by student)
+- state (a field used by student and dependent on country)
+- student_subject (formed by student and subject relation)
+- audit_logs
+- users
 
 ## Validation
 
