@@ -86,15 +86,15 @@ const storageUpload = () => {
       if (!req.fileCount[key]) req.fileCount[key] = 0
       const maxFileLimit = options?.limits?.files || 1
       if (req.fileCount[key] >= maxFileLimit) {
-        return cb(new Error(`Maximum Number Of Files Exceeded`), false);
+        return cb(new Error(`Maximum Number Of Files Exceeded`), false)
       }
-      req.fileCount[key]++ ; // Increment the file count for each processed file
+      req.fileCount[key]++ // Increment the file count for each processed file
       // TBD validate binary file type... using npm file-type?
       // https://dev.to/ayanabilothman/file-type-validation-in-multer-is-not-safe-3h8l
       // if (!['image/png', 'image/jpeg'].includes(file.mimetype)) {
       //   return cb(new Error('Invalid file type!'), false)
       // }
-      cb(null, true); // Accept the file
+      cb(null, true) // Accept the file
     },
     limits: {
       // files: 3,
@@ -128,7 +128,7 @@ const generateTable = async (req, res, next) => { // TODO get config info from a
 
     // const docPath = path.resolve(__dirname, `./tables/${tableKey}.yaml`)
     const docPath = TABLE_CONFIGS_FOLDER_PATH + `${tableKey}.yaml`
-    const doc = yaml.load(fs.readFileSync(docPath, 'utf8'));
+    const doc = yaml.load(fs.readFileSync(docPath, 'utf8'))
     req.table = JSON.parse(JSON.stringify(doc))
 
     // generated items
@@ -228,14 +228,14 @@ const kvDb2Col = (_row, _joinCols, _tableCols) => { // a key value from DB to co
   return _row
 }
 
-const setAuditData = (req, op = 'UNKNOWN', body = {}) => ({
+const setAuditData = (req, op, keys = '', body = {}) => ({
   user: req?.decoded?.id,
   timestamp: new Date(),
   db_name: req.table.db,
   table_name: req.table.name,
   op,
-  where_cols: req?.table?.pk || req?.table?.multiKey?.join('|') || '',
-  where_vals: req.query?.__key || '',
+  where_cols: keys ? req?.table?.pk || req?.table?.multiKey?.join('|') || '' : '',
+  where_vals: keys,
   cols_changed: JSON.stringify(Object.keys(body)),
   prev_values: '',
   new_values: JSON.stringify(Object.values(body)),
@@ -385,7 +385,7 @@ const routes = (options) => {
         else {
           const { ui, type } = col // TBD handle better if its undefined ?
           if (ui) {
-            const invalid = isInvalidInput(ui, body[key]);
+            const invalid = isInvalidInput(ui, body[key])
             if (invalid) return res.status(400).json(invalid)
           }
           if (col.auto && col.auto === 'user') {
@@ -404,15 +404,16 @@ const routes = (options) => {
     if (Object.keys(body).length) { // update if there is something to update
       // TBD delete all related records in other tables?
       // TBD delete images for failed update?
-	  	const trx = await svc.get(table.conn).transaction();
+	  	const trx = await svc.get(table.conn).transaction()
 		  try {
-			  count = await svc.get(table.conn)(table.name).update(body).where(where).transacting(trx);
-        const audit = setAuditData(req, 'UPDATE', body)
+			  count = await svc.get(table.conn)(table.name).update(body).where(where).transacting(trx)
+        const audit = setAuditData(req, 'UPDATE', req.query.__key, body)
 			  await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
         await trx.commit()
 		  } catch (e) {
         console.log(e) // TBD
-		    await trx.rollback();
+		    await trx.rollback()
+        throw e
 		  }
     }
     if (!count) {
@@ -428,15 +429,15 @@ const routes = (options) => {
     if (!req.table.create) throw new Error('Forbidden - Create')
     const { table, body } = req
     for (let key in table.cols) {
+      const col = table.cols[key]
       if (!col.creator) delete body[key]
       else if (col.auto && col.auto === 'pk' && key in body) delete body[key]
       else {
         const { ui, type, required } = table.cols[key]
         if (ui) {
-          const invalid = isInvalidInput(ui, body[key]);
+          const invalid = isInvalidInput(ui, body[key])
           if (invalid) return res.status(400).json(invalid)
         }
-        const col = table.cols[key]
         if (col.auto && col.auto === 'user') {
           body[key] = req?.decoded?.id || 'unknown'
         } else if (col.auto && col.auto === 'ts') {
@@ -450,22 +451,25 @@ const routes = (options) => {
       }
     }
 
-  	// const trx = await svc.get(table.conn).transaction();
-		// try {
-		//   count = await svc.get(table.conn)(table.name).update(body).where(where).transacting(trx);
-    //   const audit = setAuditData(req, 'INSERT', body)
-		//   await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
-    //   await trx.commit()
-		// } catch (e) {
-    //   console.log(e) // TBD
-		//   await trx.rollback();
-		// }
-
     let rv = null
-    let query = svc.get(table.conn)(table.name).insert(body)
-    if (table.pk) query = query.returning(table.pk)
-    rv = await query.clone()
-    const recordKey = rv?.[0] // id - also... disallow link tables input... for creation
+  	const trx = await svc.get(table.conn).transaction()
+		try {
+      let query = svc.get(table.conn)(table.name).insert(body)
+      if (table.pk) query = query.returning(table.pk)
+      rv = await query.clone().transacting(trx)
+      const audit = setAuditData(req, 'INSERT', '', body)
+      await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
+      await trx.commit()
+		} catch (e) {
+      console.log(e) // TBD
+		  await trx.rollback()
+      throw e
+		}
+    // let rv = null
+    // let query = svc.get(table.conn)(table.name).insert(body)
+    // if (table.pk) query = query.returning(table.pk)
+    // rv = await query.clone()
+    // const recordKey = rv?.[0] // id - also... disallow link tables input... for creation
     return res.status(201).json(rv)
   })
   .post('/remove/:table', authUser, generateTable, async (req, res) => {
@@ -476,31 +480,34 @@ const routes = (options) => {
     if (ids.length < 1) return res.status(400).json({ error: 'No item selected' })
 
     // TODO delete relations junction, do not delete if value is in use...
-    if (table.pk) { // delete using pk
-      await svc.get(table.conn)(table.name).whereIn(table.pk, ids).delete()
-    } else { // delete using keys
-      const keys = ids.map(id => {
-        let id_a = id.split('|')
-        const multiKey = {}
-        for (let i=0; i<id_a.length; i++) {
-          const keyName = table.multiKey[i]
-          multiKey[keyName] = id_a[i]
-        }
-        return svc.get(table.conn)(table.name).where(multiKey).delete() 
+	  const trx = await svc.get(table.conn).transaction()
+  	try {
+      if (table.pk || table.multiKey.length === 1) { // delete using pk
+        const keyCol = table.pk || table.multiKey[0]
+        await svc.get(table.conn)(table.name).whereIn(keyCol, ids).delete().transacting(trx)
+      } else {
+        const keys = ids.map(id => {
+          let id_a = id.split('|')
+          const multiKey = {}
+          for (let i=0; i<id_a.length; i++) {
+            const keyName = table.multiKey[i]
+            multiKey[keyName] = id_a[i]
+          }
+          return svc.get(table.conn)(table.name).where(multiKey).delete().transacting(trx)
+        })
+        await Promise.allSettled(keys)
+      }
+      const audit = setAuditData(req, 'DELETE', ids.join(','))
+      await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
+      await trx.commit()
+      return res.json({
+        deletedRows: ids.length
       })
-      await Promise.allSettled(keys)
-	  	// const trx = await svc.get(table.conn).transaction();
-		  // try {
-			//   count = await svc.get(table.conn)(table.name).update(body).where(where).transacting(trx);
-      //   const audit = setAuditData(req, 'DELETE')
-			//   await svc.get(table.conn)('audit_logs').insert(audit).transacting(trx)
-      //   await trx.commit()
-		  // } catch (e) {
-      //   console.log(e) // TBD
-		  //   await trx.rollback();
-		  // }
+    } catch (e) {
+      console.log(e) // TBD
+      await trx.rollback()
+      throw e
     }
-    return res.json()
   })
   // Test country collection upload using a csv file with following contents
   // code,name

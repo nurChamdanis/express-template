@@ -3,6 +3,10 @@
 - import / export - replace all? append (ignore duplicates)? append (replace duplicates) - to improve error handling and response and scaling
 - UI replace text with suitable icons+ popover
 
+## TO NOTE (REFERENTIAL INTEGRITY)
+
+- https://stackoverflow.com/a/53861921/2215486
+
 ## TODO
 
 - [BE] audit tables - in progress

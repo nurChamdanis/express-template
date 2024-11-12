@@ -1,9 +1,9 @@
 ## http testing for t4t
-# tables
-# books
-# categories
-# authors
-# pages
+# student
+# subject
+# student_subject
+# country
+# state
 
 ## Variables
 @table = student
@@ -59,7 +59,7 @@ PATCH {{url}}/update/{{table}}?__key=1
 Content-Type: application/json
 
 {
-  "gpa": 1,
+  "gpa": 5,
   "remarks": "hello world 97"
 }
 
@@ -92,7 +92,7 @@ Content-Type: application/json
 GET {{url}}/find-one/country?__key=241
 Content-Type: application/json
 
-###
+### Delete one record
 POST {{url}}/remove/country
 Content-Type: application/json
 
@@ -101,7 +101,7 @@ Content-Type: application/json
 }
 
 ### Update With File Upload - 1 file... them multiple files
-PATCH {{url}}/update/{{table}}?__key=1
+PATCH {{url}}/update/student?__key=1
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
@@ -144,6 +144,32 @@ Content-Type: text/csv
 < ./subject.csv
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
-###
-GET {{url}}/find/subject?page=1&limit=25
+
+
+### Create a record - multi-key - TBD
+POST {{url}}/create/student_subject
+Content-Type: application/json
+
+{
+  "studentId": 4,
+  "subjectCode": "EM",
+  "gradeFinal": "X",
+  "gradeDate": "2024-10-02"
+}
+
+
+### Get one record - TBD
+GET {{url}}/find-one/student_subject?__key=xx|yy
+Content-Type: application/json
+
+### Delete 2 records - multi-key - TBD
+POST {{url}}/remove/student_subject
+Content-Type: application/json
+
+{
+  "ids": ["3|EM", "4|EM"]
+}
+
+### Get
+GET {{url}}/find/student_subject?page=1&limit=25
 Content-Type: application/json
