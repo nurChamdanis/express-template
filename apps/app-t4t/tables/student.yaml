@@ -195,8 +195,8 @@ cols:
     filter: true
     ui:
       tag: input
-      # attrs:
-      #   type: date
+      attrs:
+        type: date
   birthTime: # HHmm (no timezone - assume local - store as string)
     label: Birth time
     type: string # time
@@ -205,8 +205,8 @@ cols:
     edit: hide
     ui:
       tag: input
-      # attrs:
-      #   type: time
+      attrs:
+        type: time
   dateTimeTz: # date with timezone info
     label: Datetime+TZ
     type: datetime
