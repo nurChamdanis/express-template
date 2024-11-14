@@ -9,10 +9,10 @@
 
 ## TODO
 
-- [UI+BE] fix filter search for date time range
+- [UI+BE] AUTO COMPLETE /autocomplete/:table
+- [UI+BE] tags
 - fix... saving... always keys... displays always text
 - [UI+BE] handle multiple file images/pdf preview/text, display...
-- [UI+BE] AUTO COMPLETE /autocomplete/:table
 - [UI] required * label in form
 - [BE] file upload, delete, list - oss
 - [BE] file delete - folder

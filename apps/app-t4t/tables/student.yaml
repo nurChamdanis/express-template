@@ -104,6 +104,7 @@ cols:
     type: string # change to auto complete
     # hide: true
     # filter: true
+    edit: true
     options:
       parentCol: '' # use column to get parent value affecting a child
       parentTableColName: '' # the column name in the parent table
@@ -114,9 +115,11 @@ cols:
       strict: true # cannot enter own values, must be selected
       key: code
       text: name
-      display: key # TBD key or text or both
+      display: text # TBD key or text or both
     ui:
-      tag: input
+      tag: autocomplete
+      # exact match needed?
+      # default?
   state:
     label: State # key text...
     type: string # change to auto complete

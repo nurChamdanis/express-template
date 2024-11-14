@@ -25,9 +25,11 @@ cols:
   timestamp:
     filter: true
     label: Timestamp
-    type: string
+    type: datetime
     ui:
       tag: input
+      attrs:
+        type: datetime-local
   db_name:
     filter: true
     label: DB Name
