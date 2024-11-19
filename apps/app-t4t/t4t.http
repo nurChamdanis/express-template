@@ -173,3 +173,15 @@ Content-Type: application/json
 ### Get
 GET {{url}}/find/student_subject?page=1&limit=25
 Content-Type: application/json
+
+### Test Autocomplete
+POST {{url}}/autocomplete/country
+Content-Type: application/json
+
+{
+  "key": "code",
+  "text": "name",
+  "search": "United",
+  "parentTableColName": "",
+  "parentTableColVal": ""
+}

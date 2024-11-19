@@ -135,16 +135,18 @@ cols:
       key: code
       text: name
       display: key # TBD key or text or both
-    # ui:
-    #   tag: input
+    ui:
+      tag: autocomplete
   sex: # single select - fixed items
     label: Sex
     type: string
     filter: true
     default: M
     ui:
+      display: label # unused - tbd get label from attrs.options
       tag: select
       attrs:
+        multiple: false
         options:
           - label: ''
             value: ''
@@ -191,7 +193,6 @@ cols:
       tag: input
       attrs:
         type: number
-    required: true
   birthDate: # date of birth - YYYY-MM-dd (no timezone - assume local - store as string)
     label: Date of Birth
     type: string # date

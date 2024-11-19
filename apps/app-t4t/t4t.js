@@ -142,12 +142,15 @@ const generateTable = async (req, res, next) => { // TODO get config info from a
     const { database, filename } = svc.get(req?.table?.conn)?.client?.config?.connection || {}
     req.table.db = database || filename || 'DB Not Found'
 
-    const acStr = '/autocomplete'
-    const acLen = acStr.length
-    if (req.path.substring(req.path.length - acLen) === acStr) return next()
 
     // permissions settings
     req.table.view = roleOperationMatch(req.decoded[roleKey], req.table.view)
+    const acStr = '/autocomplete'
+    const acLen = acStr.length
+    if (req.path.substring(req.path.length - acLen) === acStr) {
+      console.log('auto completgin here...')
+      return next()
+    }
     req.table.create = roleOperationMatch(req.decoded[roleKey], req.table.create)
     req.table.update = roleOperationMatch(req.decoded[roleKey], req.table.update)
     req.table.delete = roleOperationMatch(req.decoded[roleKey], req.table.delete)
