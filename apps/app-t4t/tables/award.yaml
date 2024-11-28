@@ -22,6 +22,7 @@ cols:
   name:
     label: Name
     multiKey: true
+    edit: readonly
     type: string
     ui:
       tag: input

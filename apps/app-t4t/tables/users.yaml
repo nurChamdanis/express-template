@@ -59,11 +59,7 @@ cols:
     label: Created At
     auto: ts
     hide: true
-    add: hide
-    edit: readonly
   updatedAt:
     label: Updated At
     auto: ts
     hide: true
-    add: hide
-    edit: readonly

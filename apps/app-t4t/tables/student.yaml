@@ -12,29 +12,27 @@ select: # comma seperated columns that you want only
 audit: true # false, true, save - save will record previous values for delete/update  operation (requires read)
 multiSelect: false # can select multiple records
 cols:
-  id: # primary key column, _id for mongodb (can cause error in mongodb)
+  id: # primary key column
     label: ID
-    auto: pk # should override multiKey
-    # hide: omit, // if property not present = show column, if omit, do not return from API
-    #   filter: false, // default is exclude from filter
-    #   sort: false, // default is exclude from sort
-    add: hide # hide, required
-    edit: readonly # hide, readonly, required
-    #   input: 'link',
-    #   options: null { from: 'table-student', to: 'table-grade-slot' relatedCol: 'studentId' } # router link }
+    auto: pk # should override multiKey, cannot edit, always required, add not required as it is auto
+    # hide: omit # omit = not in return, blank = return as blank, true = not shown in table
+    # filter: false, // default is exclude from filter
+    # sort: false, // default is exclude from sort
+    edit: readonly # true, or readonly
   firstName:
     label: First Name
-    # multiKey: true # part of composite unique key - required!
+    # multiKey: true # part of composite unique key - required, cannot be blank
     filter: true # truthy means hide column on filter,
     sort: true # truthy allow column to be sorted
-    add: required # 'hide', '' - empty string means can show and edit
-    edit: required # 'hide', 'readonly', '' - empty string means can show and edit
+    required: true
+    add: true # true, or readonly
+    edit: true # true, or readonly
     creator: admin # additional field permissions
     editor: admin # additional field permissions
     default: '' # a default value (today? now?)
     type: string # string, integer, decimal, datetime, date, time, boolean, link (follows the DB datatype)
     ui:
-      tag: input # input (number, date, time, datetime, file, pattern), select, textarea, combobox, link to child table?
+      tag: input # input (number, date, time, datetime, file, pattern), select, textarea, combobox
       attrs:
         type: text
         pattern: '^[A-Za-z]+$'
@@ -46,9 +44,9 @@ cols:
     comment: ''
   lastName:
     label: Last Name
-    add: required
-    edit: required
-    # multiKey: true
+    required: true
+    add: true
+    edit: true
     type: string
     filter: true
     ui:
@@ -63,8 +61,8 @@ cols:
     # width: 250
   avatar: # test single file upload
     label: Avatar
-    add:
-    edit:
+    add: true
+    edit: true
     type: string
     ui:
       url: http://127.0.0.1:3000/uploads/avatar/ # can be served from URL
@@ -81,10 +79,8 @@ cols:
             fileSize: 10000000
   kyc: # test multiple file upload
     label: KYC Files
-    add:
-    edit:
-    creator:
-    editor:
+    add: true
+    edit: true
     type: string
     ui:
       url: http://127.0.0.1:3000/uploads/kyc/
@@ -137,10 +133,34 @@ cols:
       display: key # TBD key or text or both
     ui:
       tag: autocomplete
+  # TBD...
+  # awards:
+  #   label: Awards # key text...
+  #   type: string # change to auto complete
+  #   # hide: true
+  #   # filter: true
+  #   edit: true
+  #   options:
+  #     parentCol: '' # use column to get parent value affecting a child
+  #     parentTableColName: '' # the column name in the parent table
+  #     childCol: '' # affect child column in this table
+  #     conn: knex1
+  #     tableName: award
+  #     limit: 8
+  #     strict: true # cannot enter own values, must be selected
+  #     key: code
+  #     text: name
+  #     display: text # TBD key or text or both
+  #   ui:
+  #     tag: select
+  #     attrs:
+  #       mode: tags # tags or multiple
   sex: # single select - fixed items
     label: Sex
     type: string
     filter: true
+    add: true
+    edit: true
     default: M
     ui:
       display: label # unused - tbd get label from attrs.options
@@ -157,15 +177,12 @@ cols:
   subjects: # link to student_subject table...
     label: Subjects
     type: link # link should not be updated or edited directly in this table
-    add: hide
-    edit: hide
     filter: false
     sort: false
     # TBD... display static text? count? elipsis?
     link:
       display: static # count, elipsis
-      text: View Subjects
-      # EL1,EM,AM,PHY,CHEM
+      text: View Subjects # TBD, show is comma list? EL1,EM,AM,PHY,CHEM
       keys: id # comma seperated
       ctable: student_subject # comma seperated
       ckeys: studentId # comma seperated
@@ -175,6 +192,8 @@ cols:
     label: Age
     type: integer
     filter: true
+    add: true
+    edit: true
     ui:
       tag: input
       attrs:
@@ -189,6 +208,8 @@ cols:
     label: GPA
     type: decimal
     filter: true
+    add: true
+    edit: true
     ui:
       tag: input
       attrs:
@@ -197,6 +218,8 @@ cols:
     label: Date of Birth
     type: string # date
     filter: true
+    add: true
+    edit: true
     ui:
       tag: input
       attrs:
@@ -205,8 +228,6 @@ cols:
     label: Birth time
     type: string # time
     filter: true
-    add: hide
-    edit: hide
     ui:
       tag: input
       attrs:
@@ -215,24 +236,27 @@ cols:
     label: Datetime+TZ
     type: datetime
     filter: true
-    add: hide
-    edit: hide
     ui:
       tag: input
       attrs:
         type: datetime-local
       tz: iso
-  website:
-    label: URL
+  secret: # cannot be shown but can be updated
+    label: Secret
+    hide: blank # if blank when adding... error, if blank when edit, do not update
     type: string
+    add: true
+    edit: true
     ui:
       tag: input
+      attrs:
+        type: password
   remarks: # textarea
     editor: nobody
     label: Remarks
     type: string
-    add:
-    edit:
+    add: true
+    edit: true
     ui:
       tag: textarea
       attrs:
@@ -245,11 +269,9 @@ cols:
     label: Updated At
     filter: true
     auto: ts
-    hide:
-    add: hide
     edit: readonly
     type: datetime
     ui:
       tag: input
       attrs:
-        type: datetime-local
+        type: text

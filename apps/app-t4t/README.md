@@ -8,17 +8,21 @@
 - https://stackoverflow.com/a/53861921/2215486
 
 ## TODO
+- [DONE][FE] default population for add form
+- [DONE] required * label in form
+- [DONE] upload CSV... error message (download as csv... or popup in dialog box?)
+- [DONE][BE] upload CSV... check that required fields are filled (to test)
 
-- [UI+BE] AUTO COMPLETE /autocomplete/:table
+- [UI + BE] own self view / group view
+- [BE] file upload, delete, list - oss / s3
+- [UI+BE] AUTO COMPLETE /autocomplete/:table - single, dependent, multiple
 - [UI+BE] tags
 - fix... saving... always keys... displays always text
 - [UI+BE] handle multiple file images/pdf preview/text, display...
-- [UI] required * label in form
-- [BE] file upload, delete, list - oss
 - [BE] file delete - folder
-- [UI + BE] own self view?
 - [UI] i18n
 - [BE] auto detect yaml / json
+- [BE] handle xlsx upload (including sanitize) - satria
 
 
 

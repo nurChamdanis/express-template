@@ -15,8 +15,6 @@ cols:
     label: ID
     auto: pk
     hide: true
-    add: hide
-    edit: readonly
   code:
     label: Code
     type: string

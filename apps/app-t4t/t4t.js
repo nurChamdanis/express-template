@@ -32,10 +32,14 @@ const noAuthFunc = (req, res, next) => {
 const inputTypeNumbers = ['number', 'range', 'date', 'datetime-local', 'month', 'time', 'week']
 const inputTypeText = ['text','tel','email','password','url','search']
 
-const isInvalidInput = (colUi, val) => {
+const isInvalidInput = (col, val) => {
+  const { ui, required, multiKey } = col
   // TBD check for required also...
-  if (colUi?.tag === 'input') {
-    const attrs = colUi?.attrs
+  if (required || multiKey) {
+    if (val !== 0 && !val) return { status: 'error', message: 'required input' }
+  }
+  if (ui?.tag === 'input') {
+    const attrs = ui?.attrs
     if (attrs) {
       if (inputTypeText.includes(attrs.type)) {
         if (attrs.pattern) {
@@ -49,7 +53,7 @@ const isInvalidInput = (colUi, val) => {
         if (Number(val) > Number(attrs.max)) return { status: 'error', message: 'min exceeded' }
       }
     }
-  } else if (colUi?.tag === 'select') {
+  } else if (ui?.tag === 'select') {
     // TBD if options present, validate with it
   }
   return false
@@ -136,7 +140,6 @@ const generateTable = async (req, res, next) => { // TODO get config info from a
     req.table.multiKey = []
     req.table.required = []
     req.table.auto = []
-    req.table.nonAuto = []
     req.table.fileConfigUi = {}
 
     const { database, filename } = svc.get(req?.table?.conn)?.client?.config?.connection || {}
@@ -148,7 +151,7 @@ const generateTable = async (req, res, next) => { // TODO get config info from a
     const acStr = '/autocomplete'
     const acLen = acStr.length
     if (req.path.substring(req.path.length - acLen) === acStr) {
-      console.log('auto completgin here...')
+      console.log('auto complete here...')
       return next()
     }
     req.table.create = roleOperationMatch(req.decoded[roleKey], req.table.create)
@@ -170,17 +173,15 @@ const generateTable = async (req, res, next) => { // TODO get config info from a
         } else {
           req.table.auto.push(key)
         }
-      } else {
-        req.table.nonAuto.push(key)
       }
       if (col.multiKey) req.table.multiKey.push(key)
       if (col.required) req.table.required.push(key)
       if (col?.ui?.tag === 'files') req.table.fileConfigUi[key] = col?.ui
 
       col.editor = !(col.editor && !roleOperationMatch(req.decoded[roleKey], col.editor, key))
-      if (!col.editor) col.edit = 'readonly'
+      if (!col.editor && col.edit) col.edit = 'readonly'
       col.creator = !(col.creator && !roleOperationMatch(req.decoded[roleKey], col.creator, key))
-      if (!col.creator) col.add = 'readonly'
+      if (!col.creator && col.add) col.add = 'readonly'
     }
     // console.log(req.table)
     return next()
@@ -213,10 +214,13 @@ const mapRelation = (key, col) => {
   return null
 }
 
-const kvDb2Col = (_row, _joinCols, _tableCols) => { // a key value from DB to column
+// for reads
+// map a key value of a row from DB read...  to desired output for that key (db field)
+const kvDb2Col = (_row, _joinCols, _tableCols) => {
   for (let k in _row) {
     if (_tableCols[k]) {
       if (_tableCols[k].hide === 'omit') delete _row[k]
+      else if (_tableCols[k].hide === 'blank') _row[k] = ''
       else {
         if (_joinCols[k]) {
           const v = _joinCols[k]
@@ -382,15 +386,13 @@ const routes = (options) => {
 
     if (!where) return res.status(400).json({}) // bad request
     for (const key in table.cols) { // formally used table.cols, add in auto fields?
-      if (body[key]) {
+      if (body[key] !== undefined) {
         const col = table.cols[key]
         if (!col.editor) delete body[key]
+        else if (col?.hide === 'blank' && !body[key]) delete body[key]
         else {
-          const { ui, type } = col // TBD handle better if its undefined ?
-          if (ui) {
-            const invalid = isInvalidInput(ui, body[key])
-            if (invalid) return res.status(400).json(invalid)
-          }
+          const invalid = isInvalidInput(col, body[key])
+          if (invalid) return res.status(400).json(invalid)
           if (col.auto && col.auto === 'user') {
             body[key] = req?.decoded?.id || 'unknown'
           } else if (col.auto && col.auto === 'ts') {
@@ -438,11 +440,8 @@ const routes = (options) => {
       if (!col.creator) delete body[key]
       else if (col.auto && col.auto === 'pk' && key in body) delete body[key]
       else {
-        const { ui, type, required } = table.cols[key]
-        if (ui) {
-          const invalid = isInvalidInput(ui, body[key])
-          if (invalid) return res.status(400).json(invalid)
-        }
+        const invalid = isInvalidInput(col, body[key])
+        if (invalid) return res.status(400).json(invalid)
         if (col.auto && col.auto === 'user') {
           body[key] = req?.decoded?.id || 'unknown'
         } else if (col.auto && col.auto === 'ts') {
@@ -500,6 +499,7 @@ const routes = (options) => {
             const keyName = table.multiKey[i]
             multiKey[keyName] = id_a[i]
           }
+          console.log('multiKey', multiKey); // AARON
           return svc.get(table.conn)(table.name).where(multiKey).delete().transacting(trx)
         })
         await Promise.allSettled(keys)
@@ -522,6 +522,13 @@ const routes = (options) => {
   // code,name
   // zzz,1234
   // ddd,5678
+  // result {
+  //     "errorCount": 2,
+  //     "errors": [
+  //       { "line": 2, "msg": "Column Count Mismatch" },
+  //       { "line": 3, "msg": "Column Count Mismatch" }
+  //     ]
+  // }
   .post('/upload/:table', authUser, generateTable, memoryUpload(uploadMemory).single('csv-file'), async (req, res) => {
     if (!req.table.import) throw new Error('Forbidden - Upload')
     const { table } = req
@@ -530,6 +537,8 @@ const routes = (options) => {
     let errors = []
     let keys = []
     let currLine = 0
+    let columnsError = false // flag as true
+    const keyMap = {}
     csvParse.parse(csv)
       .on('error', (e) => console.error(e.message))
       .on('readable', function () {
@@ -538,17 +547,31 @@ const routes = (options) => {
           currLine++
           if (currLine === 1) {
             keys = [...record]
+            keys.forEach(key => keyMap[key] = true)
+            for (const k in table.cols) {
+              if (
+                table.cols[k].required && !keyMap[k] // required column not present
+                || keyMap[k] && table.cols[k].type === 'link' // columns is a link
+                || keyMap[k] && table.cols[k].auto // columns is auto
+              ) {
+                errors.push(`-1,Fatal Error: missing required column/s or invalid column/s`)
+                columnsError = true;
+                break;
+              }
+            }
             continue // ignore first line
           }
-          if (record.length === table.nonAuto.length) { // ok
-            if (record.join('')) {
-              // TODO format before push?
-              output.push(record)
+          if (!columnsError) {
+            if (record.length === keys.length) { // ok
+              if (record.join('')) {
+                // TODO format before push?
+                output.push(record)
+              } else {
+                errors.push(`${line},Empty Row`)
+              }
             } else {
-              errors.push({ currLine, data: record.join(','), msg: 'Empty Row' })
+              errors.push(`${line},Column Count Mismatch`)
             }
-          } else {
-            errors.push({ currLine, data: record.join(','), msg: 'Column Count Mismatch' })
           }
         }
       })
@@ -558,35 +581,27 @@ const routes = (options) => {
         for (let row of output) {
           line++
           try {
-            // TODO: also take care of auto populating fields?
-            // TODO: should add validation here
             const obj = {}
             for (let i=0; i<keys.length; i++) {
-              obj[ keys[i] ] = row[i]
+              const colName = keys[i]
+              // const col = table.cols[colName]
+              // isInvalidInput(col, row[i]) // TODO: should add validation here?
+              // TODO: also take care of auto populating fields?
+              obj[ colName ] = row[i]
             }
             writes.push(svc.get(table.conn)(table.name).insert(obj))
           } catch (e) {
-            errors.push({ line, data: row.join(','), msg: 'Caught exception: ' + e.toString() })
+            errors.push(`${line},`+'Caught exception: ' + e.toString())
           }
         }
-        await Promise.allSettled(writes)
+        const rv = await Promise.allSettled(writes) // [ { status !== 'fulfilled', reason } ]
+        rv.forEach((result, index) => {
+          if (result.status !== 'fulfilled') errors.push(`${index + 1},${result.reason}`)
+        })
         return res.status(200).json({ errorCount: errors.length, errors })
       })
   })
 
-  /*
-  const trx = await svc.get(table.conn).transaction()
-  for {
-    let err = false
-    try {
-      await svc.get(table.conn)(tableName).insert(data).transacting(trx)
-    } catch (e) {
-      err = true
-    }
-    if (err) await trx.rollback()
-    else await trx.commit()
-  }
-  */
   // delete file
   // export async function deleteFile(filePath) {
   //   fs.unlink(filePath, e => {
