@@ -8,15 +8,15 @@
 - https://stackoverflow.com/a/53861921/2215486
 
 ## TODO
-- [DONE][FE] default population for add form
-- [DONE] required * label in form
-- [DONE] upload CSV... error message (download as csv... or popup in dialog box?)
-- [DONE][BE] upload CSV... check that required fields are filled (to test)
 
+NEXT:
+- remove edit sidebar on Audit log
 - [UI + BE] own self view / group view
 - [BE] file upload, delete, list - oss / s3
 - [UI+BE] AUTO COMPLETE /autocomplete/:table - single, dependent, multiple
 - [UI+BE] tags
+
+- [BE] - prevent deletion of dependent keys ?
 - fix... saving... always keys... displays always text
 - [UI+BE] handle multiple file images/pdf preview/text, display...
 - [BE] file delete - folder

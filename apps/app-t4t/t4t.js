@@ -9,66 +9,17 @@ const multer = require('multer')
 
 const svc = require('@es-labs/node/services')
 const { memoryUpload } = require('@es-labs/node/express/upload')
-const { TABLE_CONFIGS_FOLDER_PATH, TABLE_CONFIGS_CSV_SIZE, TABLE_CONFIGS_UPLOAD_SIZE } = process.env
+const {
+  TABLE_CONFIGS_FOLDER_PATH, TABLE_CONFIGS_CSV_SIZE, TABLE_CONFIGS_UPLOAD_SIZE, TABLE_CUSTOM_PATH
+} = process.env
 
+const {
+  noAuthFunc, isInvalidInput, processJson, roleOperationMatch, mapRelation, formUniqueKey, kvDb2Col, setAuditData
+} = require('./t4t-utils.js')
+
+const custom = TABLE_CUSTOM_PATH ? require(TABLE_CUSTOM_PATH) : { }
 const uploadMemory =  {
   limits: { files : 1, fileSize: Number(TABLE_CONFIGS_CSV_SIZE) || 500000 }
-}
-
-const noAuthFunc = (req, res, next) => {
-    const message = 'no user auth middleware set'
-    console.log({
-      error: message,
-      expectedFormat: {
-        'req.decoded': {
-          id: 'testuser',
-          groups: 'admin,user'
-        }
-      }
-    })
-    res.status(500).send(message)
-  }
-
-const inputTypeNumbers = ['number', 'range', 'date', 'datetime-local', 'month', 'time', 'week']
-const inputTypeText = ['text','tel','email','password','url','search']
-
-const isInvalidInput = (col, val) => {
-  const { ui, required, multiKey } = col
-  // TBD check for required also...
-  if (required || multiKey) {
-    if (val !== 0 && !val) return { status: 'error', message: 'required input' }
-  }
-  if (ui?.tag === 'input') {
-    const attrs = ui?.attrs
-    if (attrs) {
-      if (inputTypeText.includes(attrs.type)) {
-        if (attrs.pattern) {
-          if ( !(new RegExp(attrs.pattern)).test(val) ) return { status: 'error', message: 'wrong format' }
-        }
-        if (attrs.maxLength) {
-          if (val.length > Number(attrs.maxlength)) return { status: 'error', message: 'max length exceeded' }
-        }
-      } else if (inputTypeNumbers.includes(attrs.type)) {
-        if (Number(val) < Number(attrs.min)) return { status: 'error', message: 'min exceeded' }
-        if (Number(val) > Number(attrs.max)) return { status: 'error', message: 'min exceeded' }
-      }
-    }
-  } else if (ui?.tag === 'select') {
-    // TBD if options present, validate with it
-  }
-  return false
-}
-
-const processJson = async (req, res, next) => {
-  if (req.files) { // it is formdata
-    let obj = {}
-    for (let key in req.body) {
-      const part = req.body[key]
-      obj = JSON.parse(part)
-    }
-    req.body = obj
-  }
-  next()
 }
 
 const storageUpload = () => {
@@ -107,22 +58,7 @@ const storageUpload = () => {
   })
 }
 
-// both are comma seperated strings
 let roleKey = ''
-const roleOperationMatch = (role, operation, col = null) => {
-  // console.log('roleOperationMatch (col, role, operation)', col, role, operation)
-  try {
-    const operations = operation.split(',')
-    const roles = role.split(',')
-    for (const _role of roles) {
-      for (const _operation of operations) {
-        if (_operation === _role) return true
-      }
-    }
-  } catch (e) {
-  }
-  return false
-}
 
 // __key is reserved property for identifying row in a table
 // | is reserved for seperating columns that make the multiKey
@@ -190,64 +126,6 @@ const generateTable = async (req, res, next) => { // TODO get config info from a
   }
 }
 
-const formUniqueKey = (table, args) => {
-  if (table.pk) return { [table.name + '.' + table.pk] : args } // return for pk
-  const where = {} // return for multiKey
-  const val_a = args.split('|')
-  if (val_a.length !== table.multiKey.length) return null // error numbers do not match
-  for (let i=0; i<val_a.length; i++) {
-    if (!val_a[i]) return null
-    const key = table.multiKey[i]
-    where[table.name + '.' + key] = val_a[i]
-  }
-  return (Object.keys(where).length) ? where : null
-}
-
-const mapRelation = (key, col) => {
-  const table1Id = key
-  const table2 = col?.options?.tableName
-  const table2Id = col?.options?.key
-  const table2Text = col?.options?.text
-  if (table2 && table2Id && table2Text && table1Id) {
-    return { table2, table2Id, table2Text, table1Id }
-  }
-  return null
-}
-
-// for reads
-// map a key value of a row from DB read...  to desired output for that key (db field)
-const kvDb2Col = (_row, _joinCols, _tableCols) => {
-  for (let k in _row) {
-    if (_tableCols[k]) {
-      if (_tableCols[k].hide === 'omit') delete _row[k]
-      else if (_tableCols[k].hide === 'blank') _row[k] = ''
-      else {
-        if (_joinCols[k]) {
-          const v = _joinCols[k]
-          _row[k] = { key: _row[k], text: _row[v] }
-          delete _row[v] // remove column created by join
-        }
-      }
-    } else {
-      console.log(`Missing Col: ${k}`)
-    }
-  }
-  return _row
-}
-
-const setAuditData = (req, op, keys = '', body = {}) => ({
-  user: req?.decoded?.id,
-  timestamp: new Date(),
-  db_name: req.table.db,
-  table_name: req.table.name,
-  op,
-  where_cols: keys ? req?.table?.pk || req?.table?.multiKey?.join('|') || '' : '',
-  where_vals: keys,
-  cols_changed: JSON.stringify(Object.keys(body)),
-  prev_values: '',
-  new_values: JSON.stringify(Object.values(body)),
-})
-
 const routes = (options) => {
   const authUser = options?.authFunc || noAuthFunc
   roleKey = options?.roleKey || ''
@@ -264,7 +142,6 @@ const routes = (options) => {
     const query = svc.get(table.conn)(table.name).where(key, 'like', `%${search}%`).orWhere(text, 'like', `%${search}%`)
     if (parentTableColName && parentTableColVal !== undefined) query.andWhere(parentTableColName, parentTableColVal) // AND filter - OK
     rows = await query.clone().limit(limit) // TODO orderBy
-
     rows = rows.map(row => ({
       key: row[key],
       text: text ? row[text] : row[key]
@@ -368,7 +245,6 @@ const routes = (options) => {
         columns = [...columns, table2 + '.' + table2Text + ' as ' + joinCol] // add a join colomn
       }
     }
-
     rv = await query.column(...columns).first()
     rv = rv ? kvDb2Col(rv, joinCols, table.cols) : null // return null if not found
     return res.status(rv ? 200 : 404).json(rv)  
@@ -418,7 +294,6 @@ const routes = (options) => {
         }
         await trx.commit()
 		  } catch (e) {
-        console.log(e) // TBD
 		    await trx.rollback()
         throw e
 		  }
@@ -454,7 +329,6 @@ const routes = (options) => {
         }
       }
     }
-
     let rv = null
   	const trx = await svc.get(table.conn).transaction()
 		try {
@@ -467,7 +341,6 @@ const routes = (options) => {
       }
       await trx.commit()
 		} catch (e) {
-      console.log(e) // TBD
 		  await trx.rollback()
       throw e
 		}
@@ -518,20 +391,12 @@ const routes = (options) => {
       throw e
     }
   })
-  // Test country collection upload using a csv file with following contents
-  // code,name
-  // zzz,1234
-  // ddd,5678
-  // result {
-  //     "errorCount": 2,
-  //     "errors": [
-  //       { "line": 2, "msg": "Column Count Mismatch" },
-  //       { "line": 3, "msg": "Column Count Mismatch" }
-  //     ]
-  // }
   .post('/upload/:table', authUser, generateTable, memoryUpload(uploadMemory).single('csv-file'), async (req, res) => {
-    if (!req.table.import) throw new Error('Forbidden - Upload')
     const { table } = req
+    if (custom[table.name]?.upload) {
+      return custom[table.name]?.upload(req, res);
+    }
+    if (!table.import) throw new Error('Forbidden - Upload')
     const csv = req.file.buffer.toString('utf-8')
     const output = []
     let errors = []
@@ -594,10 +459,18 @@ const routes = (options) => {
             errors.push(`${line},`+'Caught exception: ' + e.toString())
           }
         }
-        const rv = await Promise.allSettled(writes) // [ { status !== 'fulfilled', reason } ]
-        rv.forEach((result, index) => {
-          if (result.status !== 'fulfilled') errors.push(`${index + 1},${result.reason}`)
-        })
+        try {
+          if (table.audit) {
+            const audit = setAuditData(req, 'UPLOAD', '', { output })
+            await svc.get(table.conn)('audit_logs').insert(audit)
+          }
+          const rv = await Promise.allSettled(writes) // [ { status !== 'fulfilled', reason } ]
+          rv.forEach((result, index) => {
+            if (result.status !== 'fulfilled') errors.push(`${index + 1},${result.reason}`)
+          })
+        } catch (e) {
+          errors.push('-2,General write error: ' + e.toString())
+        }
         return res.status(200).json({ errorCount: errors.length, errors })
       })
   })

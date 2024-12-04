@@ -7,7 +7,8 @@ function mockAuthUser (req, res, next) {
   console.log('WARNING Auth bypass in t4t.js')
   req.decoded = {
     id: 'testuser',
-    groups: 'admin,editor,viewer'
+    groups: 'admin,editor,viewer', // rename to roles?
+    orgId: null, // for filtering by organization
   }
   next()
 }

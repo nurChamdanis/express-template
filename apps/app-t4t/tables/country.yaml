@@ -9,6 +9,7 @@ delete: admin
 deleteLimit: -1 # 0 = no limit, requires multiSelect
 import: admin,editor # can import from csv
 export: admin,editor # can export from csv
+audit: true
 multiSelect: true
 cols:
   id:
