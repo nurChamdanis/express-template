@@ -14,32 +14,36 @@ const upload = async (req, res) => {
   const output = []
   let errors = []
   let keys = []
-  let currLine = 0
+  let line = 0
+  let columnsError = false
   csvParse.parse(csv)
     .on('error', (e) => console.error(e.message))
     .on('readable', function () {
         let record
         while ( (record = this.read()) ) {
-          currLine++
-          if (currLine === 1) {
+          line++
+          if (line === 1) {
             // check headers match...
             const headers = 'code,name,states'
             if (headers !== record.join(',')) {
               errors.push(`-1,Fatal Error: missing column/s`)
+              columnsError = true
               break;
             }
             keys = [...record]
             continue // ignore first line
           } else {
-            if (record.length === keys.length) { // ok
-              if (record.join('')) {
-                // TODO format before push?
-                output.push(record)
+            if (!columnsError) {
+              if (record.length === keys.length) { // ok
+                if (record.join('')) {
+                  // TODO format before push?
+                  output.push(record)
+                } else {
+                  errors.push(`${line},Empty Row`)
+                }
               } else {
-                errors.push(`${line},Empty Row`)
+                errors.push(`${line},Column Count Mismatch`)
               }
-            } else {
-              errors.push(`${line},Column Count Mismatch`)
             }
           }
         }

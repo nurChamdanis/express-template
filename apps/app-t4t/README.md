@@ -10,15 +10,14 @@
 ## TODO
 
 NEXT:
-- remove edit sidebar on Audit log
+- [UI] better view of audit log changes... (1. open to see details..., 2. allow for download)
 - [UI + BE] own self view / group view
 - [BE] file upload, delete, list - oss / s3
 - [UI+BE] AUTO COMPLETE /autocomplete/:table - single, dependent, multiple
 - [UI+BE] tags
-
-- [BE] - prevent deletion of dependent keys ?
-- fix... saving... always keys... displays always text
+- [BE] - prevent deletion of dependent keys (done with FK constraints), or insertion with orphan keys...
 - [UI+BE] handle multiple file images/pdf preview/text, display...
+- fix... saving... always keys... displays always text
 - [BE] file delete - folder
 - [UI] i18n
 - [BE] auto detect yaml / json

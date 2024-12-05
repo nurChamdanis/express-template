@@ -117,19 +117,19 @@ Content-Type: application/json
 Content-Disposition: form-data; name="avatar"; filename="test.txt"
 Content-Type: text/javascript
 
-< ./test.txt
+< ./test_upload/test.txt
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="kyc"; filename="test-kyc-a.txt"
 Content-Type: text/javascript
 
-< ./test-kyc-a.txt
+< ./test_upload/test-kyc-a.txt
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="kyc"; filename="test-kyc-b.txt"
 Content-Type: text/javascript
 
-< ./test-kyc-b.txt
+< ./test_upload/test-kyc-b.txt
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
@@ -141,7 +141,7 @@ Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0g
 Content-Disposition: form-data; name="csv-file"; filename="subject.csv"
 Content-Type: text/csv
 
-< ./test_upload_data/upload-ok-subject.csv
+< ./test_upload/upload-ok-subject.csv
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ### UPLOAD CSV - country
@@ -152,7 +152,7 @@ Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0g
 Content-Disposition: form-data; name="csv-file"; filename="country.csv"
 Content-Type: text/csv
 
-< ./test_upload_data/country.csv
+< ./test_upload/country.csv
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 

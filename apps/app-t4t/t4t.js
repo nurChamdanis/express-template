@@ -401,7 +401,7 @@ const routes = (options) => {
     const output = []
     let errors = []
     let keys = []
-    let currLine = 0
+    let line = 0
     let columnsError = false // flag as true
     const keyMap = {}
     csvParse.parse(csv)
@@ -409,8 +409,8 @@ const routes = (options) => {
       .on('readable', function () {
         let record
         while ( (record = this.read()) ) {
-          currLine++
-          if (currLine === 1) {
+          line++
+          if (line === 1) {
             keys = [...record]
             keys.forEach(key => keyMap[key] = true)
             for (const k in table.cols) {
@@ -441,10 +441,10 @@ const routes = (options) => {
         }
       })
       .on('end', async () => {
-        let line = 0
+        let _line = 0
         const writes = []
         for (let row of output) {
-          line++
+          _line++
           try {
             const obj = {}
             for (let i=0; i<keys.length; i++) {
@@ -456,7 +456,7 @@ const routes = (options) => {
             }
             writes.push(svc.get(table.conn)(table.name).insert(obj))
           } catch (e) {
-            errors.push(`${line},`+'Caught exception: ' + e.toString())
+            errors.push(`L2-${_line},`+'Caught exception: ' + e.toString())
           }
         }
         try {
@@ -464,10 +464,12 @@ const routes = (options) => {
             const audit = setAuditData(req, 'UPLOAD', '', { output })
             await svc.get(table.conn)('audit_logs').insert(audit)
           }
-          const rv = await Promise.allSettled(writes) // [ { status !== 'fulfilled', reason } ]
-          rv.forEach((result, index) => {
-            if (result.status !== 'fulfilled') errors.push(`${index + 1},${result.reason}`)
-          })
+          if (writes.length) {
+            const rv = await Promise.allSettled(writes) // [ { status !== 'fulfilled', reason } ]
+            rv.forEach((result, index) => {
+              if (result.status !== 'fulfilled') errors.push(`L3-${index + 1},${result.reason}`)
+            })
+          }
         } catch (e) {
           errors.push('-2,General write error: ' + e.toString())
         }
