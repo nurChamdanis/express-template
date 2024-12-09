@@ -60,7 +60,8 @@ const storageUpload = () => {
 }
 
 let roleKey = ''
-let userIdKey = ''
+let idKey = ''
+let orgIdKey = ''
 
 // __key is reserved property for identifying row in a table
 // | is reserved for seperating columns that make the multiKey
@@ -464,10 +465,6 @@ const routes = (options) => {
           }
         }
         try {
-          if (table.audit) {
-            const audit = setAuditData(req, 'UPLOAD', '', { output })
-            await svc.get(table.conn)('audit_logs').insert(audit)
-          }
           if (writes.length) {
             const rv = await Promise.allSettled(writes) // [ { status !== 'fulfilled', reason } ]
             rv.forEach((result, index) => {
@@ -476,6 +473,14 @@ const routes = (options) => {
           }
         } catch (e) {
           errors.push('-2,General write error: ' + e.toString())
+        }
+        try {
+          if (table.audit) {
+            const audit = setAuditData(req, 'UPLOAD', '', { csv_data: JSON.stringify(output, null, 2), errors: JSON.stringify(errors, null, 2) })
+            await svc.get(table.conn)('audit_logs').insert(audit)
+          }
+        } catch (e) {
+          console.log('error writing to audit table')
         }
         return res.status(200).json({ errorCount: errors.length, errors })
       })
