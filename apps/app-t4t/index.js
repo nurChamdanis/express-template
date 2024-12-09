@@ -13,7 +13,7 @@ function mockAuthUser (req, res, next) {
   next()
 }
 
-const t4t = require('./t4t')({ authFunc: mockAuthUser, roleKey: 'groups' })
+const t4t = require('./t4t')({ authFunc: mockAuthUser })
 
 module.exports = ({ app, routePrefix }) => {
   app.use(routePrefix, router.use('/', t4t))

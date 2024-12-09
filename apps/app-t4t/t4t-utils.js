@@ -1,3 +1,6 @@
+const {
+  TABLE_USER_ID_KEY, TABLE_USER_ROLE_KEY, TABLE_ORG_ID_KEY
+} = process.env
 
 exports.noAuthFunc = (req, res, next) => {
     const message = 'no user auth middleware set'
@@ -116,7 +119,7 @@ exports.kvDb2Col = (_row, _joinCols, _tableCols) => {
 }
 
 exports.setAuditData = (req, op, keys = '', body = {}) => ({
-  user: req?.decoded?.id,
+  user: req?.decoded[TABLE_USER_ID_KEY] || '---',
   timestamp: new Date(),
   db_name: req.table.db,
   table_name: req.table.name,

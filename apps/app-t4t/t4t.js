@@ -10,7 +10,8 @@ const multer = require('multer')
 const svc = require('@es-labs/node/services')
 const { memoryUpload } = require('@es-labs/node/express/upload')
 const {
-  TABLE_CONFIGS_FOLDER_PATH, TABLE_CONFIGS_CSV_SIZE, TABLE_CONFIGS_UPLOAD_SIZE, TABLE_CUSTOM_PATH
+  TABLE_CONFIGS_FOLDER_PATH, TABLE_CONFIGS_CSV_SIZE, TABLE_CONFIGS_UPLOAD_SIZE, TABLE_CUSTOM_PATH,
+  TABLE_USER_ID_KEY, TABLE_USER_ROLE_KEY, TABLE_ORG_ID_KEY
 } = process.env
 
 const {
@@ -59,6 +60,7 @@ const storageUpload = () => {
 }
 
 let roleKey = ''
+let userIdKey = ''
 
 // __key is reserved property for identifying row in a table
 // | is reserved for seperating columns that make the multiKey
@@ -128,7 +130,9 @@ const generateTable = async (req, res, next) => { // TODO get config info from a
 
 const routes = (options) => {
   const authUser = options?.authFunc || noAuthFunc
-  roleKey = options?.roleKey || ''
+  roleKey = TABLE_USER_ROLE_KEY
+  idKey = TABLE_USER_ID_KEY
+  orgIdKey = TABLE_ORG_ID_KEY
 
   return express.Router()
   .get('/healthcheck', (req, res) => res.send('t4t ok - 0.0.1'))
