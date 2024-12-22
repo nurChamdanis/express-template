@@ -105,6 +105,9 @@ exports.kvDb2Col = (_row, _joinCols, _tableCols) => {
       if (_tableCols[k].hide === 'omit') delete _row[k]
       else if (_tableCols[k].hide === 'blank') _row[k] = ''
       else {
+        if (_row[k] instanceof Date) { // map date set as ISO String
+          _row[k] = _row[k].toISOString()
+        }
         if (_joinCols[k]) {
           const v = _joinCols[k]
           _row[k] = { key: _row[k], text: _row[v] }

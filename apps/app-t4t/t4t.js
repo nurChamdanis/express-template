@@ -457,6 +457,7 @@ const routes = (options) => {
               // const col = table.cols[colName]
               // isInvalidInput(col, row[i]) // TODO: should add validation here?
               // TODO: also take care of auto populating fields?
+              // TODO: handle datetime local data...
               obj[ colName ] = row[i]
             }
             writes.push(svc.get(table.conn)(table.name).insert(obj))

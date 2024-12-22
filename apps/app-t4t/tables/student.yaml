@@ -240,7 +240,7 @@ cols:
       tag: input
       attrs:
         type: datetime-local
-      tz: iso
+      tz: utc # show in UTC, otherwise, local time
   secret: # cannot be shown but can be updated
     label: Secret
     hide: blank # if blank when adding... error, if blank when edit, do not update
