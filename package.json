@@ -46,12 +46,12 @@
   },
   "dependencies": {
     "@es-labs/esm": "^0.0.32",
-    "@es-labs/node": "^0.0.47",
-    "esm": "^3.2.25",
+    "@es-labs/node": "^0.0.48",
     "express": "^4.21.2",
     "express-jsdoc-swagger": "^1.8.0",
     "js-yaml": "^4.1.0",
     "mysql": "^2.18.1",
+    "pg": "^8.13.1",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {

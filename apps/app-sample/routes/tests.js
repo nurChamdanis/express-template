@@ -7,7 +7,7 @@ const express = require('express')
 const PdfKit = require('pdfkit')
 
 const services = require('@es-labs/node/services')
-const { sleep } = require('esm')(module)('@es-labs/esm/sleep')
+const sleep = require('@es-labs/node/utils/sleep')
 const gcp = require('@es-labs/node/services/gcp')
 const { memoryUpload, storageUpload } = require('@es-labs/node/express/upload')
 

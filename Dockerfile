@@ -4,6 +4,7 @@
 # RUN ./run/init-stuff $SETTINGS
 
 # Set Node Version
+# version 22 can remove esm shim... if no top level await
 ARG NODE_VERSION=22
 
 # base build
@@ -17,7 +18,7 @@ RUN npm i --only=production
 COPY . .
 
 # FROM gcr.io/distroless/nodejs:debug
-FROM gcr.io/distroless/nodejs:${NODE_VERSION} AS production
+FROM gcr.io/distroless/nodejs${NODE_VERSION}:latest AS production
 WORKDIR /app
 COPY --from=build /app .
 

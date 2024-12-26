@@ -11,9 +11,8 @@ const app = express()
 // const require = createRequire(import.meta.url)
 // const siblingModule = require('./sibling-module')
 
-const { sleep } = require('esm')(module)('@es-labs/esm/sleep')
-
 require('@es-labs/node/express/init')()
+const sleep = require('@es-labs/node/utils/sleep')
 
 // setup graceful exit
 const handleExitSignal = async (signal) => await cleanup(`Signal ${signal}`, 0) // NOSONAR
