@@ -11,6 +11,7 @@ export: admin,editor # can export from csv
 select: # comma seperated columns that you want only
 audit: true # false, true, save - save will record previous values for delete/update  operation (requires read)
 multiSelect: false # can select multiple records
+defaultSort: # see audit_logs
 cols:
   id: # primary key column
     label: ID

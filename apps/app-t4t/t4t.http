@@ -6,7 +6,8 @@
 # state
 
 ## Variables
-@table = student
+@table = audit_logs 
+# @table = student
 @url = http://127.0.0.1:3000/api/t4t
 
 # ----------------------------------------

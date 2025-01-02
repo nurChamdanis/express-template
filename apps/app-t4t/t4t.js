@@ -84,7 +84,6 @@ const generateTable = async (req, res, next) => { // TODO get config info from a
     const { database, filename } = svc.get(req?.table?.conn)?.client?.config?.connection || {}
     req.table.db = database || filename || 'DB Not Found'
 
-
     // permissions settings
     req.table.view = roleOperationMatch(req.decoded[roleKey], req.table.view)
     const acStr = '/autocomplete'
@@ -166,6 +165,9 @@ const routes = (options) => {
     // console.log('t4t filters and sort', filters, sorter, table.name, page, limit)
     filters = JSON.parse(filters ? filters : null) // ignore where col === null, sort it 'or' first then 'and' // [ { col, op, val, andOr } ]
     sorter = JSON.parse(sorter ? sorter : '[]') // [ { column, order: 'asc' } ] / [] order = asc, desc
+    if (req.table?.defaultSort && sorter.length === 0 && req.table.defaultSort.length > 0) {
+      sorter = req.table.defaultSort
+    }
     if (page < 1) page = 1
     let rv = { results: [], total: 0 }
     let rows
