@@ -81,7 +81,11 @@ exports.formUniqueKey = (table, args) => {
   for (let i=0; i<val_a.length; i++) {
     if (!val_a[i]) return null
     const key = table.multiKey[i]
-    where[table.name + '.' + key] = val_a[i]
+    where[table.name + '.' + key] = 
+      (['integer', 'decimal'].includes(table.cols[key].type)) ? Number(val_a[i]) :
+      (['datetime', 'date', 'time'].includes(table.cols[key].type)) ? new Date(val_a[i]) :
+      val_a[i]
+    // where[table.name + '.' + key] = val_a[i]
   }
   return (Object.keys(where).length) ? where : null
 }
@@ -121,7 +125,7 @@ exports.kvDb2Col = (_row, _joinCols, _tableCols) => {
   return _row
 }
 
-exports.setAuditData = (req, op, keys = '', body = {}) => ({
+exports.setAuditData = (req, op, keys = '', body = '') => ({
   user: req?.decoded[TABLE_USER_ID_KEY] || '---',
   timestamp: new Date(),
   db_name: req.table.db,
@@ -129,7 +133,7 @@ exports.setAuditData = (req, op, keys = '', body = {}) => ({
   op,
   where_cols: keys ? req?.table?.pk || req?.table?.multiKey?.join('|') || '' : '',
   where_vals: keys,
-  cols_changed: JSON.stringify(Object.keys(body)),
-  prev_values: '',
-  new_values: JSON.stringify(Object.values(body)),
+  cols_changed: typeof body === 'object' ? JSON.stringify(Object.keys(body), null, 2) : '',
+  prev_values: '', // TBD
+  new_values: typeof body === 'object' ? JSON.stringify(Object.values(body), null, 2) : body.toString()
 })

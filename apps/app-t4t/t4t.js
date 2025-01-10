@@ -272,6 +272,7 @@ const routes = (options) => {
       if (body[key] !== undefined) {
         const col = table.cols[key]
         if (!col.editor) delete body[key]
+        else if (col.edit !== true) delete body[key]
         else if (col?.hide === 'blank' && !body[key]) delete body[key]
         else {
           const invalid = isInvalidInput(col, body[key])
@@ -320,6 +321,7 @@ const routes = (options) => {
     for (let key in table.cols) {
       const col = table.cols[key]
       if (!col.creator) delete body[key]
+      else if (col.add !== true) delete body[key]
       else if (col.auto && col.auto === 'pk' && key in body) delete body[key]
       else {
         const invalid = isInvalidInput(col, body[key])
