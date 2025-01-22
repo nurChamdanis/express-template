@@ -26,3 +26,20 @@ cols:
     type: string
     ui:
       tag: input
+  icc:
+    label: ICC
+    type: string
+    ui:
+      tag: input
+  updated: # date with timezone info
+    label: Updated
+    type: datetime
+    filter: true
+    # default: NOW
+    # add: true
+    edit: true
+    ui:
+      tag: input
+      attrs:
+        type: datetime-local
+      tz: utc # show in UTC, otherwise, local time

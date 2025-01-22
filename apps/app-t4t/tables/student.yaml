@@ -111,7 +111,7 @@ cols:
       limit: 8
       strict: true # cannot enter own values, must be selected
       key: code
-      text: name
+      text: name # ,icc,updated
       display: text # TBD key or text or both
     ui:
       tag: autocomplete
@@ -253,7 +253,7 @@ cols:
       attrs:
         type: password
   remarks: # textarea
-    editor: nobody
+    editor: nobody #... no editor group? called nobody so cannot edit, ignored
     label: Remarks
     type: string
     add: true

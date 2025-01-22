@@ -16,27 +16,27 @@ exports.noAuthFunc = (req, res, next) => {
     res.status(500).send(message)
 }
 
-exports.isInvalidInput = (col, val) => {
+exports.isInvalidInput = (col, val, key) => {
   const inputTypeNumbers = ['number', 'range', 'date', 'datetime-local', 'month', 'time', 'week']
   const inputTypeText = ['text','tel','email','password','url','search']
   const { ui, required, multiKey } = col
   // TBD check for required also...
   if (required || multiKey) {
-    if (val !== 0 && !val) return { status: 'error', message: 'required input' }
+    if (val !== 0 && !val) return { status: 'error', message: `required input` }
   }
   if (ui?.tag === 'input') {
     const attrs = ui?.attrs
     if (attrs) {
       if (inputTypeText.includes(attrs.type)) {
         if (attrs.pattern) {
-          if ( !(new RegExp(attrs.pattern)).test(val) ) return { status: 'error', message: 'wrong format' }
+          if ( !(new RegExp(attrs.pattern)).test(val) ) return { status: 'error', message: `wrong format`, key }
         }
         if (attrs.maxLength) {
-          if (val.length > Number(attrs.maxlength)) return { status: 'error', message: 'max length exceeded' }
+          if (val.length > Number(attrs.maxlength)) return { status: 'error', message: `max length exceeded` }
         }
       } else if (inputTypeNumbers.includes(attrs.type)) {
-        if (Number(val) < Number(attrs.min)) return { status: 'error', message: 'min exceeded' }
-        if (Number(val) > Number(attrs.max)) return { status: 'error', message: 'min exceeded' }
+        if (Number(val) < Number(attrs.min)) return { status: 'error', message: `min exceeded` }
+        if (Number(val) > Number(attrs.max)) return { status: 'error', message: `min exceeded` }
       }
     }
   } else if (ui?.tag === 'select') {
