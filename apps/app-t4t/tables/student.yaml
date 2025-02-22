@@ -90,6 +90,12 @@ cols:
         accept: .pdf,.doc,.docx,.txt
         multiple: true
         maxCount: 2 # ant design vue a-upload
+      oss: #if want to add oss as cloud storage for thumbnail 
+        folder: sub/folder
+        options:
+          limits:
+            files: 1
+            fileSize: 10000000
       multer:
         folder: apps/app-sample/uploads/kyc
         options:

@@ -16,7 +16,7 @@ exports.noAuthFunc = (req, res, next) => {
     res.status(500).send(message)
 }
 
-exports.isInvalidInput = (col, val, key) => {
+exports.isInvalidInput = (col, val, key = null) => {
   const inputTypeNumbers = ['number', 'range', 'date', 'datetime-local', 'month', 'time', 'week']
   const inputTypeText = ['text','tel','email','password','url','search']
   const { ui, required, multiKey } = col
@@ -85,18 +85,22 @@ exports.formUniqueKey = (table, args) => {
       (['integer', 'decimal'].includes(table.cols[key].type)) ? Number(val_a[i]) :
       (['datetime', 'date', 'time'].includes(table.cols[key].type)) ? new Date(val_a[i]) :
       val_a[i]
-    // where[table.name + '.' + key] = val_a[i]
+    // TOREMOVE where[table.name + '.' + key] = val_a[i]
   }
   return (Object.keys(where).length) ? where : null
 }
 
 exports.mapRelation = (key, col) => {
-  const table1Id = key
+  // foreignKey get from yaml config, so make sure there is foreignKey
+  const table1Id = col?.options?.foreignKey
   const table2 = col?.options?.tableName
   const table2Id = col?.options?.key
   const table2Text = col?.options?.text
-  if (table2 && table2Id && table2Text && table1Id) {
-    return { table2, table2Id, table2Text, table1Id }
+  const table2Column = col?.options?.column
+  const tableJoinFrom = col?.options?.joinFromTable
+
+  if (table2 && table2Id && table2Text && table1Id && tableJoinFrom && table2Column) {
+    return { table2, table2Id, table2Text, table1Id, tableJoinFrom, table2Column }
   }
   return null
 }
