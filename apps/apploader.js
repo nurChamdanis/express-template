@@ -14,4 +14,5 @@ module.exports = (app) => {
   // authentication stuff Below - you can remove if not needed (be aware of routing if you are customizing your auth)
   // routes used are: /api/auth (own auth rollout), /api/oauth, /api/oidc, /api/saml
   require('./app-auth')({ app, routePrefix: '/api'})
+  require('./app-auth')({ app, routePrefix: '/api/custom-app/file-and-json' })
 }

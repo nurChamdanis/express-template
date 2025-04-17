@@ -1,7 +1,7 @@
 (async function() {
   require('./env')
   // console.log(__dirname, process.cwd())
-  // exit(1)
+  // exit(1)  
   console.log('NODE_ENV', process.env.NODE_ENV)
   
   await require('@es-labs/node/config')(__dirname, process.cwd())
@@ -14,3 +14,4 @@
   const { API_PORT, HTTPS_CERTIFICATE } = process.env
   server.listen(API_PORT, () => console.info(`[(${process.env.NODE_ENV}) ${process.env.APP_VERSION}] listening on port ${API_PORT}, https=${Boolean(HTTPS_CERTIFICATE)}`))
 }())
+ 
