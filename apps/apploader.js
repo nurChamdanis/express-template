@@ -6,7 +6,8 @@ module.exports = (app) => {
   // require('./app-2nd/routes')({ app, urlPrefix: '/api/app-second'})
 
   // some sample/demo routes - you can remove if not needed
-  require('./app-sample/routes')({ app, routePrefix: '/api/app-sample'})
+  // require('./app-sample/routes')({ app, routePrefix: '/api/app-sample'})
+  require('./app-sample/routes')({ app, routePrefix: '/api/chamdani-vue'})
 
   // table for table experimental app
   require('./app-t4t')({ app, routePrefix: '/api/t4t'}) // TODO: need to fix t4t-fe.js to make URL configurable
